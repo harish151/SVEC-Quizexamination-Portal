@@ -1,1 +1,8 @@
-abcd
+*create react app -> npm create vite@latest appname
+                  -> chooose react and then choose javascript
+                  -> Do the providing commands from commands
+
+*create spring app -> Go to 'start.spring.io'
+                   -> choose maven, java, choose latest springboot, jar, java latestversion
+                   -> choose dependencies spring web, spring boot dev tools
+                   -> then after make 'clean install' pom.xml in ecllipse

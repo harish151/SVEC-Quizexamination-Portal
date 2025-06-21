@@ -1,46 +1,68 @@
 package com.project.Backend.controller;
 
 import java.util.List;
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.project.Backend.model.Userdetails;
+
+import com.project.Backend.model.Questions;
+import com.project.Backend.model.User;
+import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.Repo1;
 import com.project.Backend.service.UserService;
 
-@CrossOrigin(origins = {
-	    "http://192.168.152.193:3000",
-	    "http://localhost:3000"
-	})
+@CrossOrigin("*")
 @RestController
 public class TaskController{
 	
 	@Autowired
-	Repo1 re1;
+	Repo1 r;
 	
-	 @Autowired
+	@Autowired
+	QuestionsRepo qr;
+	
+	@Autowired
 	UserService us;
 	
-	@PostMapping("/signup")
-	public int signup(@RequestBody Userdetails ud) {
-	   return us.signup(re1, ud);  
+	@PostMapping("/create")
+	public String create(@RequestBody User u) {
+		return us.create(r, u);
 	}
 	
 	@GetMapping("/login")
-	public String login(@RequestParam("email") String email,@RequestParam("password") String password) {
-		return us.checkpassword(re1, email, password);
+	public Optional<User> login(@RequestParam("username") String username,@RequestParam("password") String password) {
+		return us.login(r, username,password);
 	}
 	
-	@GetMapping("/dashboard")
-	public List<Userdetails> dashboard() {
-		return re1.findAll();
+	@PostMapping("/addquestions")
+	public String addquestion(@RequestBody Questions q) {
+		return us.createquestion(qr,q);
 	}
+	
+	@PutMapping("/updatequestion")
+	public int updatequestion(@RequestBody Questions q) {
+		return us.updatequestion(qr,q);
+	}
+	
+	@GetMapping("/getquestions")
+	public List<Questions> findallquestions(@RequestParam("acedemic_year") String year,@RequestParam("exam_type") String type,@RequestParam("branch") String branch,@RequestParam("semester") String sem)
+	{
+		List<Questions> q = us.getAllQuestions(qr,year,type,branch,sem);
+		return q;
+	}
+	
+	@DeleteMapping("/deletequestion")
+	public String deletequestion(@RequestParam("id") String id) {
+		return us.deleteQuestion(qr,id);
+	}
+	
 	
 }

@@ -5,14 +5,17 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.project.Backend.model.Questions;
+import com.project.Backend.model.Regulation;
+import com.project.Backend.model.Subjects;
 import com.project.Backend.model.User;
 import com.project.Backend.repository.QuestionsRepo;
+import com.project.Backend.repository.RegulationRepo;
 import com.project.Backend.repository.Repo1;
+import com.project.Backend.repository.SubjectsRepo;
 
 @Service
 public class UserService{
-	
-	
+
 	public String create(Repo1 r,User u) {
 		try {
 			r.save(u);
@@ -34,6 +37,29 @@ public class UserService{
 		}
 	}
 	
+	public String setregulation(RegulationRepo rr,Regulation reg) {
+		rr.save(reg);
+		return reg.toString();
+	}
+	
+	public String getregulation(RegulationRepo rr,String batch) {
+		Regulation reg = rr.findByBatch(batch);
+		if(reg == null)	
+			return null;
+		else 
+			return reg.getRegulation();
+	}
+	
+	public String postsubjects(SubjectsRepo sr, Subjects s) {
+		Subjects sub = sr.save(s);
+		return sub.toString();
+		}
+	
+	public List<Subjects> getsubjects(SubjectsRepo sr, String reg, String branch, String sem) {
+		List<Subjects> s = sr.findByRegulationAndBranchAndSemester(reg,branch,sem);
+		return s;
+	}
+	
 	public String createquestion(QuestionsRepo qr,Questions q) {
 		qr.save(q);
 		return q.getId();
@@ -43,11 +69,12 @@ public class UserService{
 	    Optional<Questions> optional = qr.findById(q.getId());
 	    if (optional.isPresent()) {
 	        Questions existing = optional.get();
-	        existing.setAcedemic_year(q.getAcedemic_year());
+	        existing.setBatch(q.getBatch());
 	        existing.setExam_type(q.getExam_type());
 	        existing.setBranch(q.getBranch());
-	        existing.setSubject(q.getSubject());
+//	        existing.setSubject(q.getSubject());
 	        existing.setSemester(q.getSemester());
+	        existing.setQuestion_no(q.getQuestion_no());
 	        existing.setQuestion(q.getQuestion());
 	        existing.setOptions(q.getOptions());
 	        existing.setAnswer(q.getAnswer());
@@ -58,8 +85,8 @@ public class UserService{
 	    }
 	}
 
-	public List<Questions> getAllQuestions(QuestionsRepo qr, String year, String type, String branch, String sem) {
-		return qr.findQuestions(year,type,branch,sem);
+	public List<Questions> getAllQuestions(QuestionsRepo qr, String year, String type, String branch,String code) {
+		return qr.findQuestions(year,type,branch,code);
 	}
 
 	public String deleteQuestion(QuestionsRepo qr,String id) {
@@ -71,6 +98,8 @@ public class UserService{
 			return "id not found";
 		}
 	}
+
+
 	
 	
 

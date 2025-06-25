@@ -11,8 +11,6 @@ public interface Repo1 extends MongoRepository<User,String>{
 
 	Optional<User> findByUsernameAndPassword(String username, String password);
 	
-//	@Query("{'username':?0,'password':?1}")
-//	User checkcrediantials(String username, String password);
 	
 }
 

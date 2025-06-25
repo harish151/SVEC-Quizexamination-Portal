@@ -9,15 +9,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Questions {
 	@Id
 	String id;
-	String acedemic_year;
-	String exam_type;
-	String branch;
-	String semester;
-	String coursecode;
-	String subject;
-	String question;
-	List<String> options;
-	String answer;
+	String batch="";
+	String exam_type="";
+	String branch="";
+	String semester="";
+	String coursecode="";
+	String question_no="";
+	String question="";
+	List<String> options=null;
+	String answer="";
 	
 	
 	public String getId() {
@@ -26,11 +26,11 @@ public class Questions {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getAcedemic_year() {
-		return acedemic_year;
+	public String getBatch() {
+		return batch;
 	}
-	public void setAcedemic_year(String acedemic_year) {
-		this.acedemic_year = acedemic_year;
+	public void setBatch(String batch) {
+		this.batch = batch;
 	}
 	public String getExam_type() {
 		return exam_type;
@@ -57,11 +57,11 @@ public class Questions {
 	public void setCoursecode(String coursecode) {
 		this.coursecode = coursecode;
 	}
-	public String getSubject() {
-		return subject;
+	public String getQuestion_no() {
+		return question_no;
 	}
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setQuestion_no(String question_no) {
+		this.question_no = question_no;
 	}
 	public String getQuestion() {
 		return question;
@@ -83,7 +83,7 @@ public class Questions {
 	}
 	@Override
 	public String toString() {
-		return "Questions [acedemic_year=" + acedemic_year + ", exam_type=" + exam_type + ", branch=" + branch
+		return "Questions [batch=" + batch + ", exam_type=" + exam_type + ", branch=" + branch
 				+ ", semester=" + semester + ", question=" + question + ", options=" + options + ", answer=" + answer
 				+ "] "+id;
 	}

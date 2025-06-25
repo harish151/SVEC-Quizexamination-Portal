@@ -12,8 +12,8 @@ import com.project.Backend.model.Questions;
 @Repository
 public interface QuestionsRepo extends MongoRepository<Questions,String>{
 	
-	@Query("{ 'acedemic_year': ?0, 'exam_type': ?1, 'branch': ?2, 'semester': ?3 }")
-	List<Questions> findQuestions(String year, String examType, String branch, String semester);
+	@Query("{ 'batch': ?0, 'exam_type': ?1, 'branch': ?2, 'coursecode':?3}")
+	List<Questions> findQuestions(String year, String examType, String branch,String code);
 
 
 

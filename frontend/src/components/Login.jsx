@@ -10,7 +10,7 @@ function Login() {
         e.preventDefault();
         console.log(username);
         console.log(password);
-         axios.get("http://localhost:8080/login",{params:{username:username,password:password}})
+         axios.get(`http://${import.meta.env.VITE_HOST}:8080/login`,{params:{username:username,password:password}})
          .then(res =>{
               console.log(result);
               if(res.data==null){
@@ -20,7 +20,8 @@ function Login() {
                  navigate("/student");
               }
               else if(res.data.role.toLowerCase()==="teacher"){
-                navigate("/employee",{state:{username:res.data.empname}});
+                console.log(res.data.empname);
+                navigate("/employee",{state:{name:res.data.name}});
               }
           })
          .catch(err =>{console.log(err)} );

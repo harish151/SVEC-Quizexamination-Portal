@@ -15,7 +15,7 @@ function Signup() {
         console.log(password);
         console.log(newpassword);
         if(password===newpassword){
-        axios.post("http://localhost:8080/signup",{email:email,password:password})
+        axios.post(`http://${import.meta.env.VITE_HOST}:8080/signup`,{email:email,password:password})
         .then(res =>{setResult(res.data===1?(alert("!Account Created Click Ok To SignIn"),navigate('/')):(alert("User Already Exist")));})
         .catch(err =>{console.log(err)} );
         }

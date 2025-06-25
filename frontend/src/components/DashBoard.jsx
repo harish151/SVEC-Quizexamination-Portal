@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 function DashBoard() {
     const [users,SetUsers] = useState([]);
     useEffect(()=>{
-    axios.get("http://localhost:8080/dashboard")
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/dashboard`)
     .then(res=>SetUsers(res.data))
     .catch(err=>console.log(err))
 },[])

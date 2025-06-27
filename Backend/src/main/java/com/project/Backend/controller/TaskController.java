@@ -10,17 +10,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
+import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Subjects;
 import com.project.Backend.model.User;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.RegulationRepo;
 import com.project.Backend.repository.Repo1;
+import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.SubjectsRepo;
 import com.project.Backend.service.UserService;
 
@@ -43,6 +44,9 @@ public class TaskController{
 	@Autowired
 	SubjectsRepo sr;
 	
+	@Autowired
+	ScheduleRepo schr;
+	
 	@PostMapping("/create")
 	public String create(@RequestBody User u) {
 		return us.create(r, u);
@@ -51,6 +55,11 @@ public class TaskController{
 	@GetMapping("/login")
 	public Optional<User> login(@RequestParam("username") String username,@RequestParam("password") String password) {
 		return us.login(r, username,password);
+	}
+	
+	@GetMapping("/checkeligibility")
+	public String checkeligibility(@RequestParam("username") String username,@RequestParam("coursecode") String coursecode) {
+		return us.checkeligibility(r, username, coursecode);
 	}
 	
 	@PostMapping("/setregulation")
@@ -102,5 +111,19 @@ public class TaskController{
 		return us.deleteQuestion(qr,id);
 	}
 	
+	@PostMapping("/addschedule")
+	public String addschedule(@RequestBody Schedule sch) {
+		return us.addschedule(schr,sch);
+	}
+	
+	@GetMapping("/getschedule")
+	public List<Schedule> getschedule(@RequestParam("branch") String branch,@RequestParam("semester") String semester){
+		return us.getschedule(schr,branch,semester);
+	}
+	
+	@GetMapping("/getexams")
+	public List<Schedule> getexams(@RequestParam("branch") String branch,@RequestParam("semester") String semester,@RequestParam("date") String date){
+		return us.getexams(schr,branch,semester,date);
+	}
 	
 }

@@ -10,6 +10,8 @@ import com.project.Backend.model.User;
 public interface Repo1 extends MongoRepository<User,String>{
 
 	Optional<User> findByUsernameAndPassword(String username, String password);
+
+	User findByUsernameAndTeachsub(String username, String coursecode);
 	
 	
 }

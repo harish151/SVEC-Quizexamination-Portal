@@ -1,5 +1,7 @@
 package com.project.Backend.model;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,15 +11,18 @@ import jakarta.validation.constraints.NotNull;
 @Document(collection = "users")
 public class User{
 	@Id
-	String id;
-	String name;
+	private String id;
+	private String name;
 	@Indexed(unique = true)
-	String username;
-	String password="1234";
-	String academic_year=null;
-	String regulation;
+	private String username;
+	private String password="1234";
+	private String academic_year=null;
+	private String regulation=null;
+	private String branch=null;
+	private String semester=null;
+	private List<String> teachsub=null;
 	@NotNull
-	String role;
+	private String role;
 	public String getId() {
 		return id;
 	}
@@ -52,8 +57,27 @@ public class User{
 	public String getRegulation() {
 		return regulation;
 	}
+	
 	public void setRegulation(String regulation) {
 		this.regulation = regulation;
+	}
+	public String getBranch() {
+		return branch;
+	}
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+	public String getSemester() {
+		return semester;
+	}
+	public void setSemester(String semester) {
+		this.semester = semester;
+	}
+	public List<String> getTeachsub() {
+		return teachsub;
+	}
+	public void setTeachsub(List<String> teachsub) {
+		this.teachsub = teachsub;
 	}
 	public String getRole() {
 		return role;
@@ -63,6 +87,8 @@ public class User{
 	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + "]";
+		return "User [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password
+				+ ", academic_year=" + academic_year + ", regulation=" + regulation + ", teachsub=" + teachsub
+				+ ", role=" + role + "]";
 	}
 }

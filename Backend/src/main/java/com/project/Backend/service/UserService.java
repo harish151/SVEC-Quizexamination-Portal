@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
+import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Subjects;
 import com.project.Backend.model.User;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.RegulationRepo;
 import com.project.Backend.repository.Repo1;
+import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.SubjectsRepo;
 
 @Service
@@ -34,6 +36,16 @@ public class UserService{
 		else {
 			System.out.println(l);
 			return l; //there is no document
+		}
+	}
+	
+	public String checkeligibility(Repo1 r,String username,String coursecode) {
+		User u = r.findByUsernameAndTeachsub(username,coursecode);
+		if(u!=null) {
+			return "eligible";
+		}
+		else {
+			return "noteligible";
 		}
 	}
 	
@@ -98,6 +110,23 @@ public class UserService{
 			return "id not found";
 		}
 	}
+
+	public String addschedule(ScheduleRepo schr, Schedule sch) {
+		schr.save(sch);
+		return sch.toString();
+	}
+
+	public List<Schedule> getschedule(ScheduleRepo schr, String branch, String semester) {
+		List<Schedule> sh = schr.findByBranchAndSemester(branch,semester);
+		return sh;
+
+	}
+	
+	public List<Schedule> getexams(ScheduleRepo schr, String branch, String semester, String date) {
+		List<Schedule> sh = schr.findByBranchAndSemesterAndDate(branch,semester,date);
+		return sh;
+	}
+
 
 
 	

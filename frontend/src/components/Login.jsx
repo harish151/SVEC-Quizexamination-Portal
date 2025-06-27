@@ -8,8 +8,6 @@ function Login() {
     const [result,setResult] = useState("");
     const handle_login = (e)=>{
         e.preventDefault();
-        console.log(username);
-        console.log(password);
          axios.get(`http://${import.meta.env.VITE_HOST}:8080/login`,{params:{username:username,password:password}})
          .then(res =>{
               console.log(result);
@@ -20,8 +18,7 @@ function Login() {
                  navigate("/student");
               }
               else if(res.data.role.toLowerCase()==="teacher"){
-                console.log(res.data.empname);
-                navigate("/employee",{state:{name:res.data.name}});
+                navigate("/employee",{state:{name:res.data.name,username:res.data.username,teachsub:res.data.teachsub}});
               }
           })
          .catch(err =>{console.log(err)} );

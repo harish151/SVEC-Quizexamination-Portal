@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import FormComponent from './Form';
 
-function Conductexam() {
+function Conductexam({username}) {
+  // console.log(username);
+
   const [regulation, setRegulation] = useState("V20");
   const [batch, setBatch] = useState("2021");
   const [branch, setBranch] = useState("CSE");
@@ -14,6 +17,7 @@ function Conductexam() {
   const [options, setOptions] = useState(["", "", "", ""]);
   const [answer,setAnswer]=useState("");
   const [qno,setQno] = useState(1);
+  const [buttonname,setButtonname] = useState("Upload Questions");
 
   const handleregulation = (selectedBatch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getregulation`, {
@@ -27,28 +31,43 @@ function Conductexam() {
 
   const handleaddquestions =(e)=>{
     e.preventDefault();
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getnumofqueposted`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/checkeligibility`,{params:{username:username,coursecode:ccode}})
     .then(res =>{
-      if(res.data===20){
-        alert("Already Question are Assigned.");
-      }
-      else{
-        setDisplayque(1);
-        setQno(res.data+1);console.log(res.data)
-      }
+      if(res.data==="eligible"){
+          axios.get(`http://${import.meta.env.VITE_HOST}:8080/getnumofqueposted`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
+          .then(res =>{
+            if(res.data===20){
+              alert("Already Question are Assigned. Click on view question paper to see.");
+            }
+            else{
+              setDisplayque(1);
+              setQno(res.data+1);
+            }
+          })
+          .catch(err => alert(err))
+        }
+        else{
+          setDisplayque(0);
+          alert("you are not eligible to assign questions to this subject.");
+        }
+      
     })
-    .catch(err => alert(err))
     
   }
 
-  const handlequestion =(e)=>{
+  const handlequestion =(e,i=0)=>{
     e.preventDefault();
     axios.post(`http://${import.meta.env.VITE_HOST}:8080/addquestions`,{batch:batch,exam_type:exam_type,branch:branch,semester:semester,coursecode:ccode,question_no:qno,question:question,options:options,answer:answer})
-    .then(res => {console.log(res.data);console.log(ccode);setQno(qno+1);
-        setQuestion("");
-        setOptions(["","","",""]);
-        setAnswer("");
-    })
+    .then(res => {console.log(res.data);
+                  if(i===0){setQno(qno+1);}
+                  else if(i===13){
+                      alert("successfully posted all questions.");
+                      setDisplayque(0);
+                    }
+                    setQuestion("");
+                    setOptions(["","","",""]);
+                    setAnswer("");
+          })
     .catch(err => console.error(err))
 
   }
@@ -86,15 +105,12 @@ function Conductexam() {
                         <div>D:<input type="text" name="option4" id="option4" value={options[3]} required onChange={(e)=>{var updated = [...options];updated[3] = e.target.value;setOptions(updated)}} /></div>
                     </div>
                     <div style={{display:'flex',justifyContent:'space-between'}}>
-                      <div style={{width:'50%'}}>ANSWER:<input type='text' id='ans' name='ans' value={answer} onChange={(e)=>{setAnswer(e.target.value)}} /></div>
+                      <div style={{width:'50%'}}>ANSWER:<input type='text' id='ans' name='ans' value={answer} onChange={(e)=>{setAnswer(e.target.value)}} required /></div>
                       <div style={{width:'20%',display:'flex',justifyContent:'space-evenly'}}>
                           {
                             qno===20?(<div style={{display:'flex',justifyContent:'space-evenly',gap:'12px'}}>
-                                      <button type="submit" id='savebutton' onClick={()=>{document.getElementById('finishbutton').disabled=false;
-                                                                      document.getElementById('savebutton').style.display='none';}}>SAVE</button>
-                                      <button type="submit" id='finishbutton' onClick={()=>{alert("FINISHED");setDisplayque(0);}} disabled>
-                                        FINISH
-                                      </button></div>):(<button type="submit">SAVE & NEXT</button>)
+                                      <button type="submit"submit id='savebutton' onClick={(e)=>{handlequestion(e,13);}}>SAVE</button>
+                                      </div>):(<button type="submit">SAVE & NEXT</button>)
                           }
                       </div>
                     </div>
@@ -104,127 +120,27 @@ function Conductexam() {
               </form>
               );
             }
-  else{
-    alert("maximum questions reached.")
-  }
 
   return (
     <div>
-      <form onSubmit={handleaddquestions}>
-        <table align="center">
-          <tbody>
-            <tr>
-              <td>COURSE</td>
-              <td>:</td>
-              <td>
-                <select name="course" id="course">
-                  <option value="btech">BTECH</option>
-                </select>
-              </td>
-            </tr>
-
-            <tr>
-              <td>BATCH</td>
-              <td>:</td>
-              <td>
-                <select
-                  name="batch"
-                  id="batch"
-                  value={batch}
-                  onChange={(e) => {
-                    const selectedValue = e.target.value;
-                    setBatch(selectedValue);
-                    handleregulation(selectedValue);
-                  }}
-                >
-                  <option value="2021">2021</option>
-                  <option value="2022">2022</option>
-                  <option value="2023">2023</option>
-                  <option value="2024">2024</option>
-                </select>
-              </td>
-            </tr>
-
-            <tr>
-              <td>BRANCH</td>
-              <td>:</td>
-              <td>
-                <select
-                  name="branch"
-                  id="branch"
-                  value={branch}
-                  onChange={(e) => setBranch(e.target.value)}
-                >
-                  <option value="CSE">COMPUTER SCIENCE AND ENGINEERING</option>
-                  <option value="ECE">ELECTRONICS AND COMMUNICATION ENGINEERING</option>
-                  <option value="EEE">ELECTRICAL AND ELECTRONICS ENGINEERING</option>
-                  <option value="ME">MECHANICAL ENGINEERING</option>
-                  <option value="CE">CIVIL ENGINEERING</option>
-                  <option value="CST">COMPUTER SCIENCE AND TECHNOLOGY</option>
-                  <option value="CAI">COMPUTER SCIENCE AND ENGINEERING (AI)</option>
-                  <option value="AIM">COMPUTER SCIENCE AND ENGINEERING (AIM)</option>
-                </select>
-              </td>
-            </tr>
-
-            <tr>
-              <td>SEMESTER</td>
-              <td>:</td>
-              <td>
-                <select
-                  name="semester"
-                  id="semester"
-                  value={semester}
-                  onChange={(e) => setSemester(e.target.value)}
-                >
-                  <option value="1">I</option>
-                  <option value="2">II</option>
-                  <option value="3">III</option>
-                  <option value="4">IV</option>
-                  <option value="5">V</option>
-                  <option value="6">VI</option>
-                  <option value="7">VII</option>
-                  <option value="8">VIII</option>
-                </select>
-              </td>
-            </tr>
-
-            <tr>
-              <td>SUBJECT</td>
-              <td>:</td>
-              <td>
-                <select name="subject" id="subject-select" value={ccode} onChange={(e)=>{setCcode(e.target.value);console.log(e.target.value)}} >
-                  {Array.isArray(subjects.subjectname) && subjects.subjectname.length > 0 ? (
-                    subjects.subjectname.map((name, index) => (
-                      <option key={index} value={subjects.coursecode?.[index]}>
-                        {name}
-                      </option>
-                    ))
-                  ) : (
-                    <option disabled>No subjects available</option>
-                  )}
-                </select>
-              </td>
-            </tr>
-
-            <tr>
-              <td>EXAM</td>
-              <td>:</td>
-              <td>
-                <select name="exam" id="exam-select" value={exam_type} onChange={(e)=>{setExam_type(e.target.value)}}>
-                  <option value="MID-1">MID-1</option>
-                  <option value="MID-2">MID-2</option>
-                </select>
-              </td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colSpan={3} align='center'><button type='submit'>Upload Questions</button></td>
-            </tr>
-          </tfoot>
-        </table>
-      </form>
+      <FormComponent
+        batch={batch}
+        setBatch={setBatch}
+        branch={branch}
+        setBranch={setBranch}
+        semester={semester}
+        setSemester={setSemester}
+        subjects={subjects}
+        ccode={ccode}
+        setCcode={setCcode}
+        exam_type={exam_type}
+        setExam_type={setExam_type}
+        setDisplayque={setDisplayque}
+        buttonname = {buttonname}
+        setButtonname = {setButtonname}
+        handleregulation={handleregulation}
+        handlequestions={handleaddquestions}
+      />
       <div style={{marginTop:'10px',marginBottom:'10px'}}>
       {displayque ===1 ? (divs):(null)}
       </div>

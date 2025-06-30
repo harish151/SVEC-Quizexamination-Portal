@@ -163,8 +163,8 @@ public class UserService{
 	public void setresults(Result r) {
 		double marks = 0.0;
 		List<String> studentAnswers = r.getAns();
-		System.out.println(studentAnswers);
-		System.out.println(result);
+//		System.out.println(studentAnswers);
+//		System.out.println(result);
 		int size = Math.min(studentAnswers.size(), result.size());
 		
 	    for (int i = 0; i < size; i++) {
@@ -174,13 +174,13 @@ public class UserService{
 	    }
 		marks = Math.ceil(marks);
 		r.setMarks(marks);
+		r.setAns(null);
 		rr.save(r);
-		//System.out.println(r.toString());
 		result.clear();
 		
 	}
 
-	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
+	public Optional<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
 			String u) {
 		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
 	}

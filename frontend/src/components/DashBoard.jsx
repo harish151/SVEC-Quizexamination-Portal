@@ -19,13 +19,14 @@ function DashBoard() {
           <table border={1}>
             <thead>
               <tr>
-                <td colSpan={4} align='center'>{exam}</td>
+                <td colSpan={5} align='center'>{exam}</td>
               </tr>
               <tr>
                 <td>SNO</td>
                 <td>SUBJECT</td>
                 <td>COURSE CODE</td>
                 <td>DATE</td>
+                <td>TIME</td>
               </tr>
             </thead>
             <tbody>
@@ -35,6 +36,7 @@ function DashBoard() {
                   <td>{result.subject}</td>
                   <td align='center'>{result.coursecode}</td>
                   <td>{result.date}</td>
+                  <td>{result.startTime}-{result.endTime}</td>
                 </tr>
               ))}
             </tbody>

@@ -13,6 +13,8 @@ public class Schedule {
 	private String coursecode;
 	private String subject;
 	private String date;
+	private String startTime;
+	private String endTime;
 	public String getId() {
 		return id;
 	}
@@ -53,14 +55,27 @@ public class Schedule {
 		return date;
 	}
 	public void setDate(String date) {
-		//SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 	    this.date = date;
+	}
+	public String getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+	public String getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
 	}
 	@Override
 	public String toString() {
 		return "Schedule [id=" + id + ", exam_type=" + exam_type + ", branch=" + branch + ", semester=" + semester
-				+ ", coursecode=" + coursecode + ", subject=" + subject + ", date=" + date + "]";
+				+ ", coursecode=" + coursecode + ", subject=" + subject + ", date=" + date + ", startTime=" + startTime
+				+ ", endTime=" + endTime + "]";
 	}
+	
 	
 	
 }

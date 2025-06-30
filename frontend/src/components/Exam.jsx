@@ -51,7 +51,7 @@ function Exam() {
                 </div>))}
                 </div>)}
             <button onClick={(e)=>{e.preventDefault();if(qno>0){setQno(qno-1)}}} >PREVIOUS</button>
-            <button onClick={(e)=>{e.preventDefault();console.log(answers);if(qno<7){setQno(qno+1);if(qno===6){setQno(0)}}}} >SAVE & NEXT</button>
+            <button onClick={(e)=>{e.preventDefault();console.log(answers);if(qno<21){setQno(qno+1);if(qno===19){setQno(0)}}}} >SAVE & NEXT</button>
             <div style={{height:'75vh',width:'78vw',border:'1px solid',display:'flex',justifyContent:'flex-end',alignItems:'flex-end'}}><button type='submit'>SUBMIT</button></div>
             </form>
       </div>

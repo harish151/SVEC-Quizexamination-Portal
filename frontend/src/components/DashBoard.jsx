@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react'
 function DashBoard() {
     const [schedule,setSchedule] = useState([]);
     const [exam,setExam] = useState("");
+    const[branch,setBranch]=useState("CSE");
+    const [sem,setSem] = useState("1");
     useEffect(()=>{
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getschedule`,{params:{branch:"CSE",semester:"1"}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getschedule`,{params:{branch:branch,semester:sem}})
     .then(res=>{setSchedule(res.data);setExam(res.data[0].exam_type);console.log(res.data);})
     .catch(err=>console.log(err))
 },[])

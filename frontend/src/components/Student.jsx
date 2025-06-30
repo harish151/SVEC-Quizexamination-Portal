@@ -74,8 +74,8 @@ useEffect(()=>{
 
   return (
     <div style={{display:'flex',height:'100vh',width:'100vw'}}>
-        <div style={{border:'1px solid '}}>Welcome {details.name}</div>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%'}}>
+        <div style={{border:'1px solid',width:'15%'}}>Welcome {details.name}</div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'85%'}}>
           <table border={1} align='center'>
             <thead>
               <tr>
@@ -88,7 +88,7 @@ useEffect(()=>{
               <tr>
                 <td>{exams.date}</td>
                 <td>{exams.subject}</td>
-                <td><button onClick={(e)=>handlesubmitornot(e,"1:02",exams.startTime,exams.endTime)}>START</button></td>
+                <td><button onClick={(e)=>handlesubmitornot(e,time,exams.startTime,exams.endTime)}>START</button></td>
               </tr>
             </tbody>
           </table>

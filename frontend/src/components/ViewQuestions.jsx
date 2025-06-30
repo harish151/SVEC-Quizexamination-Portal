@@ -9,6 +9,7 @@ function ViewQuestions({username}) {
       const [branch, setBranch] = useState("CSE");
       const [semester, setSemester] = useState("1");
       const [subjects, setSubjects] = useState({});
+      const [sections,setSections] = useState(["ALL"]);
       const [ccode,setCcode] = useState("");
       const [exam_type,setExam_type] = useState("MID-1");
       const [displayque,setDisplayque] = useState(0);
@@ -18,12 +19,13 @@ function ViewQuestions({username}) {
 
     const handleregulation = (selectedBatch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getregulation`, {
-      params: { batch: selectedBatch }
+      params: { batch: selectedBatch,branch:branch}
     })
     .then(res => {
-      setRegulation(res.data);
+      console.log(res.data[0].regulation);
+      setRegulation(res.data[0].regulation);
     })
-    .catch(err => alert(err));
+    .catch(err => {alert(err);setSubjects([""])});
   };
 
   const handleviewquestions =(e)=>{
@@ -86,8 +88,10 @@ function ViewQuestions({username}) {
         setCcode={setCcode}
         exam_type={exam_type}
         setExam_type={setExam_type}
+        sections={sections}
+        setSections={setSections}
         displayque = {displayque}
-        setDisplayque={setDisplayque}
+        setDisplay={setDisplayque}
         buttonname = {buttonname}
         setButtonname = {setButtonname}
         handleregulation={handleregulation}

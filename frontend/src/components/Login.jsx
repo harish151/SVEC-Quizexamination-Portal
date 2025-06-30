@@ -15,7 +15,7 @@ function Login() {
                 setResult("Invalid Username And Password")
               }
               else if(res.data.role.toLowerCase()==="student"){
-                 navigate("/student");
+                 navigate("/student",{state:{details:res.data}});
               }
               else if(res.data.role.toLowerCase()==="teacher"){
                 navigate("/employee",{state:{name:res.data.name,username:res.data.username,teachsub:res.data.teachsub}});

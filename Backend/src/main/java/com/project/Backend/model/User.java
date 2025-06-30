@@ -20,6 +20,7 @@ public class User{
 	private String regulation=null;
 	private String branch=null;
 	private String semester=null;
+	private String section = null;
 	private List<String> teachsub=null;
 	@NotNull
 	private String role;
@@ -72,6 +73,12 @@ public class User{
 	}
 	public void setSemester(String semester) {
 		this.semester = semester;
+	}
+	public String getSection() {
+		return section;
+	}
+	public void setSection(String section) {
+		this.section = section;
 	}
 	public List<String> getTeachsub() {
 		return teachsub;

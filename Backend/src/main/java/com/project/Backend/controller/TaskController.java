@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
+import com.project.Backend.model.Result;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Subjects;
 import com.project.Backend.model.User;
@@ -47,6 +48,12 @@ public class TaskController{
 	@Autowired
 	ScheduleRepo schr;
 	
+	@GetMapping("/getusers")
+	public List<User> get(){
+		List<User> u =r.findAll();
+		return u;
+	}
+	
 	@PostMapping("/create")
 	public String create(@RequestBody User u) {
 		return us.create(r, u);
@@ -68,8 +75,8 @@ public class TaskController{
 	}
 	
 	@GetMapping("/getregulation")
-	public String getregulation(@RequestParam("batch") String batch) {
-		return us.getregulation(rr,batch);
+	public List<Regulation> getregulation(@RequestParam("batch") String batch,@RequestParam("branch") String branch) {
+		return us.getregulation(rr,batch,branch);
 	}
 	
 	@PostMapping("/postsubjects")
@@ -96,6 +103,14 @@ public class TaskController{
 	public List<Questions> findallquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type)
 	{
 		List<Questions> q = us.getAllQuestions(qr,year,type,branch,code);
+		return q;
+	}
+	
+	
+	@GetMapping("/examquestions")
+	public List<Questions> findallexamquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type)
+	{
+		List<Questions> q = us.getAllexamQuestions(qr,year,type,branch,code);
 		return q;
 	}
 	
@@ -126,4 +141,14 @@ public class TaskController{
 		return us.getexams(schr,branch,semester,date);
 	}
 	
+	@PostMapping("/setresults")
+	public void setresults(@RequestBody Result r) {
+		us.setresults(r);
+	}
+	
+	@GetMapping("/getresults")
+	public List<Result> getresults(@RequestParam("batch") String batch,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type,@RequestParam("semester") String semester,@RequestParam("section") String section,@RequestParam("username") String u) {
+		return us.getresults(batch,branch,code,type,semester,section,u);
+	}
+
 }

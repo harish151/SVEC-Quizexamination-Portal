@@ -10,6 +10,7 @@ function Conductexam({username}) {
   const [branch, setBranch] = useState("CSE");
   const [semester, setSemester] = useState("1");
   const [subjects, setSubjects] = useState({});
+  const [sections,setSections] = useState(["ALL"]);
   const [ccode,setCcode] = useState("");
   const [exam_type,setExam_type] = useState("MID-1");
   const [displayque,setDisplayque] = useState(0);
@@ -19,12 +20,13 @@ function Conductexam({username}) {
   const [qno,setQno] = useState(1);
   const [buttonname,setButtonname] = useState("Upload Questions");
 
-  const handleregulation = (selectedBatch) => {
+  const handleregulation = (selectedBatch,selectedbranch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getregulation`, {
-      params: { batch: selectedBatch }
+      params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
-      setRegulation(res.data);
+      console.log(res.data[0].regulation);
+      setRegulation(res.data[0].regulation);
     })
     .catch(err => alert(err));
   };
@@ -135,7 +137,9 @@ function Conductexam({username}) {
         setCcode={setCcode}
         exam_type={exam_type}
         setExam_type={setExam_type}
-        setDisplayque={setDisplayque}
+        sections={sections}
+        setSections={setSections}
+        setDisplay={setDisplayque}
         buttonname = {buttonname}
         setButtonname = {setButtonname}
         handleregulation={handleregulation}

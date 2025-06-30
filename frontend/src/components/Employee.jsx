@@ -6,6 +6,7 @@ import Signup from './Signup'
 import Conductexam from './Conductexam';
 import ViewQuestions from './ViewQuestions';
 import DashBoard from './DashBoard';
+import Viewresult from './Viewresult';
 
 function Employee() {
   const location = useLocation();
@@ -21,7 +22,7 @@ function Employee() {
             <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<DashBoard />);}}>DASHBOARD</Link>
             <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<Conductexam username={username}/>);}}>CONDUCT EXAM</Link>
             <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<ViewQuestions username={username}/>);}}>VIEW QUESTION PAPER</Link>
-            <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault()}}>VIEW RESULTS</Link>
+            <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<Viewresult />);}}>VIEW RESULTS</Link>
             <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();navigate("/")}}>LOGOUT</Link>
           </div>
       </div>

@@ -1,22 +1,29 @@
 package com.project.Backend.service;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
+import com.project.Backend.model.Result;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Subjects;
 import com.project.Backend.model.User;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.RegulationRepo;
 import com.project.Backend.repository.Repo1;
+import com.project.Backend.repository.ResultRepo;
 import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.SubjectsRepo;
 
 @Service
 public class UserService{
+	
+	ArrayList<String> result = new ArrayList<>();
 
 	public String create(Repo1 r,User u) {
 		try {
@@ -54,12 +61,12 @@ public class UserService{
 		return reg.toString();
 	}
 	
-	public String getregulation(RegulationRepo rr,String batch) {
-		Regulation reg = rr.findByBatch(batch);
+	public List<Regulation> getregulation(RegulationRepo rr,String batch,String branch) {
+		List<Regulation> reg = rr.findByBatchAndBranch(batch,branch);
 		if(reg == null)	
 			return null;
 		else 
-			return reg.getRegulation();
+			return reg;
 	}
 	
 	public String postsubjects(SubjectsRepo sr, Subjects s) {
@@ -99,6 +106,7 @@ public class UserService{
 
 	public List<Questions> getAllQuestions(QuestionsRepo qr, String year, String type, String branch,String code) {
 		return qr.findQuestions(year,type,branch,code);
+		
 	}
 
 	public String deleteQuestion(QuestionsRepo qr,String id) {
@@ -127,10 +135,53 @@ public class UserService{
 		return sh;
 	}
 
+	public List<Questions> getAllexamQuestions(QuestionsRepo qr, String year, String type, String branch, String code) {
+		List<Questions> q =qr.findQuestions(year,type,branch,code);
+		return shuffleQuestion(q);
+	}
 
+	public List<Questions> shuffleQuestion(List<Questions> q) {
+		for (Questions que : q) {
+	        String correct = que.getAnswer();
+	        List<String> options = que.getOptions();
+	        Collections.shuffle(options);
+	        que.setOptions(options);
+	        for (String opt : options) {
+	            if (opt.equals(correct)) {
+	                result.add(correct);
+	                break;
+	            }
+	        }
+		}
+		return q;
+		
+	}
 
+	@Autowired
+	ResultRepo rr;
 	
-	
+	public void setresults(Result r) {
+		double marks = 0.0;
+		List<String> studentAnswers = r.getAns();
+		System.out.println(studentAnswers);
+		System.out.println(result);
+		int size = Math.min(studentAnswers.size(), result.size());
+		
+	    for (int i = 0; i < size; i++) {
+	        if (studentAnswers.get(i) != null && studentAnswers.get(i).equals(result.get(i))) {
+	            marks += 0.5;
+	        }
+	    }
+		marks = Math.ceil(marks);
+		r.setMarks(marks);
+		rr.save(r);
+		//System.out.println(r.toString());
+		result.clear();
+		
+	}
 
-	
+	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
+			String u) {
+		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
+	}
 }

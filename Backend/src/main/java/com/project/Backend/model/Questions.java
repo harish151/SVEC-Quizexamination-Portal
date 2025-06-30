@@ -16,7 +16,7 @@ public class Questions {
 	String coursecode="";
 	String question_no="";
 	String question="";
-	List<String> options=null;
+	public List<String> options=null;
 	String answer="";
 	
 	

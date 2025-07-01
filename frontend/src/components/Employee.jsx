@@ -16,18 +16,18 @@ function Employee() {
   const [component,setComponent] = useState(<DashBoard />)
   return (
     <div style={{display:'flex',flexDirection:'row',width:'100vw'}}>
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',border:'1px solid',width:'16%',height:'100vh',padding:'2px'}}>
-         <div style={{paddingBottom:'50px'}}> Welcome, {name}</div>
+      <div className='menu' style={{display:'flex',flexDirection:'column',alignItems:'center',border:'1px solid',width:'16%',height:'100vh',padding:'2px'}}>
+         <div style={{paddingBottom:'50px'}}><b> Welcome, {name}</b></div>
          <div style={{ height:'100vh',display:'flex',flexDirection:'column'}}>
-            <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<DashBoard />);}}>DASHBOARD</Link>
-            <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<Conductexam username={username}/>);}}>CONDUCT EXAM</Link>
-            <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<ViewQuestions username={username}/>);}}>VIEW QUESTION PAPER</Link>
-            <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();setComponent(<Viewresult />);}}>VIEW RESULTS</Link>
-            <Link style={{padding:'10px',textDecoration:'none'}} onClick={(e)=>{e.preventDefault();navigate("/")}}>LOGOUT</Link>
+            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<DashBoard />);}}>DASHBOARD</Link>
+            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<Conductexam username={username}/>);}}>CONDUCT EXAM</Link>
+            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<ViewQuestions username={username}/>);}}>VIEW QUESTION PAPER</Link>
+            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<Viewresult />);}}>VIEW RESULTS</Link>
+            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();navigate("/")}}>LOGOUT</Link>
           </div>
       </div>
 
-      <div style={{border:'4px solid GREEN',width:'80%'}}>
+      <div style={{border:'1px solid',width:'80%'}}>
         {component}
       </div>
     </div>

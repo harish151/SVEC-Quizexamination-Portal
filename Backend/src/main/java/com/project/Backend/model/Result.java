@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.validation.constraints.NotNull;
+
 @Document(collection = "results")
 public class Result {
 	@Id
@@ -16,6 +18,7 @@ public class Result {
 	String coursecode;
 	String examType;
 	String section;
+	
 	String username;
 	double marks;
 	public String getId() {

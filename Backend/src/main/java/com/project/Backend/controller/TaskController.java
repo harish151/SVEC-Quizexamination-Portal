@@ -147,8 +147,13 @@ public class TaskController{
 	}
 	
 	@GetMapping("/getresults")
-	public Optional<Result> getresults(@RequestParam("batch") String batch,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type,@RequestParam("semester") String semester,@RequestParam("section") String section,@RequestParam("username") String u) {
+	public List<Result> getresults(@RequestParam("batch") String batch,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type,@RequestParam("semester") String semester,@RequestParam("section") String section,@RequestParam("username") String u) {
 		return us.getresults(batch,branch,code,type,semester,section,u);
+	}
+	
+	@GetMapping("/getresultswithoutusername")
+	public List<Result> getresultswithoutusername(@RequestParam("batch") String batch,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type,@RequestParam("semester") String semester,@RequestParam("section") String section) {
+		return us.getresultswithoutusername(batch,branch,code,type,semester,section);
 	}
 
 }

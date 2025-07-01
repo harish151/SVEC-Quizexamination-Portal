@@ -13,22 +13,22 @@ function DashBoard() {
 },[])
   return (
     <React.Fragment>
-      {["CSE", "CST","CAI","AIM","ECE","ECT","MECH"].map((branch) => {
+      {["CSE"].map((branch) => {
       const filteredSchedule = schedule.filter(item => item.branch === branch);
       return (
         <div key={branch}>
-          <div><h1>BRANCH : {branch}</h1></div>
-          <table border={1}>
+          <div><h1 align='center'>BRANCH : {branch}</h1></div>
+          <table border={1} align='center' style={{borderCollapse:'collapse'}}>
             <thead>
               <tr>
                 <td colSpan={5} align='center'>{exam}</td>
               </tr>
               <tr>
-                <td>SNO</td>
-                <td>SUBJECT</td>
-                <td>COURSE CODE</td>
-                <td>DATE</td>
-                <td>TIME</td>
+                <td align='center'>SNO</td>
+                <td align='center'>SUBJECT</td>
+                <td align='center'>COURSE CODE</td>
+                <td align='center'>DATE</td>
+                <td align='center'>TIME</td>
               </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@ function DashBoard() {
                 <tr key={result.id || index}>
                   <td>{index + 1}</td>
                   <td>{result.subject}</td>
-                  <td align='center'>{result.coursecode}</td>
+                  <td>{result.coursecode}</td>
                   <td>{result.date}</td>
                   <td>{result.startTime}-{result.endTime}</td>
                 </tr>

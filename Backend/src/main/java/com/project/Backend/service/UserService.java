@@ -154,7 +154,6 @@ public class UserService{
 	        }
 		}
 		return q;
-		
 	}
 
 	@Autowired
@@ -180,8 +179,13 @@ public class UserService{
 		
 	}
 
-	public Optional<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
+	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
 			String u) {
 		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
+	}
+
+	public List<Result> getresultswithoutusername(String batch, String branch, String code, String type,
+			String semester, String section) {
+		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, code, type, semester, section);
 	}
 }

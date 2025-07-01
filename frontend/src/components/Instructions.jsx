@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 function Instructions() {
     const navigate = useNavigate();
     const location = useLocation();
+    const name = location.state?.name || null;
     const batch = location.state?.batch || null;
     const branch = location.state?.branch || null;
     const coursecode = location.state?.coursecode || null;
@@ -16,7 +17,7 @@ function Instructions() {
 
     const handleexam =(e)=>{
         e.preventDefault();
-        navigate("/exam",{state:{batch:batch,branch:branch,coursecode:coursecode,examtype:exam_type,semester:semester,section:section,username:username}});
+        navigate("/exam",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:exam_type,semester:semester,section:section,username:username}});
         goFullscreen();
     }
     const goFullscreen = () => {
@@ -33,8 +34,9 @@ function Instructions() {
     };
 
   return (
-    <div>
-      <h1>INSTRUCTIONS</h1>
+    <div style={{display:'flex',justifyContent:'center',alignItems:'center',paddingTop:'50px'}}>
+    <div className='instruction-page'>
+      <center><h1>INSTRUCTIONS</h1></center>
       <div>
 
       </div>
@@ -47,18 +49,21 @@ function Instructions() {
         <li>Please submit a response to an MCQ once you are sure, as you cannot change it once submitted.</li>
         <li>The maximum mark for the contest is 10.</li>
       </ul>
-      <h1>QUIZ DETAILS</h1>
+      <center><h1>QUIZ DETAILS</h1></center>
       <ul>
         <li>You can modify your answers any number of times during the contest.</li>
         <li>If you finished your exam then please submit the exam. If time limit has reached then your answers will be submitted automatically.</li>
         <li>All the best for your exam.</li>
       </ul>
-      <input type="checkbox" name="checkbox" id="checkbox" style={{width:'18px',height:'18px'}} required/>
-      <label htmlFor="checkbox">Mark as if you read all the instructions mentioned above.</label>
+      <div style={{marginLeft:'15px'}}>
+          <input type="checkbox" name="checkbox" id="checkbox" style={{width:'18px',height:'18px'}} required/>
+          <label htmlFor="checkbox">Mark as if you read all the instructions mentioned above.</label>
+      </div>
       <center>
-        <button type="submit" style={{marginTop:'50px'}}>START</button>
+        <button type="submit" style={{marginTop:'50px',marginBottom:'20px',padding:'4px 10px'}}>START</button>
       </center>
       </form>
+    </div>
     </div>
   )
 }

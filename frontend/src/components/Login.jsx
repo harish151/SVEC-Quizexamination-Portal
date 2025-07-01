@@ -26,7 +26,7 @@ function Login() {
 
   return (
     <div className='login'>
-    <div><marquee behavior="" direction=""><b>QUIZ WEB APP. PLEASE LOGIN TO EXPLORE MORE.</b></marquee></div>
+    {/* <div><marquee behavior="" direction=""><b>QUIZ WEB APP. PLEASE LOGIN TO EXPLORE MORE.</b></marquee></div> */}
     <div className='form-div'>
         <center>
       <form onSubmit={handle_login} className='login-signup-form'>

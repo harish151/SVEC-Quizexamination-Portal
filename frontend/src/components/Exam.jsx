@@ -17,12 +17,11 @@ function Exam() {
   const [questions, setQuestions] = useState([]);
   const [qno, setQno] = useState(0);
   const [answers, setAnswers] = useState(new Array(20).fill(null));
-  const answersRef = useRef(answers); // 👈 Always holds the latest answers
+  const answersRef = useRef(answers);
   const [timeLeft, setTimeLeft] = useState((20) * 60);
 const isSubmittedRef = useRef(false);  // replaces useState
 
 
-  // Keep ref updated with every answer change
   useEffect(() => {
     answersRef.current = answers;
   }, [answers]);
@@ -136,6 +135,14 @@ const isSubmittedRef = useRef(false);  // replaces useState
     );
   }
 
+  if (!name || !username) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <h2 style={{ color: 'red' }}>ERROR: GO BACK TO LOGIN PAGE.</h2>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex' }}>
       <div
@@ -154,22 +161,8 @@ const isSubmittedRef = useRef(false);  // replaces useState
       </div>
       <div style={{ border: '1px solid', width: '80vw', height: '99.8vh' }}>
          <form onSubmit={handleans} style={{marginLeft:'20px'}}>
-        <div
-          style={{
-            height: '5vw',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            fontSize: '30px',
-          }}
-          className='timer'
-        >
-          <b
-            style={{
-              marginRight: '20px',
-              color: timeLeft > 600 ? 'green' : timeLeft > 180 ? 'orange' : 'red',
-            }}
-          >
+        <div style={{height: '5vw',display: 'flex',justifyContent: 'flex-end',alignItems: 'center',fontSize: '30px',}} className='timer'>
+          <b style={{marginRight: '20px',color: timeLeft > 600 ? 'green' : timeLeft > 180 ? 'orange' : 'red',}}>
             {`${Math.floor(timeLeft / 60)
               .toString()
               .padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`}
@@ -183,17 +176,12 @@ const isSubmittedRef = useRef(false);  // replaces useState
               </b>
               {questions[qno].options.map((opt, index) => (
                 <div key={index} style={{ padding: '10px' }}>
-                  <input
-                    type='radio'
-                    id={`qno${qno}option${index}`}
-                    value={opt}
-                    checked={answers[qno] === opt}
+                  <input type='radio' id={`qno${qno}option${index}`} value={opt} checked={answers[qno] === opt}
                     onChange={() => {
                       const updatedAnswers = [...answers];
                       updatedAnswers[qno] = opt;
                       setAnswers(updatedAnswers);
-                    }}
-                  />
+                    }} />
                   <label htmlFor={`qno${qno}option${index}`} style={{ cursor: 'pointer' }}>
                     {opt}
                   </label>

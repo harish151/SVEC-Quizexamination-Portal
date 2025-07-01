@@ -11,9 +11,18 @@ import Viewresult from './Viewresult';
 function Employee() {
   const location = useLocation();
   const navigate = useNavigate();
-  const name = location.state?.name || "Guest";
+  const name = location.state?.name || null;
   const username = location.state?.username || null;
   const [component,setComponent] = useState(<DashBoard />)
+
+  if (!name || !username) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <h2 style={{ color: 'red' }}>ERROR: YOUR NOT AN AUTHORIZED PERSON.</h2>
+      </div>
+    );
+  }
+
   return (
     <div style={{display:'flex',flexDirection:'row',width:'100vw'}}>
       <div className='menu' style={{display:'flex',flexDirection:'column',alignItems:'center',width:'16%',height:'100vh',padding:'2px'}}>

@@ -6,14 +6,12 @@ import { Link } from 'react-router-dom';
 function Student() {
   const navigate = useNavigate();
   const location = useLocation();
-  const details = location.state?.details;
-
+  const details = location.state?.details || null;
   const [exams, setExams] = useState(null);
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
     if (!details) {
-      alert("No student details provided.");
       return;
     }
 
@@ -117,6 +115,14 @@ function Student() {
       alert("Already Submitted !");
     }
   };
+
+  if (!details) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <h2 style={{ color: 'red' }}>ERROR: YOUR NOT AN AUTHORIZED PERSON.</h2>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>

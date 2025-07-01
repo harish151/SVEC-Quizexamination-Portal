@@ -22,9 +22,12 @@
     width: fit-content;
     border-radius: 15px;
 }
-
-
+.link{
+  transform: scale(0.9);
+  transition: transform 0.3s;
+}
 .link:hover{
+  transform: scale(1);
 }
 /* Smartphones (portrait and landscape) */
 @media only screen and (max-width: 600px) {

@@ -99,28 +99,27 @@ function ViewQuestions({username}) {
       />
         {(displayque===1 && Array.isArray(question))?(
         question.map((result,index)=>(<form key={index} onSubmit={handleupdateque} id="que-form"><div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',marginBottom:'20px'}}>
-                <div style={{display:'flex',width:'90%',border:'1px solid',padding:'20px',marginBottom:'10px'}}>
+                <div style={{display:'flex',width:'95%',padding:'10px',marginBottom:'10px'}}>
                   <div style={{display:'none'}}>{result.id}</div>
                   <div style={{width:'5%',display:'flex',alignItems:'center',justifyContent:'center'}}>Q{result.question_no}:</div>
                   <div style={{width:'95%'}}><textarea id='textarea' style={{height:'100%',width:'100%'}} value={result.question} onChange={(e)=>{ const updated = [...question];updated[index] = {...updated[index],question: e.target.value};setQuestion(updated);}} required/></div>
                 </div>
-                <div style={{border:'1px solid',width:'95%',display:'flex',flexDirection:'column'}}>
+                <div style={{width:'95%',display:'flex',flexDirection:'column'}}>
                     {[0, 1, 2, 3].map((i) => (
-                    <div key={i} style={{ display: 'flex',gap:'10px' }}>
+                    <div key={i} style={{ display: 'flex',gap:'10px',marginLeft:'60px',marginBottom:'8px' }}>
                       <div>
-                        {String.fromCharCode(65 + i)}:
-                        <input type="text" id={`Q${index}input${i}`} value={result.options[i] || ""} onChange={(e) => { const updated = [...question];const updatedOptions = [...updated[index].options];updatedOptions[i] = e.target.value;updated[index].options = updatedOptions;setQuestion(updated);}} required />
+                        {String.fromCharCode(65 + i)} : <input type="text" id={`Q${index}input${i}`} value={result.options[i] || ""} onChange={(e) => { const updated = [...question];const updatedOptions = [...updated[index].options];updatedOptions[i] = e.target.value;updated[index].options = updatedOptions;setQuestion(updated);}} required />
                       </div>
                     </div>
-                  ))}
+                    ))}
                     <div style={{display:'flex',justifyContent:'space-between'}}>
-                      <div style={{width:'50%'}}>ANSWER:<input type='text' id='ans' name='ans' value={result.answer} onChange={(e) => {const updated = [...question];updated[index].answer = e.target.value;setQuestion(updated);
+                      <div style={{width:'50%',marginLeft:'60px',marginTop:'10px',color:'green'}}><b>ANSWER : </b><input type='text' id='ans' name='ans' value={result.answer} onChange={(e) => {const updated = [...question];updated[index].answer = e.target.value;setQuestion(updated);
                     }} required /></div>
                       <div style={{width:'20%',display:'flex',justifyContent:'space-evenly'}}>
                           <div style={{display:'flex',justifyContent:'space-evenly',gap:'12px'}}>
-                                      <button id='updatebutton' onClick={(e)=>{handleupdateque(e,index)}} >UPDATE</button>
+                                      <button id='updatebutton' className='button' onClick={(e)=>{handleupdateque(e,index)}} >UPDATE</button>
                           </div>
-                          <button>CANCEL</button>
+                          <button className='button'>CANCEL</button>
                       </div>
                     </div>
                 </div>

@@ -126,7 +126,7 @@ const isSubmittedRef = useRef(false);  // replaces useState
           width: '10%',
           cursor:'pointer',
           padding:'10px 5px',
-          marginBottom:'9px',
+          marginBottom:'20px',
           borderRadius:'4px'
         }}
         onClick={()=>setQno(i)}

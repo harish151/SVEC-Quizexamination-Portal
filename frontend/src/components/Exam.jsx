@@ -116,6 +116,7 @@ const isSubmittedRef = useRef(false);  // replaces useState
     divs.push(
       <div
         key={i + 1}
+        id={`qno${i+1}`}
         style={{
           display: 'flex',
           margin: '0px',
@@ -123,7 +124,12 @@ const isSubmittedRef = useRef(false);  // replaces useState
           border: '1px solid',
           height: 'fit-content',
           width: '10%',
+          cursor:'pointer',
+          padding:'10px 5px',
+          marginBottom:'9px',
+          borderRadius:'4px'
         }}
+        onClick={()=>setQno(i)}
       >
         {i + 1}
       </div>
@@ -208,6 +214,7 @@ const isSubmittedRef = useRef(false);  // replaces useState
               e.preventDefault();
               if (qno < 19) setQno(qno + 1);
               else setQno(0);
+              document.getElementById(`qno${qno+1}`).style.backgroundColor = "green";
             }}
           >
             SAVE & NEXT

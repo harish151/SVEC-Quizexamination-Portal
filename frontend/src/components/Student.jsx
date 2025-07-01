@@ -73,7 +73,7 @@ function Student() {
       return;
     }
 
-    const allow = handleExamTime(currentTime, exams.startTime, exams.endTime);
+    const allow = handleExamTime("1:02", exams.startTime, exams.endTime);
     if (!allow) {
       alert(`Exam is only allowed between ${exams.startTime} and ${exams.endTime}`);
       return;

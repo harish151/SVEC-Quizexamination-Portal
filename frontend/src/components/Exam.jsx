@@ -111,7 +111,7 @@ const isSubmittedRef = useRef(false);  // replaces useState
 
 
   const divs = [];
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < questions.length; i++) {
     divs.push(
       <div
         key={i + 1}

@@ -16,6 +16,7 @@ function Viewresult() {
     const [exam_type,setExam_type] = useState("MID-1");
     const [result,setResult] = useState([]);
     const [buttonname,setButtonname] = useState("View Result");
+    const [displayres,setDisplayres] = useState(true);
 
     const handleregulation = (selectedBatch,selectedbranch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getregulation`, {
@@ -32,7 +33,7 @@ function Viewresult() {
   const handleresult =(e)=>{
     e.preventDefault();
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getresultswithoutusername`,{params:{batch:batch,branch:branch,coursecode:ccode,exam_type:exam_type,semester:semester,section:selectedsec}})
-    .then(res=>{console.log(res.data);setResult(res.data);})
+    .then(res=>{console.log(res.data);setResult(res.data);if(res.data.length==0){setDisplayres(1);}})
     .catch(err=>{alert(err);})
   }
 
@@ -78,25 +79,27 @@ function Viewresult() {
         handlequestions={handleresult}
        />
       {Array.isArray(result) && result.length > 0 && (
-  <table border="1" style={{ marginTop: '20px', width: '100%',borderCollapse:'collapse' }}>
-    <thead>
-      <tr>
-        <th>SNO</th>
-        <th>USERNAME</th>
-        <th>MARKS</th>
-      </tr>
-    </thead>
-    <tbody>
-      {result.map((res, index) => (
-        <tr key={res.username + index}>
-          <td align='center'>{index + 1}</td>
-          <td align='center'>{res.username}</td>
-          <td align='center'>{res.marks}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-)}
+        <table border="1" style={{ marginTop: '20px', width: '100%',borderCollapse:'collapse' }}>
+          <thead>
+            <tr>
+              <th>SNO</th>
+              <th>USERNAME</th>
+              <th>MARKS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {result.map((res, index) => (
+              <tr key={res.username + index}>
+                <td align='center'>{index + 1}</td>
+                <td align='center'>{res.username}</td>
+                <td align='center'>{res.marks}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        )}
+
+        {result.length === 0 && displayres===1 && ("NO RESULT")}
 
 
     </div>

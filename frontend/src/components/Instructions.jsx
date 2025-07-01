@@ -60,7 +60,7 @@ function Instructions() {
           <label htmlFor="checkbox">Mark as if you read all the instructions mentioned above.</label>
       </div>
       <center>
-        <button type="submit" style={{marginTop:'50px',marginBottom:'20px',padding:'4px 10px'}}>START</button>
+        <button type="submit" className='button' style={{marginTop:'50px',marginBottom:'20px',padding:'4px 10px'}}>START</button>
       </center>
       </form>
     </div>

@@ -17,7 +17,7 @@ function FormComponent({
   return (
     <div>
       <form onSubmit={handlequestions}>
-        <table align="center">
+        <table align="center" cellPadding={'7px'}>
           <tbody>
             <tr>
               <td>COURSE</td>
@@ -135,7 +135,7 @@ function FormComponent({
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={3} align='center'><button type='submit'>{buttonname}</button></td>
+              <td colSpan={3} align='center' style={{paddingTop:'20px'}}><button type='submit' className='button'>{buttonname}</button></td>
             </tr>
           </tfoot>
         </table>

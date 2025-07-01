@@ -45,6 +45,17 @@ const isSubmittedRef = useRef(false);  // replaces useState
       username,
     });
     console.log("Submitted:", res.data);
+    alert("submitted");
+    navigate("/student",{state:{details: {
+          name,
+          batch,
+          branch,
+          coursecode,
+          examtype: exam_type,
+          semester,
+          section,
+          username,
+        },}})
   } catch (err) {
     alert("Submission failed: " + err);
   }

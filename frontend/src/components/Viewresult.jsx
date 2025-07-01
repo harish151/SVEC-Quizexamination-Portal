@@ -78,7 +78,7 @@ function Viewresult() {
         handlequestions={handleresult}
        />
       {Array.isArray(result) && result.length > 0 && (
-  <table border="1" style={{ marginTop: '20px', width: '100%' }}>
+  <table border="1" style={{ marginTop: '20px', width: '100%',borderCollapse:'collapse' }}>
     <thead>
       <tr>
         <th>SNO</th>

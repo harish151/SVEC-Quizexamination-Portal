@@ -44,7 +44,7 @@ function Login() {
                 </div>
             </div>
             <div style={{display:'flex',justifyContent:'center',paddingTop:'20px'}}>
-                <button type='submit' className='loginbutton'>LOGIN</button>
+                <button type='submit' className='button' >LOGIN</button>
             </div>
         </div>
       </form>

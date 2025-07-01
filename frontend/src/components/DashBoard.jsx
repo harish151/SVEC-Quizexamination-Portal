@@ -18,17 +18,17 @@ function DashBoard() {
       return (
         <div key={branch}>
           <div><h1 align='center'>BRANCH : {branch}</h1></div>
-          <table border={1} align='center' style={{borderCollapse:'collapse'}}>
+          <table border={1} align='center' cellPadding={'10px'} style={{borderCollapse:'collapse'}}>
             <thead>
               <tr>
-                <td colSpan={5} align='center'>{exam}</td>
+                <th colSpan={5} align='center'>{exam}</th>
               </tr>
               <tr>
-                <td align='center'>SNO</td>
-                <td align='center'>SUBJECT</td>
-                <td align='center'>COURSE CODE</td>
-                <td align='center'>DATE</td>
-                <td align='center'>TIME</td>
+                <th align='center'>SNO</th>
+                <th align='center'>SUBJECT</th>
+                <th align='center'>COURSE CODE</th>
+                <th align='center'>DATE</th>
+                <th align='center'>TIME</th>
               </tr>
             </thead>
             <tbody>

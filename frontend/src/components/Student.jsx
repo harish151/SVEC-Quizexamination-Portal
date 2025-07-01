@@ -141,7 +141,7 @@ function Student() {
                 <button
                   disabled={!exams}
                   onClick={handleSubmitOrNot}
-                  className='start-button'
+                  className='button'
                 >
                   START
                 </button>

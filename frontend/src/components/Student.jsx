@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 function Student() {
   const navigate = useNavigate();
   const location = useLocation();
-  const details = location.state?.details || null;
+  let details = location.state?.details || null;
   const [exams, setExams] = useState(null);
   const [currentTime, setCurrentTime] = useState("");
 
@@ -46,6 +46,7 @@ function Student() {
       alert("Failed to fetch exams.");
     });
   }, [details]);
+
 
   const handleExamTime = (now, start, end) => {
     const [currH, currM] = now.split(':').map(Number);

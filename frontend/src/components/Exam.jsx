@@ -99,7 +99,7 @@ const isSubmittedRef = useRef(false);  // replaces useState
         clearInterval(timer);
         if (!isSubmittedRef.current) {
           alert("Time's up!");
-          handleTimeout(); // will use handleans inside
+          handleTimeout();
         }
         return 0;
       }

@@ -212,16 +212,6 @@ const isSubmittedRef = useRef(false);  // replaces useState
           >
             SAVE & NEXT
           </button>
-          {/* <div
-            style={{
-              
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
-            }}
-          >
-            <button type="submit" disabled={isSubmittedRef.current}>SUBMIT</button>
-          </div> */}
         </form>
       </div>
     </div>

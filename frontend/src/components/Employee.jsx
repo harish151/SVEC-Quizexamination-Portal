@@ -16,7 +16,7 @@ function Employee() {
   const [component,setComponent] = useState(<DashBoard />)
   return (
     <div style={{display:'flex',flexDirection:'row',width:'100vw'}}>
-      <div className='menu' style={{display:'flex',flexDirection:'column',alignItems:'center',border:'1px solid',width:'16%',height:'100vh',padding:'2px'}}>
+      <div className='menu' style={{display:'flex',flexDirection:'column',alignItems:'center',width:'16%',height:'100vh',padding:'2px'}}>
          <div style={{paddingBottom:'50px'}}><b> Welcome, {name}</b></div>
          <div style={{ height:'100vh',display:'flex',flexDirection:'column'}}>
             <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<DashBoard />);}}>DASHBOARD</Link>

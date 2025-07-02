@@ -8,6 +8,7 @@ function FormComponent({
   ccode, setCcode,
   exam_type, setExam_type,
   sections,setSections,
+  selectedsec,
   setSelectedsec,
   setDisplay,
   buttonname,
@@ -118,7 +119,7 @@ function FormComponent({
               <td>SECTION</td>
               <td>:</td>
               <td>
-              <select name="section" id="section" value={"All"} onChange={(e)=>{e.preventDefault();console.log(e.target.value);setSelectedsec(e.target.value);}}>
+              <select name="section" id="section" value={selectedsec} onChange={(e)=>{console.log(e.target.value);setSelectedsec(e.target.value);}}>
                 {sections.map((i)=>(<option key={i} value={i}>{i}</option>))}
               </select></td>
             </tr>

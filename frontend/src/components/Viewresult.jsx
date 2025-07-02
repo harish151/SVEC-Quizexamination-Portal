@@ -71,6 +71,7 @@ function Viewresult() {
         setExam_type={setExam_type}
         sections={sections}
         setSections={setSections}
+        selectedsec = {"A"}
         setSelectedsec = {setSelectedsec}
         setDisplay={0}
         buttonname = {buttonname}

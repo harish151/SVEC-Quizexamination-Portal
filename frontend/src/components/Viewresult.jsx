@@ -33,7 +33,7 @@ function Viewresult() {
   const handleresult =(e)=>{
     e.preventDefault();
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getresultswithoutusername`,{params:{batch:batch,branch:branch,coursecode:ccode,exam_type:exam_type,semester:semester,section:selectedsec}})
-    .then(res=>{console.log(res.data);setResult(res.data);if(res.data.length==0){setDisplayres(1);}})
+    .then(res=>{setResult(res.data);if(res.data.length==0){setDisplayres(1);}})
     .catch(err=>{alert(err);})
   }
 

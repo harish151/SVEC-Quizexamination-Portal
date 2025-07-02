@@ -10,7 +10,6 @@ function Login() {
         e.preventDefault();
          axios.get(`http://${import.meta.env.VITE_HOST}:8080/login`,{params:{username:username,password:password}})
          .then(res =>{
-              console.log(result);
               if(res.data==null){
                 setResult("Invalid Username And Password")
               }

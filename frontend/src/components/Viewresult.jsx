@@ -39,7 +39,6 @@ function Viewresult() {
 
 
     useEffect(() => {
-    console.log(selectedsec);
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getsubjects`, {
       params: {
         regulation: regulation,

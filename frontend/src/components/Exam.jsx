@@ -151,15 +151,26 @@ const isSubmittedRef = useRef(false);  // replaces useState
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'space-around',
+          alignItems:'center',
           width: '20vw',
-          height: '30vh',
+          height: 'fit-content',
           columnGap: '30px',
-          marginTop: '50px',
+          marginTop: '200px',
+          border:'1px solid',
+          boxShadow:'0 4px 8px rgba(0, 0, 0, 50)',
+          marginLeft:'20px',
+          padding:'20px 15px 10px 15px',
+
         }}
       >
         {divs}
+        <br />
+        <div style={{display:'flex',gap:'20px'}}>
+        <div><span style={{backgroundColor:'green'}}>ANSWERED</span></div>
+        <div><span style={{backgroundColor:'grey'}}>NOT ANSWERED</span></div>
+        </div>
       </div>
-      <div style={{ border: '1px solid', width: '80vw', height: '99.8vh' }}>
+      <div style={{ border: '1px solid', width: '80vw', height: '99.8vh',marginLeft:'20px' }}>
          <form onSubmit={handleans} style={{marginLeft:'20px'}}>
         <div style={{height: '5vw',display: 'flex',justifyContent: 'flex-end',alignItems: 'center',fontSize: '30px',}} className='timer'>
           <b style={{marginRight: '20px',color: timeLeft > 600 ? 'green' : timeLeft > 180 ? 'orange' : 'red',}}>
@@ -202,7 +213,11 @@ const isSubmittedRef = useRef(false);  // replaces useState
               e.preventDefault();
               if (qno < 19) setQno(qno + 1);
               else setQno(0);
-              document.getElementById(`qno${qno+1}`).style.backgroundColor = "green";
+              if(answers[qno]===null){
+                document.getElementById(`qno${qno+1}`).style.backgroundColor = "gray";
+              }
+              else{
+              document.getElementById(`qno${qno+1}`).style.backgroundColor = "green";}
             }}
           >
             SAVE & NEXT

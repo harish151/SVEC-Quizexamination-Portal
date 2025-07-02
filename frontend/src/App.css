@@ -29,6 +29,7 @@
 .link:hover{
   transform: scale(1);
 }
+
 /* Smartphones (portrait and landscape) */
 @media only screen and (max-width: 600px) {
   body {

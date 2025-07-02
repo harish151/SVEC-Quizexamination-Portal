@@ -7,7 +7,7 @@ function FormComponent({
   subjects,
   ccode, setCcode,
   exam_type, setExam_type,
-  sections,setSections,
+  sections,
   selectedsec,
   setSelectedsec,
   setDisplay,

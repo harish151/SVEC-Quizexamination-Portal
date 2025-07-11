@@ -6,3 +6,5 @@
                    -> choose maven, java, choose latest springboot, jar, java latestversion
                    -> choose dependencies spring web, spring boot dev tools
                    -> then after make 'clean install' pom.xml in ecllipse
+
+*install bootstrap -> npm install react-bootstrap

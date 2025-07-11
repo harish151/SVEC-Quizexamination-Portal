@@ -108,7 +108,7 @@ public class TaskController{
 	
 	
 	@GetMapping("/examquestions")
-	public List<Questions> findallexamquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type)
+	public List<Questions> findallexamquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("examtype") String type)
 	{
 		List<Questions> q = us.getAllexamQuestions(qr,year,type,branch,code);
 		return q;

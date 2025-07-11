@@ -1,5 +1,4 @@
 package com.project.Backend.service;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +21,6 @@ import com.project.Backend.repository.SubjectsRepo;
 
 @Service
 public class UserService{
-	
-	ArrayList<String> result = new ArrayList<>();
 
 	public String create(Repo1 r,User u) {
 		try {
@@ -41,7 +38,6 @@ public class UserService{
 				return l; 
 		}
 		else {
-			System.out.println(l);
 			return l; //there is no document
 		}
 	}
@@ -137,22 +133,14 @@ public class UserService{
 
 	public List<Questions> getAllexamQuestions(QuestionsRepo qr, String year, String type, String branch, String code) {
 		List<Questions> q =qr.findQuestions(year,type,branch,code);
-		return shuffleQuestion(q);
+		return shuffleQuestions(q);
 	}
 
-	public List<Questions> shuffleQuestion(List<Questions> q) {
+	public List<Questions> shuffleQuestions(List<Questions> q) {
+		Collections.shuffle(q);
 		for (Questions que : q) {
-	        String correct = que.getAnswer();
-	        List<String> options = que.getOptions();
-	        Collections.shuffle(options);
-	        que.setOptions(options);
-	        for (String opt : options) {
-	            if (opt.equals(correct)) {
-	                result.add(correct);
-	                break;
-	            }
-	        }
-		}
+            Collections.shuffle(que.getOptions());
+        }
 		return q;
 	}
 
@@ -160,23 +148,7 @@ public class UserService{
 	ResultRepo rr;
 	
 	public void setresults(Result r) {
-		double marks = 0.0;
-		List<String> studentAnswers = r.getAns();
-//		System.out.println(studentAnswers);
-//		System.out.println(result);
-		int size = Math.min(studentAnswers.size(), result.size());
-		
-	    for (int i = 0; i < size; i++) {
-	        if (studentAnswers.get(i) != null && studentAnswers.get(i).equals(result.get(i))) {
-	            marks += 0.5;
-	        }
-	    }
-		marks = Math.ceil(marks);
-		r.setMarks(marks);
-		r.setAns(null);
-		rr.save(r);
-		result.clear();
-		
+		rr.save(r);	
 	}
 
 	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,

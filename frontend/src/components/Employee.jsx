@@ -1,21 +1,21 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useLocation } from 'react-router-dom';
-import Login from './Login';
-import Signup from './Signup'
-import Conductexam from './Conductexam';
+import React, { useState,useRef } from 'react'
+import { useLocation,useNavigate } from 'react-router-dom';
+import ExamSchedule from './ExamSchedule';
+import ConductExam from './ConductExam';
 import ViewQuestions from './ViewQuestions';
-import DashBoard from './DashBoard';
-import Viewresult from './Viewresult';
-
+import ViewResults from './ViewResults';
 function Employee() {
   const location = useLocation();
   const navigate = useNavigate();
-  const name = location.state?.name || null;
-  const username = location.state?.username || null;
-  const [component,setComponent] = useState(<DashBoard />)
+  const details = location.state?.details || null;
+  const [page,setPage] = useState(<ExamSchedule branch={details.branch} details={details} />);
+  const dashboardRef = useRef(null);
+  const conductexamRef = useRef(null);
+  const viewqueRef = useRef(null);
+  const viewresultRef = useRef(null);
+  const logoutRef = useRef(null);
 
-  if (!name || !username) {
+  if (!details) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <h2 style={{ color: 'red' }}>ERROR: YOUR NOT AN AUTHORIZED PERSON.</h2>
@@ -24,21 +24,55 @@ function Employee() {
   }
 
   return (
-    <div style={{display:'flex',flexDirection:'row',width:'100vw'}}>
-      <div className='menu' style={{display:'flex',flexDirection:'column',alignItems:'center',width:'16%',height:'100vh',padding:'2px'}}>
-         <div style={{paddingBottom:'50px'}}><b> Welcome, {name}</b></div>
-         <div style={{ height:'100vh',display:'flex',flexDirection:'column'}}>
-            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<DashBoard />);}}>DASHBOARD</Link>
-            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<Conductexam username={username}/>);}}>CONDUCT EXAM</Link>
-            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<ViewQuestions username={username}/>);}}>VIEW QUESTION PAPER</Link>
-            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();setComponent(<Viewresult />);}}>VIEW RESULTS</Link>
-            <Link className='link' style={{padding:'10px',textDecoration:'none',fontWeight:'bold',color:'black'}} onClick={(e)=>{e.preventDefault();navigate("/")}}>LOGOUT</Link>
+    <div className='h-100 w-100'>
+      <div className="p-2 bg-info text-dark w-100 text-start text-uppercase"><b>WELCOME {details?.name || "Student"}</b></div>
+        <div className='d-inline-block w-100 d-flex flex-row border' style={{height:'100vh'}}>
+          <div className='border vertical list-group' style={{width:'16%',height:'100vh',borderRadius:'0'}}>
+            <button className="list-group-item list-group-item-action active" ref={dashboardRef} data-bs-toggle="list" role="tab" 
+            onClick={()=>{ dashboardRef.current.classList.add("active");
+                           conductexamRef.current.classList.remove("active");
+                           viewresultRef.current.classList.remove("active");
+                           viewqueRef.current.classList.remove("active");
+                           logoutRef.current.classList.remove("active");
+                           setPage(<ExamSchedule details={details} branch={details.branch} />)
+            }}>DASHBOARD</button>
+            <button className="list-group-item list-group-item-action" ref={conductexamRef} data-bs-toggle="list" role="tab" 
+            onClick={()=>{conductexamRef.current.classList.add("active");
+                          viewresultRef.current.classList.remove("active");
+                          dashboardRef.current.classList.remove("active");
+                          viewqueRef.current.classList.remove("active");
+                          logoutRef.current.classList.remove("active");
+                          setPage(<ConductExam username={details.username} />);
+            }}>CONDUCT EXAM</button>
+            <button className="list-group-item list-group-item-action" ref={viewqueRef} id='exams' data-bs-toggle="list" role="tab" 
+            onClick={()=>{dashboardRef.current.classList.remove("active");
+                          viewresultRef.current.classList.remove("active");
+                          conductexamRef.current.classList.remove("active");
+                          viewqueRef.current.classList.add("active");
+                          logoutRef.current.classList.remove("active");
+                          setPage(<ViewQuestions username={details.username} />)
+            }} >VIEW QUESTION PAPER</button>
+            <button className="list-group-item list-group-item-action" ref={viewresultRef} data-bs-toggle="list" role="tab"
+             onClick={()=>{dashboardRef.current.classList.remove("active");
+                          conductexamRef.current.classList.remove("active");
+                          viewqueRef.current.classList.remove("active");
+                          logoutRef.current.classList.remove("active");
+                          viewresultRef.current.classList.add("active");
+                          setPage(<ViewResults username={details.username} />)
+            }} >VIEW RESULTS</button>
+            <button className="list-group-item list-group-item-action" ref={logoutRef} data-bs-toggle="list" role="tab"
+             onClick={()=>{dashboardRef.current.classList.remove("active");
+                          viewresultRef.current.classList.remove("active");
+                          conductexamRef.current.classList.remove("active");
+                          viewqueRef.current.classList.remove("active");
+                          logoutRef.current.classList.add("active");
+                          navigate("/");
+            }} >LOGOUT</button>
           </div>
-      </div>
-
-      <div style={{border:'1px solid',width:'80%'}}>
-        {component}
-      </div>
+          <div className='border h-100' style={{width:'84%'}}>
+            {page}
+          </div>
+        </div>
     </div>
   )
 }

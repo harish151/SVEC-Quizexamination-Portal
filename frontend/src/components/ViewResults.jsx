@@ -3,7 +3,7 @@ import { useState,useEffect } from 'react';
 import axios from 'axios';
 import FormComponent from './Form';
 
-function Viewresult() {
+function ViewResult() {
 
     const [regulation, setRegulation] = useState("V20");
     const [batch, setBatch] = useState("2021");
@@ -105,4 +105,4 @@ function Viewresult() {
     </div>
   )
 }
-export default Viewresult;
+export default ViewResult;

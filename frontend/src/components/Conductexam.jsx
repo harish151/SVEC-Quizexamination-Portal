@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FormComponent from './Form';
 
-function Conductexam({username}) {
+function ConductExam({username}) {
   // console.log(username);
 
   const [regulation, setRegulation] = useState("V20");
@@ -152,4 +152,4 @@ function Conductexam({username}) {
   );
 }
 
-export default Conductexam;
+export default ConductExam;

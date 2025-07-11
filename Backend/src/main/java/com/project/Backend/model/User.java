@@ -16,7 +16,7 @@ public class User{
 	@Indexed(unique = true)
 	private String username;
 	private String password="1234";
-	private String academic_year=null;
+	private String batch=null;
 	private String regulation=null;
 	private String branch=null;
 	private String semester=null;
@@ -48,12 +48,11 @@ public class User{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	public String getAcademic_year() {
-		return academic_year;
+	public String getBatch() {
+		return batch;
 	}
-	public void setAcademic_year(String academic_year) {
-		this.academic_year = academic_year;
+	public void setBatch(String batch) {
+		this.batch = batch;
 	}
 	public String getRegulation() {
 		return regulation;
@@ -95,7 +94,7 @@ public class User{
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password
-				+ ", academic_year=" + academic_year + ", regulation=" + regulation + ", teachsub=" + teachsub
+				+ ", batch=" + batch + ", regulation=" + regulation + ", teachsub=" + teachsub
 				+ ", role=" + role + "]";
 	}
 }

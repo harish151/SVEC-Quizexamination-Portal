@@ -1,26 +1,24 @@
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import './App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login'
-import Signup from './components/Signup';
-import Student from './components/Student';
-import Employee from './components/Employee';
-import Instructions from './components/Instructions';
-import Exam from './components/Exam';
+import Student from './components/Student'
+import React from 'react'
+import Instructions from './components/Instructions'
+import Exam from './components/Exam'
+import Employee from './components/Employee'
 
 function App() {
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/student" element={<Student />} />
-        <Route path="/employee" element={<Employee />} />
-        <Route path="/instructions" element={<Instructions />} />
-        <Route path="/exam" element={<Exam />} />
-      </Routes>
-    </Router>
-
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/student" element={<Student />} />
+          <Route path="/employee" element={<Employee />} />
+          <Route path="/instructions" element={<Instructions />} />
+          <Route path="/exam" element={<Exam />} />
+        </Routes>
+      </Router>
   )
 }
 

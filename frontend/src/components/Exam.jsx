@@ -1,6 +1,9 @@
+import React from 'react'
+import { useState,useEffect,useRef } from 'react';
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation, Link } from 'react-router-dom';
+
+
 
 function Exam() {
   const navigate = useNavigate();
@@ -9,179 +12,168 @@ function Exam() {
   const batch = location.state?.batch || null;
   const branch = location.state?.branch || null;
   const coursecode = location.state?.coursecode || null;
-  const exam_type = location.state?.examtype || null;
+  const examtype = location.state?.examtype || null;
   const semester = location.state?.semester || null;
   const section = location.state?.section || null;
   const username = location.state?.username || null;
-
+  let sess= location.state?.session || false;
+  const[session,setSession]=useState(sess);
   const [questions, setQuestions] = useState([]);
   const [qno, setQno] = useState(0);
+  const [originalans,setOriginalans] = useState(new Array(20).fill(null));
   const [answers, setAnswers] = useState(new Array(20).fill(null));
-  const answersRef = useRef(answers);
-  const [timeLeft, setTimeLeft] = useState((20) * 60);
-const isSubmittedRef = useRef(false);  // replaces useState
-
+  const [timeLeft, setTimeLeft] = useState(20*60);
+  const details ={batch,branch,name,semester,section,username}
+  const [exitcount,setExitcount]=useState(0);
+  const [fullscreen,setFullscreen]=useState(true);
+  const submitRef = useRef(false);
 
   useEffect(() => {
-    answersRef.current = answers;
-  }, [answers]);
-
-  const handleans = async (e) => {
-  if (e?.preventDefault) e.preventDefault();
-
-  if (isSubmittedRef.current) return;
-  isSubmittedRef.current = true;
-
-  try {
-    const res = await axios.post(`http://${import.meta.env.VITE_HOST}:8080/setresults`, {
-      ans: answersRef.current,
-      batch,
-      branch,
-      coursecode,
-      examType: exam_type,
-      semester,
-      section,
-      username,
-    });
-    console.log("Submitted:", res.data);
-    alert("submitted");
-    navigate("/student",{state:{details: {
-          name,
-          batch,
-          branch,
-          coursecode,
-          examtype: exam_type,
-          semester,
-          section,
-          username,
-        },}})
-  } catch (err) {
-    alert("Submission failed: " + err);
-  }
-};
-
-
-  const handleTimeout = async () => {
-    await handleans();
-    navigate("/student", {
-      state: {
-        details: {
-          name,
-          batch,
-          branch,
-          coursecode,
-          examtype: exam_type,
-          semester,
-          section,
-          username,
-        },
-      },
-    });
+  const onFullscreenChange = () => {
+    if (!document.fullscreenElement) {
+      setFullscreen(false);
+      if(exitcount<=0 && submitRef.current){
+      alert("If your are escape again then your exam will be auto submitted.");
+    }
+    setExitcount((prev) => prev + 1);
+    const el = document.getElementById("fullscreenbutton");
+    if (el) {
+        el.style.display = "flex";
+    }
+    }
   };
 
+  document.addEventListener("fullscreenchange", onFullscreenChange);
+  return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+}, [exitcount]);
+  
+
+  const goFullscreen = () => {
+        const elem = document.documentElement;
+        const el = document.getElementById("fullscreenbutton");
+        if (elem.requestFullscreen) {
+          if (el) {
+            el.style.display = "none";
+          }
+          elem.requestFullscreen().catch((err) =>
+            console.error('Fullscreen error:', err)
+        );
+        } else if (elem.webkitRequestFullscreen) {
+          if (el) {
+            el.style.display = "none";
+          }
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          if (el) {
+            el.style.display = "none";
+          }
+          elem.msRequestFullscreen();
+        }
+    };
+
+  const exitFullscreen = ()=>{
+    submitRef.current = true;
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+  }
+
+  const calculatemarks = (e)=>{
+    if (e && e.preventDefault) e.preventDefault();
+    alert("exam submitted.");
+    let total = 0;
+    for (let i = 0; i < questions.length; i++) {
+      if (originalans[i] === answers[i]) {
+        total += 0.5;
+      }
+    }
+    console.log("Calculated Marks:", total);
+    axios.post(`http://${import.meta.env.VITE_HOST}:8080/setresults`, {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType:examtype,section:section,username:username,marks:Math.ceil(total)})
+    .then(res=>{console.log(res.data)})
+    .catch(err => alert(err))
+    setSession(false);
+    navigate("/student",{state:{details}});
+  }
+
+
   useEffect(() => {
-    axios
-      .get(`http://${import.meta.env.VITE_HOST}:8080/examquestions`, {
-        params: { batch, branch, coursecode, exam_type },
+    if(session){
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/examquestions`, {
+        params: { batch, branch, coursecode, examtype },
       })
       .then((res) => {
         console.log(res.data);
         setQuestions(res.data);
+        const ans = (res.data).map(q => q.answer);
+        setOriginalans(ans);
+        console.log(ans);
       })
-      .catch((err) => alert(err));
-  }, [batch, branch, coursecode, exam_type]);
+      .catch((err) => alert(err));}
+  }, [batch, branch, coursecode, examtype]);
 
   useEffect(() => {
-  const timer = setInterval(() => {
-    setTimeLeft(prev => {
-      if (prev <= 1) {
-        clearInterval(timer);
-        if (!isSubmittedRef.current) {
-          alert("Time's up!");
-          handleTimeout();
-        }
-        return 0;
-      }
-      return prev - 1;
-    });
-  }, 1000);
+    if(session){
+    if (timeLeft <= 0){
+      calculatemarks();
+      return;
+    }
+    const interval = setInterval(() => {
+      setTimeLeft(prevTime => prevTime - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }}, [timeLeft]);
 
-  return () => clearInterval(timer);
-}, []);
-
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
 
   const divs = [];
-  for (let i = 0; i < questions.length; i++) {
-    divs.push(
-      <div
-        key={i + 1}
-        id={`qno${i+1}`}
-        style={{
-          display: 'flex',
-          margin: '0px',
-          justifyContent: 'space-around',
-          border: '1px solid',
-          height: 'fit-content',
-          width: '10%',
-          cursor:'pointer',
-          padding:'10px 5px',
-          marginBottom:'20px',
-          borderRadius:'4px'
-        }}
-        onClick={()=>setQno(i)}
-      >
-        {i + 1}
-      </div>
-    );
-  }
+  for(let i=0;i<20;i++){
+  divs.push(
+      <li key={i} className='border' id={`qno${i}`} style={{width:'40px',height:'45px',lineHeight:'40px',textAlign:'center',cursor:'pointer'}} onClick={()=>setQno(i)} >{i+1}</li>
+  );}
 
-  if (!name || !username) {
+
+  if (session==false) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <h2 style={{ color: 'red' }}>ERROR: GO BACK TO LOGIN PAGE.</h2>
+        <h2 style={{ color: 'red' }}>ERROR: GO BACK TO LOGIN.</h2>
       </div>
     );
   }
 
-  return (
-    <div style={{ display: 'flex' }}>
-      <div
-        style={{
-          flexDirection: 'row',
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'space-around',
-          alignItems:'center',
-          width: '20vw',
-          height: 'fit-content',
-          columnGap: '30px',
-          marginTop: '200px',
-          border:'1px solid',
-          boxShadow:'0 4px 8px rgba(0, 0, 0, 50)',
-          marginLeft:'20px',
-          padding:'20px 15px 10px 15px',
 
-        }}
-      >
-        {divs}
-        <br />
-        <div style={{display:'flex',gap:'20px'}}>
-        <div><span style={{backgroundColor:'green'}}>ANSWERED</span></div>
-        <div><span style={{backgroundColor:'grey'}}>NOT ANSWERED</span></div>
+  return (
+    <div >
+       {
+       fullscreen==false? (
+          exitcount<=1 ?(<div id='fullscreenbutton' style={{display:'flex',backdropFilter:'blur(5px)',position:'absolute',width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}><button type='button' 
+          onClick={(e)=>{e.preventDefault();goFullscreen();
+                      }}>full screen</button></div>):(calculatemarks())):("")}
+                    
+      <form onSubmit={calculatemarks}>
+        <div className="d-flex justify-content-end" style={{alignItems:'center',marginRight:'2%'}}>
+          <table border="0" cellPadding={10}>
+            <tbody>
+              <tr>
+                <td><h4 className='fs-1'>{formatTime(timeLeft)}</h4></td>
+                <td><button type="submit" className="btn btn-success" ref={submitRef} onClick={()=>{exitFullscreen()}}>SUBMIT</button></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-      <div style={{ border: '1px solid', width: '80vw', height: '99.8vh',marginLeft:'20px' }}>
-         <form onSubmit={handleans} style={{marginLeft:'20px'}}>
-        <div style={{height: '5vw',display: 'flex',justifyContent: 'flex-end',alignItems: 'center',fontSize: '30px',}} className='timer'>
-          <b style={{marginRight: '20px',color: timeLeft > 600 ? 'green' : timeLeft > 180 ? 'orange' : 'red',}}>
-            {`${Math.floor(timeLeft / 60)
-              .toString()
-              .padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`}
-          </b>
-          <button type="submit" disabled={isSubmittedRef.current} className='button' style={{padding:'3px 9px',marginRight:'20px'}}>SUBMIT</button>
-        </div>
-          {questions[qno] && (
-            <div style={{display:'flex',flexDirection:'column',padding:'10px'}}>
+        <div className='d-flex border' style={{height:'100vh',width:'100vw'}}>
+            <div className='border w-75'>
+              { 
+                questions[qno] && (<div style={{display:'flex',flexDirection:'column',padding:'10px'}}>
               <b style={{paddingBottom:'10px'}}>
                 Q{qno + 1}.{questions[qno].question}
               </b>
@@ -197,35 +189,32 @@ const isSubmittedRef = useRef(false);  // replaces useState
                     {opt}
                   </label>
                 </div>
-              ))}
+                ))}
+                <div className='d-flex gap-5 justify-content-end'>
+                  <button type="button" className="btn btn-outline-secondary" onClick={()=>{if(qno!=0){setQno(qno-1)}}} >Previous</button>
+                  <button type="button" className="btn btn-outline-secondary" 
+                      onClick={()=>{if(qno<19){setQno(qno+1)}else{setQno(0);}
+                                    if(answers[qno]===null){document.getElementById(`qno${qno}`).style.backgroundColor = "red";}
+                                    else{document.getElementById(`qno${qno}`).style.backgroundColor = "green";}
+                                    }}> &nbsp;&nbsp; Next &nbsp;&nbsp;&nbsp; </button>
+                </div>
+                </div>
+              )}
             </div>
-          )}
-          <button style={{marginLeft:'50px',marginRight:'20px'}} className='button'
-            onClick={(e) => {
-              e.preventDefault();
-              if (qno > 0) setQno(qno - 1);
-            }}
-          >
-            PREVIOUS
-          </button>
-          <button className='button'
-            onClick={(e) => {
-              e.preventDefault();
-              if (qno < 19) setQno(qno + 1);
-              else setQno(0);
-              if(answers[qno]===null){
-                document.getElementById(`qno${qno+1}`).style.backgroundColor = "gray";
-              }
-              else{
-              document.getElementById(`qno${qno+1}`).style.backgroundColor = "green";}
-            }}
-          >
-            SAVE & NEXT
-          </button>
-        </form>
-      </div>
+            <div className='border w-25 d-flex' style={{flexWrap:'wrap',height:'0px',marginRight:'10px'}}>
+              <ul className='d-flex flex-wrap align-content-start gap-4 mt-4' style={{listStyleType:'none'}}>
+                  {divs}
+              </ul>
+              <br />
+              <ul className='d-flex flex-wrap gap-4 w-100 mt-2' style={{listStyleType:'square'}}>
+                <li style={{color:'green',fontSize:'20px'}}><p style={{color:'black',fontSize:'20px'}}>ANSWERED</p></li> &nbsp;
+                <li style={{color:'red',fontSize:'20px'}}><p style={{color:'black',fontSize:'20px'}}>NOT ANSWERED</p></li>
+              </ul>
+            </div>
+        </div>
+      </form>
     </div>
-  );
+  )
 }
 
 export default Exam;

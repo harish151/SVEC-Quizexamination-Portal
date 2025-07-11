@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 function Login() {
-    const navigate = useNavigate();
+const navigate = useNavigate();
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
     const [result,setResult] = useState("");
@@ -14,41 +15,33 @@ function Login() {
                 setResult("Invalid Username And Password")
               }
               else if(res.data.role.toLowerCase()==="student"){
-                 navigate("/student",{state:{details:res.data}});
+                console.log(res.data);
+                navigate("/student",{state:{details:res.data}});
               }
               else if(res.data.role.toLowerCase()==="teacher"){
-                navigate("/employee",{state:{name:res.data.name,username:res.data.username,teachsub:res.data.teachsub}});
+                console.log(res.data);
+                navigate("/employee",{state:{details:res.data}});
               }
           })
          .catch(err =>{console.log(err)} );
     }
 
   return (
-    <div className='login'>
-    {/* <div><marquee behavior="" direction=""><b>QUIZ WEB APP. PLEASE LOGIN TO EXPLORE MORE.</b></marquee></div> */}
-    <div className='form-div'>
-        <center>
-      <form onSubmit={handle_login} className='login-signup-form'>
-        <h4 style={{fontWeight:'bold',color:'red'}}>{result}</h4>
-        <div>
-            <div><center><h1>LOGIN</h1></center></div>
-            <div style={{padding:'10px'}}>
-                <div style={{display:'flex',padding:'10px'}}>
-                    <div style={{width:'40%',textAlign:'center',paddingRight:'10px',fontWeight:'bold'}}>USERNAME</div>
-                    <div style={{width:'60%'}}><input type="text" name="Username" id="Username" placeholder='Enter Username' value={username} onChange={(e)=>{setUsername(e.target.value)}} autoComplete='on' required style={{width:'100%'}}/></div>
-                </div>
-                <div style={{display:'flex',padding:'10px',paddingTop:'20PX'}}>
-                    <div style={{width:'40%',textAlign:'center',paddingRight:'10px',fontWeight:'bold'}}>PASSWORD</div>
-                    <div style={{width:'60%'}}><input type="password" name="password" id="password" placeholder='Enter Password' value={password} onChange={(e)=>{setPassword(e.target.value)}} autoComplete='on' required style={{width:'100%'}}/></div>
-                </div>
+    <div style={{width:'100%',height:'100vh',display:'flex',justifyContent:'center',alignItems:'center',border:'1px solid'}}>
+      <form onSubmit={handle_login}>
+        <center><h4 style={{fontWeight:'bold',color:'red'}}>{result}</h4></center>
+        <div className="row mb-3 mw-100 border row-gap-3" style={{width:'100%',display:'flex',flexDirection:'column',borderRadius:'20px',paddingTop:'0 0 0 0'}}>
+            <p className="fs-2 fw-medium border-bottom" style={{padding:'15px 15px 15px 15px',backgroundColor:'skyblue',borderTopLeftRadius:'20px',borderTopRightRadius:'20px',textAlign:'center'}}>LOGIN</p>
+            <div className="col-sm-10 gap-3" style={{width:'fit-content',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <b>USERNAME</b><input type="text" name="Username" value={username} onChange={(e)=>{setUsername(e.target.value)}} autoComplete='on' style={{position:'relative'}} className="form-control h-25 d-inline-block" placeholder="Enter Username" required />
             </div>
-            <div style={{display:'flex',justifyContent:'center',paddingTop:'20px'}}>
-                <button type='submit' className='button' >LOGIN</button>
+            <div className="col-sm-10 gap-3" style={{width:'fit-content',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <b>PASSWORD</b><input type="password" name="password" value={password} onChange={(e)=>{setPassword(e.target.value)}} autoComplete='on' className="form-control h-25 d-inline-block" placeholder="Enter Password" required />
             </div>
+            <center><button type="submit" className="btn btn-primary btn-sm " style={{width:'fit-content',backgroundColor:'skyblue',marginBottom:'15px'}}>LOGIN</button></center>
         </div>
-      </form>
-      </center>
-    </div>
+
+        </form>
     </div>
   )
 }

@@ -11,14 +11,12 @@ import jakarta.validation.constraints.NotNull;
 public class Result {
 	@Id
 	String id;
-	List<String> ans;
 	String batch;
 	String branch;
 	String semester;
 	String coursecode;
 	String examType;
 	String section;
-	
 	String username;
 	double marks;
 	public String getId() {
@@ -82,11 +80,5 @@ public class Result {
 				+ username + "]";
 	}
 	
-	public List<String> getAns() {
-		return ans;
-	}
-	public void setAns(List<String> ans) {
-		this.ans = ans;
-	}
 	
 }

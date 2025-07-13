@@ -8,7 +8,8 @@ function Employee() {
   const location = useLocation();
   const navigate = useNavigate();
   const details = location.state?.details || null;
-  const [page,setPage] = useState(<ExamSchedule branch={details.branch} details={details} />);
+  const token = location.state?.token || null;
+  const [page,setPage] = useState(<ExamSchedule branch={details[0].branch} details={details} token={token} />);
   const dashboardRef = useRef(null);
   const conductexamRef = useRef(null);
   const viewqueRef = useRef(null);
@@ -34,7 +35,7 @@ function Employee() {
                            viewresultRef.current.classList.remove("active");
                            viewqueRef.current.classList.remove("active");
                            logoutRef.current.classList.remove("active");
-                           setPage(<ExamSchedule details={details} branch={details.branch} />)
+                           setPage(<ExamSchedule details={details} branch={details[0].branch} token={token} />)
             }}>DASHBOARD</button>
             <button className="list-group-item list-group-item-action" ref={conductexamRef} data-bs-toggle="list" role="tab" 
             onClick={()=>{conductexamRef.current.classList.add("active");
@@ -42,7 +43,7 @@ function Employee() {
                           dashboardRef.current.classList.remove("active");
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
-                          setPage(<ConductExam username={details.username} />);
+                          setPage(<ConductExam username={details[0].username} />);
             }}>CONDUCT EXAM</button>
             <button className="list-group-item list-group-item-action" ref={viewqueRef} id='exams' data-bs-toggle="list" role="tab" 
             onClick={()=>{dashboardRef.current.classList.remove("active");
@@ -50,7 +51,7 @@ function Employee() {
                           conductexamRef.current.classList.remove("active");
                           viewqueRef.current.classList.add("active");
                           logoutRef.current.classList.remove("active");
-                          setPage(<ViewQuestions username={details.username} />)
+                          setPage(<ViewQuestions username={details[0].username} />)
             }} >VIEW QUESTION PAPER</button>
             <button className="list-group-item list-group-item-action" ref={viewresultRef} data-bs-toggle="list" role="tab"
              onClick={()=>{dashboardRef.current.classList.remove("active");
@@ -58,7 +59,7 @@ function Employee() {
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
                           viewresultRef.current.classList.add("active");
-                          setPage(<ViewResults username={details.username} />)
+                          setPage(<ViewResults username={details[0].username} />)
             }} >VIEW RESULTS</button>
             <button className="list-group-item list-group-item-action" ref={logoutRef} data-bs-toggle="list" role="tab"
              onClick={()=>{dashboardRef.current.classList.remove("active");

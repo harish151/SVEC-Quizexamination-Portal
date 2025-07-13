@@ -2,14 +2,15 @@ import React from 'react'
 import { useState,useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import StudentDashBoard from './StudentDashBoard';
-import Profile from './Profile';
+import StuProfile from './StuProfile';
 import ExamSchedule from './ExamSchedule';
 
 function Student() {
   const navigate = useNavigate();
   const location = useLocation();
   const details = location.state?.details || null;
-  const [page,setPage] = useState(<StudentDashBoard details={details} branch={details.branch} />);
+  const token = location.state?.token || null;
+  const [page,setPage] = useState(<StudentDashBoard details={details} branch={details[0].branch} token={token} />);
   const dashboardRef = useRef(null);
   const profileRef = useRef(null);
   const examsRef = useRef(null);
@@ -24,7 +25,7 @@ function Student() {
 
   return (
     <div className='h-100 w-100'>
-      <div className="p-2 bg-info bg-gradient text-dark w-100 text-start text-uppercase" style={{backgroundColor:'#99ccff'}}><b>WELCOME {details?.name || "Student"}</b></div>
+      <div className="p-2 bg-info bg-gradient text-dark w-100 text-start text-uppercase" style={{backgroundColor:'#99ccff'}}><b>WELCOME {details[0].name || "Student"}</b></div>
         <div className='d-inline-block w-100 d-flex flex-row border' style={{height:'100vh'}}>
           <div className='border vertical list-group' style={{width:'16%',height:'100vh',borderRadius:'0'}}>
             <ul style={{listStyleType:'none',paddingLeft:'0',margin:'0',backgroundColor:'#99ccff'}}>
@@ -34,7 +35,7 @@ function Student() {
                            profileRef.current.classList.remove("active");
                            examsRef.current.classList.remove("active");
                            logoutRef.current.classList.remove("active");
-                           setPage(<StudentDashBoard details={details}/>);
+                           setPage(<StudentDashBoard details={details} token={token}/>);
             }}>DashBoard</button></li>
             <li>
             <button className="list-group-item list-group-item-action" ref={profileRef} data-bs-toggle="list" role="tab" 
@@ -42,7 +43,7 @@ function Student() {
                           dashboardRef.current.classList.remove("active");
                           examsRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
-                          setPage(<Profile details={details} />);
+                          setPage(<StuProfile details={details} token={token}/>);
             }}>Profile</button>
             </li>
             <li>
@@ -51,7 +52,7 @@ function Student() {
                           profileRef.current.classList.remove("active");
                           examsRef.current.classList.add("active");
                           logoutRef.current.classList.remove("active");
-                          setPage(<ExamSchedule details={details} branch={details.branch} />)
+                          setPage(<ExamSchedule details={details} branch={details[0].branch} token={token}/>)
             }} >Exam Schedule</button>
             </li>
             <li>

@@ -16,14 +16,16 @@ function Exam() {
   const semester = location.state?.semester || null;
   const section = location.state?.section || null;
   const username = location.state?.username || null;
-  let sess= location.state?.session || false;
+  const role = location.state?.role || null;
+  let sess = location.state?.session || false;
+  const token = location.state?.token || false;
   const[session,setSession]=useState(sess);
   const [questions, setQuestions] = useState([]);
   const [qno, setQno] = useState(0);
   const [originalans,setOriginalans] = useState(new Array(20).fill(null));
   const [answers, setAnswers] = useState(new Array(20).fill(null));
   const [timeLeft, setTimeLeft] = useState(20*60);
-  const details ={batch,branch,name,semester,section,username}
+  const details =[{"batch":batch,"branch":branch,"name":name,"semester":semester,"section":section,"username":username,"role":role}]
   const [exitcount,setExitcount]=useState(0);
   const [fullscreen,setFullscreen]=useState(true);
   const submitRef = useRef(false);
@@ -93,26 +95,31 @@ function Exam() {
         total += 0.5;
       }
     }
-    console.log("Calculated Marks:", total);
-    axios.post(`http://${import.meta.env.VITE_HOST}:8080/setresults`, {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType:examtype,section:section,username:username,marks:Math.ceil(total)})
-    .then(res=>{console.log(res.data)})
+    //console.log("Calculated Marks:", total);
+    axios.post(`http://${import.meta.env.VITE_HOST}:8080/setresults`, 
+      {"batch":batch,"branch":branch,"semester":semester,"coursecode":coursecode,"examType":examtype,"section":section,"username":username,"marks":Math.ceil(total)},
+      {
+        headers:{Authorization:token},
+        withCredentials: true})
+   // .then(res=>{console.log(res.data)})
     .catch(err => alert(err))
     setSession(false);
-    navigate("/student",{state:{details}});
+    if(total>=0.0){
+    navigate("/student",{state:{details,token}});}
   }
 
 
   useEffect(() => {
     if(session){
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/examquestions`, {
-        params: { batch, branch, coursecode, examtype },
+        headers:{Authorization:token},
+        withCredentials: true,
+        params: { batch:batch, branch:branch, coursecode:coursecode, examtype:examtype }
       })
       .then((res) => {
-        console.log(res.data);
         setQuestions(res.data);
         const ans = (res.data).map(q => q.answer);
         setOriginalans(ans);
-        console.log(ans);
       })
       .catch((err) => alert(err));}
   }, [batch, branch, coursecode, examtype]);

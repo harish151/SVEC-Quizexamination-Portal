@@ -3,11 +3,11 @@ import axios from 'axios';
 import { useState,useEffect } from 'react';
 import FormComponent from './Form';
 
-function ViewQuestions({username}) {
+function ViewQuestions({username,token}) {
      const [regulation, setRegulation] = useState("V20");
       const [batch, setBatch] = useState("2021");
       const [branch, setBranch] = useState("CSE");
-      const [semester, setSemester] = useState("1");
+      const [semester, setSemester] = useState("I");
       const [subjects, setSubjects] = useState({});
       const [sections,setSections] = useState(["ALL"]);
       const [ccode,setCcode] = useState("");
@@ -19,6 +19,8 @@ function ViewQuestions({username}) {
 
     const handleregulation = (selectedBatch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
+      headers:{Authorization:token},
+      withCredentials: true,
       params: { batch: selectedBatch,branch:branch}
     })
     .then(res => {
@@ -30,10 +32,12 @@ function ViewQuestions({username}) {
 
   const handleviewquestions =(e)=>{
     e.preventDefault();
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/checkeligibility`,{params:{username:username,coursecode:ccode}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/checkeligibility`,{headers:{Authorization:token},
+      withCredentials: true,params:{username:username,coursecode:ccode}})
     .then(res =>{
       if(res.data==="eligible"){
-          axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getquestions`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
+          axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getquestions`,{headers:{Authorization:token},
+      withCredentials: true,params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
           .then(res =>{ if(res.data!=""){setQuestion(res.data);setDisplayque(1);console.log(res.data);}
                         else{alert("No Questions entered.");}
           })
@@ -53,13 +57,17 @@ function ViewQuestions({username}) {
                                                                           branch: branch,semester: question[index].semester,
                                                                           coursecode: ccode,question_no: question[index].question_no,
                                                                           question: question[index].question,options: question[index].options,
-                                                                          answer: question[index].answer})
+                                                                          answer: question[index].answer},
+                                                                        {headers:{Authorization:token},
+                                                                        withCredentials: true,})
           .then(res =>{ console.log(res.data);if(res.data==1){alert("Updated");}})
           .catch(err => alert(err))
   }
 
     useEffect(() => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
+      headers:{Authorization:token},
+      withCredentials: true,
       params: {
         regulation: regulation,
         branch: branch,

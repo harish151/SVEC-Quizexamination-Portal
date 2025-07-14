@@ -86,14 +86,14 @@ function FormComponent({
                   value={semester}
                   onChange={(e) => {setSemester(e.target.value);setDisplay(0);}}
                 >
-                  <option value="1">I</option>
-                  <option value="2">II</option>
-                  <option value="3">III</option>
-                  <option value="4">IV</option>
-                  <option value="5">V</option>
-                  <option value="6">VI</option>
-                  <option value="7">VII</option>
-                  <option value="8">VIII</option>
+                  <option value="I">I</option>
+                  <option value="II">II</option>
+                  <option value="III">III</option>
+                  <option value="IV">IV</option>
+                  <option value="V">V</option>
+                  <option value="VI">VI</option>
+                  <option value="VII">VII</option>
+                  <option value="VIII">VIII</option>
                 </select>
               </td>
             </tr>

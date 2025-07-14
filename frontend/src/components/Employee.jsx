@@ -43,7 +43,7 @@ function Employee() {
                           dashboardRef.current.classList.remove("active");
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
-                          setPage(<ConductExam username={details[0].username} />);
+                          setPage(<ConductExam username={details[0].username} token={token} />);
             }}>CONDUCT EXAM</button>
             <button className="list-group-item list-group-item-action" ref={viewqueRef} id='exams' data-bs-toggle="list" role="tab" 
             onClick={()=>{dashboardRef.current.classList.remove("active");
@@ -51,7 +51,7 @@ function Employee() {
                           conductexamRef.current.classList.remove("active");
                           viewqueRef.current.classList.add("active");
                           logoutRef.current.classList.remove("active");
-                          setPage(<ViewQuestions username={details[0].username} />)
+                          setPage(<ViewQuestions username={details[0].username} token={token}/>)
             }} >VIEW QUESTION PAPER</button>
             <button className="list-group-item list-group-item-action" ref={viewresultRef} data-bs-toggle="list" role="tab"
              onClick={()=>{dashboardRef.current.classList.remove("active");
@@ -59,7 +59,7 @@ function Employee() {
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
                           viewresultRef.current.classList.add("active");
-                          setPage(<ViewResults username={details[0].username} />)
+                          setPage(<ViewResults username={details[0].username} token={token} />)
             }} >VIEW RESULTS</button>
             <button className="list-group-item list-group-item-action" ref={logoutRef} data-bs-toggle="list" role="tab"
              onClick={()=>{dashboardRef.current.classList.remove("active");
@@ -70,7 +70,7 @@ function Employee() {
                           navigate("/");
             }} >LOGOUT</button>
           </div>
-          <div className='border h-100' style={{width:'84%'}}>
+          <div className='border h-100' style={{width:'84%',overflow:'scroll'}}>
             {page}
           </div>
         </div>

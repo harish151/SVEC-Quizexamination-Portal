@@ -65,7 +65,7 @@ function StudentDashBoard() {
       alert("Incomplete data to start exam.");
       return;
     }
-    const allow = handleExamTime("1:04", exams.startTime, exams.endTime);
+    const allow = handleExamTime(currentTime, exams.startTime, exams.endTime);
     if (!allow) {
       alert(`Exam is only allowed between ${exams.startTime} and ${exams.endTime}`);
       return;
@@ -129,6 +129,7 @@ function StudentDashBoard() {
                                     section={ details[0].section}
                                     username={ details[0].username}
                                     role={ details[0].role}
+                                    image = {details[0].image}
                                     token = {token} />):("")
         }
     </div>

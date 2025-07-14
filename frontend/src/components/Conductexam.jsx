@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FormComponent from './Form';
 
-function ConductExam({username}) {
+function ConductExam({username,token}) {
   // console.log(username);
 
   const [regulation, setRegulation] = useState("V20");
   const [batch, setBatch] = useState("2021");
   const [branch, setBranch] = useState("CSE");
-  const [semester, setSemester] = useState("1");
+  const [semester, setSemester] = useState("I");
   const [subjects, setSubjects] = useState({});
   const [sections,setSections] = useState(["ALL"]);
   const [ccode,setCcode] = useState("");
@@ -22,6 +22,8 @@ function ConductExam({username}) {
 
   const handleregulation = (selectedBatch,selectedbranch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
+      headers:{Authorization:token},
+      withCredentials: true,
       params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
@@ -33,10 +35,12 @@ function ConductExam({username}) {
 
   const handleaddquestions =(e)=>{
     e.preventDefault();
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/checkeligibility`,{params:{username:username,coursecode:ccode}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/checkeligibility`,{headers:{Authorization:token},
+      withCredentials: true,params:{username:username,coursecode:ccode}})
     .then(res =>{
       if(res.data==="eligible"){
-          axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getnumofqueposted`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
+          axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getnumofqueposted`,{headers:{Authorization:token},
+      withCredentials: true,params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
           .then(res =>{
             if(res.data===20){
               alert("Already Question are Assigned. Click on view question paper to see.");
@@ -59,7 +63,10 @@ function ConductExam({username}) {
 
   const handlequestion =(e,i=0)=>{
     e.preventDefault();
-    axios.post(`http://${import.meta.env.VITE_HOST}:8080/teacher/addquestions`,{batch:batch,exam_type:exam_type,branch:branch,semester:semester,coursecode:ccode,question_no:qno,question:question,options:options,answer:answer})
+    axios.post(`http://${import.meta.env.VITE_HOST}:8080/teacher/addquestions`,{batch:batch,exam_type:exam_type,branch:branch,semester:semester,coursecode:ccode,question_no:qno,question:question,options:options,answer:answer},
+      {headers:{Authorization:token},
+      withCredentials: true,}
+    )
     .then(res => {console.log(res.data);
                   if(i===0){setQno(qno+1);}
                   else if(i===13){
@@ -76,6 +83,8 @@ function ConductExam({username}) {
 
   useEffect(() => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
+      headers:{Authorization:token},
+      withCredentials: true,
       params: {
         regulation: regulation,
         branch: branch,

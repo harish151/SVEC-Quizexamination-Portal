@@ -2,13 +2,15 @@ import React from 'react'
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 import FormComponent from './Form';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
-function ViewResult() {
+function ViewResult({token}) {
 
     const [regulation, setRegulation] = useState("V20");
     const [batch, setBatch] = useState("2021");
     const [branch, setBranch] = useState("CSE");
-    const [semester, setSemester] = useState("1");
+    const [semester, setSemester] = useState("I");
     const [subjects, setSubjects] = useState({});
     const [sections,setSections] = useState(["A","B","C","D"]);
     const[selectedsec,setSelectedsec] = useState("A");
@@ -20,6 +22,8 @@ function ViewResult() {
 
     const handleregulation = (selectedBatch,selectedbranch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
+      headers:{Authorization:token},
+      withCredentials: true,
       params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
@@ -32,14 +36,17 @@ function ViewResult() {
 
   const handleresult =(e)=>{
     e.preventDefault();
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getresultslist`,{params:{batch:batch,branch:branch,coursecode:ccode,exam_type:exam_type,semester:semester,section:selectedsec}})
-    .then(res=>{setResult(res.data);if(res.data.length==0){setDisplayres(1);}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getresultslist`,{headers:{Authorization:token},
+      withCredentials: true,params:{batch:batch,branch:branch,coursecode:ccode,exam_type:exam_type,semester:semester,section:selectedsec}})
+    .then(res=>{setResult(res.data);if(res.data.length==0){setDisplayres(1);console.log(res.data)}})
     .catch(err=>{alert(err);})
   }
 
 
     useEffect(() => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
+      headers:{Authorization:token},
+      withCredentials: true,
       params: {
         regulation: regulation,
         branch: branch,
@@ -52,6 +59,25 @@ function ViewResult() {
     })
     .catch(err => alert(err));
   }, [branch, regulation, semester]);
+
+
+  const handleDownload = () => {
+    const filteredData = result.map((item,index) => ({
+      SNO:index+1,
+      ROLLNO: item.username,
+      SEMESTER:item.semester,
+      EXAM:item.examType,
+      SUBJECT:"",
+      MARKS:item.marks
+      
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    saveAs(blob, 'data.xlsx');
+  };
 
 
   return (
@@ -77,14 +103,16 @@ function ViewResult() {
         setButtonname = {setButtonname}
         handleregulation={handleregulation}
         handlequestions={handleresult}
+        
        />
       {Array.isArray(result) && result.length > 0 && (
-        <table border="1" style={{ marginTop: '20px', width: '100%',borderCollapse:'collapse' }}>
+        <center>
+        <table className='table-bordered w-75' style={{ marginTop: '20px', width: '100%',borderCollapse:'collapse',borderColor:'black' }}>
           <thead>
-            <tr>
-              <th>SNO</th>
-              <th>USERNAME</th>
-              <th>MARKS</th>
+            <tr style={{backgroundColor:'gray'}}>
+              <th><center>SNO</center></th>
+              <th><center>USERNAME</center></th>
+              <th><center>MARKS</center></th>
             </tr>
           </thead>
           <tbody>
@@ -96,7 +124,9 @@ function ViewResult() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table><br />
+        <button type="button" className="btn btn-info" onClick={handleDownload}>DOWNLOAD</button>
+        </center>
         )}
 
         {result.length === 0 && displayres===1 && ("NO RESULT")}

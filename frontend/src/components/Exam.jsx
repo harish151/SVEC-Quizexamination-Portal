@@ -16,6 +16,7 @@ function Exam() {
   const semester = location.state?.semester || null;
   const section = location.state?.section || null;
   const username = location.state?.username || null;
+  const image = location.state?.image || null;
   const role = location.state?.role || null;
   let sess = location.state?.session || false;
   const token = location.state?.token || false;
@@ -25,7 +26,7 @@ function Exam() {
   const [originalans,setOriginalans] = useState(new Array(20).fill(null));
   const [answers, setAnswers] = useState(new Array(20).fill(null));
   const [timeLeft, setTimeLeft] = useState(20*60);
-  const details =[{"batch":batch,"branch":branch,"name":name,"semester":semester,"section":section,"username":username,"role":role}]
+  const details =[{"batch":batch,"branch":branch,"name":name,"semester":semester,"section":section,"username":username,"role":role,"image":image}]
   const [exitcount,setExitcount]=useState(0);
   const [fullscreen,setFullscreen]=useState(true);
   const submitRef = useRef(false);

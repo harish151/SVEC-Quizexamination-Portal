@@ -1,15 +1,11 @@
 package com.project.Backend.model;
 
-import java.util.List;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.validation.constraints.NotNull;
-
-@Document(collection = "users")
-public class User{
+@Document(collection = "StudentList")
+public class Students {
 	@Id
 	private String id;
 	private String name;
@@ -21,9 +17,8 @@ public class User{
 	private String branch=null;
 	private String semester=null;
 	private String section = null;
-	private List<String> teachsub=null;
-	@NotNull
-	private String role;
+	private String image = null;
+	private String role = null;
 	public String getId() {
 		return id;
 	}
@@ -57,7 +52,6 @@ public class User{
 	public String getRegulation() {
 		return regulation;
 	}
-	
 	public void setRegulation(String regulation) {
 		this.regulation = regulation;
 	}
@@ -79,11 +73,11 @@ public class User{
 	public void setSection(String section) {
 		this.section = section;
 	}
-	public List<String> getTeachsub() {
-		return teachsub;
+	public String getImage() {
+		return image;
 	}
-	public void setTeachsub(List<String> teachsub) {
-		this.teachsub = teachsub;
+	public void setImage(String image) {
+		this.image = image;
 	}
 	public String getRole() {
 		return role;
@@ -93,8 +87,11 @@ public class User{
 	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password
-				+ ", batch=" + batch + ", regulation=" + regulation + ", teachsub=" + teachsub
-				+ ", role=" + role + "]";
+		return "Students [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password
+				+ ", batch=" + batch + ", regulation=" + regulation + ", branch=" + branch + ", semester=" + semester
+				+ ", section=" + section + ", image=" + image + ", role=" + role + "]";
 	}
+	
+	
+	
 }

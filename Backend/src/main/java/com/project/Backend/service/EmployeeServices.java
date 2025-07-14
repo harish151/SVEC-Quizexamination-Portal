@@ -1,49 +1,73 @@
 package com.project.Backend.service;
-import java.util.Collections;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
 import com.project.Backend.model.Result;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Subjects;
-import com.project.Backend.model.User;
+import com.project.Backend.model.Teachers;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.RegulationRepo;
-import com.project.Backend.repository.Repo1;
 import com.project.Backend.repository.ResultRepo;
 import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.SubjectsRepo;
+import com.project.Backend.repository.TeacherRepo;
+import com.project.Backend.security.JwtUtil;
 
 @Service
-public class UserService{
-
-	public String create(Repo1 r,User u) {
+public class EmployeeServices {
+	
+	@Value("${imgbb.api.key}")
+    private String imgbbApiKey;
+	
+	public String createemp(TeacherRepo teacherrepo, String name, String username, String branch, List<String> teachsub,MultipartFile image, String role) {
+		Teachers t = new Teachers();
 		try {
-			r.save(u);
-			return "success";
+			t.setName(name);
+			t.setUsername(username);
+			t.setBranch(branch);
+			t.setTeachsubjects(teachsub);
+			if(image != null && !image.isEmpty()) {
+				CommonFuncServices cfs = new CommonFuncServices();
+				String imageUrl = cfs.uploadImage(image,imgbbApiKey);
+				t.setImage(imageUrl);
+			}
+			t.setRole(role);
+			teacherrepo.save(t);
+			return t.toString();
 		}
-		catch(Exception e) {
+		catch (Exception e) {
+			System.out.println(e);
 			return "failed";
 		}
 	}
-
-	public Optional<User> login(Repo1 r, String username,String password) {
-		Optional<User> l = r.findByUsernameAndPassword(username, password);
-		if(l!=null) {  //if document is present
-				return l; 
+	
+	public HashMap<String,Object> loginemp(TeacherRepo teacherrepo, String username, String password) {
+		List<Teachers> t = teacherrepo.findByUsernameAndPassword(username, password);
+		if(!t.isEmpty()) {  //if document is present
+				JwtUtil jw = new JwtUtil();
+				jw.generateToken(username);
+				HashMap<String,Object> hm = new HashMap<>();
+				hm.put("token", jw.generateToken(username));
+				hm.put("details", t);
+				return hm; 
 		}
 		else {
-			return l; //there is no document
+			return null; //there is no document
 		}
 	}
 	
-	public String checkeligibility(Repo1 r,String username,String coursecode) {
-		User u = r.findByUsernameAndTeachsub(username,coursecode);
+	public String checkeligibility(TeacherRepo teacherrepo,String username,String coursecode) {
+		Teachers u = teacherrepo.findByUsernameAndTeachsubjects(username,coursecode);
 		if(u!=null) {
 			return "eligible";
 		}
@@ -99,12 +123,12 @@ public class UserService{
 	    	return 2;
 	    }
 	}
-
+	
 	public List<Questions> getAllQuestions(QuestionsRepo qr, String year, String type, String branch,String code) {
 		return qr.findQuestions(year,type,branch,code);
 		
 	}
-
+	
 	public String deleteQuestion(QuestionsRepo qr,String id) {
 		if(qr.existsById(id)) {
 			qr.deleteById(id);
@@ -119,43 +143,10 @@ public class UserService{
 		schr.save(sch);
 		return sch.toString();
 	}
-
-	public List<Schedule> getschedule(ScheduleRepo schr, String branch, String semester) {
-		List<Schedule> sh = schr.findByBranchAndSemester(branch,semester);
-		return sh;
-
-	}
 	
-	public List<Schedule> getexams(ScheduleRepo schr, String branch, String semester, String date) {
-		List<Schedule> sh = schr.findByBranchAndSemesterAndDate(branch,semester,date);
-		return sh;
-	}
-
-	public List<Questions> getAllexamQuestions(QuestionsRepo qr, String year, String type, String branch, String code) {
-		List<Questions> q =qr.findQuestions(year,type,branch,code);
-		return shuffleQuestions(q);
-	}
-
-	public List<Questions> shuffleQuestions(List<Questions> q) {
-		Collections.shuffle(q);
-		for (Questions que : q) {
-            Collections.shuffle(que.getOptions());
-        }
-		return q;
-	}
-
 	@Autowired
 	ResultRepo rr;
 	
-	public void setresults(Result r) {
-		rr.save(r);	
-	}
-
-	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
-			String u) {
-		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
-	}
-
 	public List<Result> getresultswithoutusername(String batch, String branch, String code, String type,
 			String semester, String section) {
 		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, code, type, semester, section);

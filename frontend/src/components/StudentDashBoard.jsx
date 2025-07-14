@@ -7,6 +7,7 @@ import Instructions from './Instructions';
 function StudentDashBoard() {
     const location = useLocation();
     let details = location.state?.details || null;
+    const token = location.state?.token || null;
     const [exams, setExams] = useState([]);
     const [currentTime, setCurrentTime] = useState("");
     const[start,setStart] = useState(0);
@@ -26,14 +27,15 @@ function StudentDashBoard() {
     setCurrentTime(formattedTime);
 
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/getexams`, {
+      headers:{Authorization:token},
+      withCredentials: true,
       params: {
-        branch: details.branch,
-        semester: details.semester,
+        branch: details[0].branch,
+        semester: details[0].semester,
         date: formattedDate
       }
     })
     .then(res => {
-      console.log(res.data[0]);
       if (res.data.length > 0) {
         setExams(res.data);
       }
@@ -59,7 +61,7 @@ function StudentDashBoard() {
 
   const handleSubmitOrNot = async (e,exams) => {
     e.preventDefault();
-    if (!details || !exams) {
+    if (!details[0] || !exams) {
       alert("Incomplete data to start exam.");
       return;
     }
@@ -70,17 +72,18 @@ function StudentDashBoard() {
     }
     try {
       const res = await axios.get(`http://${import.meta.env.VITE_HOST}:8080/getresults`, {
+        headers:{Authorization:token},
+        withCredentials: true,
         params: {
-          batch: details.batch,
-          branch: details.branch,
+          batch: details[0].batch,
+          branch: details[0].branch,
           coursecode: exams.coursecode,
           exam_type: exams.exam_type,
-          semester: details.semester,
-          section: details.section,
-          username: details.username
+          semester: details[0].semester,
+          section: details[0].section,
+          username: details[0].username
         }
       });
-      console.log(res.data);
       if (res.data != [] && Object.keys(res.data).length > 0) {
         alert("Already submitted.");
         return;
@@ -95,7 +98,7 @@ function StudentDashBoard() {
     }
   };
 
-  if (!details) {
+  if (!details[0]) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <h2 style={{ color: 'red' }}>ERROR: YOUR NOT AN AUTHORIZED PERSON.</h2>
@@ -117,14 +120,16 @@ function StudentDashBoard() {
             exams.length==0?(<div className='w-100 mt-3' style={{color:'red',textAlign:'center'}}>YOU HAVE NO EXAM TODAY</div>):("")
         }
         {
-            start===1?(<Instructions name={details.name}
-                                    batch={ details.batch} 
-                                    branch={ details.branch}
+            start===1?(<Instructions name={details[0].name}
+                                    batch={ details[0].batch} 
+                                    branch={ details[0].branch}
                                     coursecode={ exams[ind].coursecode}
                                     examtype={ exams[ind].exam_type}
-                                    semester={ details.semester}
-                                    section={ details.section}
-                                    username={ details.username} />):("")
+                                    semester={ details[0].semester}
+                                    section={ details[0].section}
+                                    username={ details[0].username}
+                                    role={ details[0].role}
+                                    token = {token} />):("")
         }
     </div>
   )

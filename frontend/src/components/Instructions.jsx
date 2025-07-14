@@ -11,11 +11,13 @@ function Instructions(props) {
     const semester= props.semester;
     const section= props.section;
     const username= props.username;
+    const token = props.token;
+    const role = props.role;
 
     const handleexam = (e)=>{
       e.preventDefault();
       goFullscreen();
-      navigate("/exam",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:examtype,semester:semester,section:section,username:username,session:true}});
+      navigate("/exam",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:examtype,semester:semester,section:section,username:username,session:true,role:role,token:token}});
     }
     const goFullscreen = () => {
         const elem = document.documentElement;

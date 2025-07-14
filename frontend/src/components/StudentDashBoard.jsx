@@ -26,7 +26,7 @@ function StudentDashBoard() {
     const formattedTime = `${hours}:${minutes}`;
     setCurrentTime(formattedTime);
 
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getexams`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/student/getexams`, {
       headers:{Authorization:token},
       withCredentials: true,
       params: {
@@ -71,7 +71,7 @@ function StudentDashBoard() {
       return;
     }
     try {
-      const res = await axios.get(`http://${import.meta.env.VITE_HOST}:8080/getresults`, {
+      const res = await axios.get(`http://${import.meta.env.VITE_HOST}:8080/common/getresults`, {
         headers:{Authorization:token},
         withCredentials: true,
         params: {

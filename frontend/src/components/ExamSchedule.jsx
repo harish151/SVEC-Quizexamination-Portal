@@ -17,7 +17,7 @@ function ExamSchedule(props) {
         try {
           const responses = await Promise.all(
             listsemesters.map((semester) =>
-              axios.get(`http://${import.meta.env.VITE_HOST}:8080/getschedule`, {
+              axios.get(`http://${import.meta.env.VITE_HOST}:8080/common/getschedule`, {
                 headers:{Authorization:token},
                 withCredentials: true,
                 params: { branch: branch, semester: semester },

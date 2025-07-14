@@ -13,9 +13,10 @@ public class JwtUtil {
     private final Key SECRET_KEY = Keys.hmacShaKeyFor("jdhjbdehvsdjvbshjbvhdnewifm09324kmvkknvdejvsn_jkbf".getBytes());
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 2; // 2 hour
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role) 
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
@@ -24,6 +25,10 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return getClaims(token).getBody().getSubject();
+    }
+    
+    public String extractRole(String token) {
+        return getClaims(token).getBody().get("role", String.class);
     }
 
     public boolean isTokenValid(String token) {

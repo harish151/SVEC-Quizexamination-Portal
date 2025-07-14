@@ -18,7 +18,7 @@ function ViewQuestions({username}) {
 
 
     const handleregulation = (selectedBatch) => {
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getregulation`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
       params: { batch: selectedBatch,branch:branch}
     })
     .then(res => {
@@ -30,10 +30,10 @@ function ViewQuestions({username}) {
 
   const handleviewquestions =(e)=>{
     e.preventDefault();
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/checkeligibility`,{params:{username:username,coursecode:ccode}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/checkeligibility`,{params:{username:username,coursecode:ccode}})
     .then(res =>{
       if(res.data==="eligible"){
-          axios.get(`http://${import.meta.env.VITE_HOST}:8080/getquestions`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
+          axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getquestions`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
           .then(res =>{ if(res.data!=""){setQuestion(res.data);setDisplayque(1);console.log(res.data);}
                         else{alert("No Questions entered.");}
           })
@@ -49,7 +49,7 @@ function ViewQuestions({username}) {
   const handleupdateque = (e,index)=>{
       e.preventDefault();
       console.log(index);
-      axios.put(`http://${import.meta.env.VITE_HOST}:8080/updatequestion`,{id: question[index].id,batch: batch,exam_type: exam_type,
+      axios.put(`http://${import.meta.env.VITE_HOST}:8080/teacher/updatequestion`,{id: question[index].id,batch: batch,exam_type: exam_type,
                                                                           branch: branch,semester: question[index].semester,
                                                                           coursecode: ccode,question_no: question[index].question_no,
                                                                           question: question[index].question,options: question[index].options,
@@ -59,7 +59,7 @@ function ViewQuestions({username}) {
   }
 
     useEffect(() => {
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getsubjects`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
       params: {
         regulation: regulation,
         branch: branch,

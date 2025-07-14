@@ -86,7 +86,7 @@ function Exam() {
       }
   }
 
-  const calculatemarks = (e)=>{
+ const calculatemarks = (e)=>{
     if (e && e.preventDefault) e.preventDefault();
     alert("exam submitted.");
     let total = 0;
@@ -96,11 +96,25 @@ function Exam() {
       }
     }
     //console.log("Calculated Marks:", total);
-    axios.post(`http://${import.meta.env.VITE_HOST}:8080/setresults`, 
-      {"batch":batch,"branch":branch,"semester":semester,"coursecode":coursecode,"examType":examtype,"section":section,"username":username,"marks":Math.ceil(total)},
+
+    const params = new URLSearchParams();
+
+    originalans.forEach(item => {
+      params.append("originalans", item ?? "");  // handle nulls
+    });
+
+    answers.forEach(item => {
+      params.append("attemptedans", item ?? "");
+    });
+
+
+    axios.post(`http://${import.meta.env.VITE_HOST}:8080/common/setresults`, 
+      {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username},
       {
-        headers:{Authorization:token},
-        withCredentials: true})
+      headers: { Authorization: token},
+      withCredentials: true,
+      params:params
+    })
    // .then(res=>{console.log(res.data)})
     .catch(err => alert(err))
     setSession(false);
@@ -111,7 +125,7 @@ function Exam() {
 
   useEffect(() => {
     if(session){
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/examquestions`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/student/examquestions`, {
         headers:{Authorization:token},
         withCredentials: true,
         params: { batch:batch, branch:branch, coursecode:coursecode, examtype:examtype }

@@ -50,7 +50,7 @@ public class EmployeeController {
 		return emps.createemp(teacherrepo, name,username,branch,teachsub,image,role);
 	}
 	
-	@GetMapping("/getteachers")
+	@GetMapping("/teacher/getteachers")
 	public List<Teachers> getTeachers(){
 		List<Teachers> u =teacherrepo.findAll();
 		return u;
@@ -59,7 +59,7 @@ public class EmployeeController {
 	@Autowired
 	StudentRepo sturepo;
 	
-	@GetMapping("/getstudents")
+	@GetMapping("/teacher/getstudents")
 	public List<Students> getStudents(){
 		List<Students> s =sturepo.findAll();
 		return s;
@@ -67,10 +67,10 @@ public class EmployeeController {
 	
 	@GetMapping("/noauth/loginemp")
 	public HashMap<String,Object> loginemp(@RequestParam("username") String username,@RequestParam("password") String password) {
-		return emps.loginemp(teacherrepo, username,password);
+		return emps.loginemp(teacherrepo, username.toUpperCase(),password);
 	}
 	
-	@GetMapping("/checkeligibility")
+	@GetMapping("/teacher/checkeligibility")
 	public String checkeligibility(@RequestParam("username") String username,@RequestParam("coursecode") String coursecode) {
 		return emps.checkeligibility(teacherrepo, username, coursecode);
 	}
@@ -78,12 +78,12 @@ public class EmployeeController {
 	@Autowired
 	RegulationRepo rr;
 	
-	@PostMapping("/setregulation")
+	@PostMapping("/teacher/setregulation")
 	public String setregulation(@RequestBody Regulation reg) {
 		return emps.setregulation(rr,reg);
 	}
 	
-	@GetMapping("/getregulation")
+	@GetMapping("/teacher/getregulation")
 	public List<Regulation> getregulation(@RequestParam("batch") String batch,@RequestParam("branch") String branch) {
 		return emps.getregulation(rr,batch,branch);
 	}
@@ -91,12 +91,12 @@ public class EmployeeController {
 	@Autowired
 	SubjectsRepo sr;
 	
-	@PostMapping("/postsubjects")
+	@PostMapping("/teacher/postsubjects")
 	public String postsubjects(@RequestBody Subjects s) {
 		return emps.postsubjects(sr,s);
 	}
 	
-	@GetMapping("/getsubjects")
+	@GetMapping("/teacher/getsubjects")
 	public List<Subjects> getsubjects(@RequestParam("regulation") String reg,@RequestParam("branch") String branch,@RequestParam("semester") String sem){
 		return emps.getsubjects(sr,reg,branch,sem);
 	}
@@ -104,31 +104,31 @@ public class EmployeeController {
 	@Autowired
 	QuestionsRepo qr;
 	
-	@PostMapping("/addquestions")
+	@PostMapping("/teacher/addquestions")
 	public String addquestion(@RequestBody Questions q) {
 		return emps.createquestion(qr,q);
 	}
 	
-	@PutMapping("/updatequestion")
+	@PutMapping("/teacher/updatequestion")
 	public int updatequestion(@RequestBody Questions q) {
 		return emps.updatequestion(qr,q);
 	}
 	
-	@GetMapping("/getquestions")
+	@GetMapping("/teacher/getquestions")
 	public List<Questions> findallquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type)
 	{
 		List<Questions> q = emps.getAllQuestions(qr,year,type,branch,code);
 		return q;
 	}
 	
-	@GetMapping("/getnumofqueposted")
+	@GetMapping("/teacher/getnumofqueposted")
 	public int findnumofqueposted(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type) {
 		List<Questions> faqc = findallquestions(year,branch,code,type);
 		int count = faqc.size();
 		return count;
 	}
 	
-	@DeleteMapping("/deletequestion")
+	@DeleteMapping("/teacher/deletequestion")
 	public String deletequestion(@RequestParam("id") String id) {
 		return emps.deleteQuestion(qr,id);
 	}
@@ -136,12 +136,12 @@ public class EmployeeController {
 	@Autowired
 	ScheduleRepo schr;
 	
-	@PostMapping("/addschedule")
+	@PostMapping("/teacher/addschedule")
 	public String addschedule(@RequestBody Schedule sch) {
 		return emps.addschedule(schr,sch);
 	}
 	
-	@GetMapping("/getresultslist")
+	@GetMapping("/teacher/getresultslist")
 	public List<Result> getresultswithoutusername(@RequestParam("batch") String batch,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type,@RequestParam("semester") String semester,@RequestParam("section") String section) {
 		return emps.getresultswithoutusername(batch,branch,code,type,semester,section);
 	}

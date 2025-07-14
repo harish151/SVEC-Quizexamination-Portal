@@ -21,7 +21,7 @@ function ConductExam({username}) {
   const [buttonname,setButtonname] = useState("Upload Questions");
 
   const handleregulation = (selectedBatch,selectedbranch) => {
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getregulation`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
       params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
@@ -33,10 +33,10 @@ function ConductExam({username}) {
 
   const handleaddquestions =(e)=>{
     e.preventDefault();
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/checkeligibility`,{params:{username:username,coursecode:ccode}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/checkeligibility`,{params:{username:username,coursecode:ccode}})
     .then(res =>{
       if(res.data==="eligible"){
-          axios.get(`http://${import.meta.env.VITE_HOST}:8080/getnumofqueposted`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
+          axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getnumofqueposted`,{params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
           .then(res =>{
             if(res.data===20){
               alert("Already Question are Assigned. Click on view question paper to see.");
@@ -59,7 +59,7 @@ function ConductExam({username}) {
 
   const handlequestion =(e,i=0)=>{
     e.preventDefault();
-    axios.post(`http://${import.meta.env.VITE_HOST}:8080/addquestions`,{batch:batch,exam_type:exam_type,branch:branch,semester:semester,coursecode:ccode,question_no:qno,question:question,options:options,answer:answer})
+    axios.post(`http://${import.meta.env.VITE_HOST}:8080/teacher/addquestions`,{batch:batch,exam_type:exam_type,branch:branch,semester:semester,coursecode:ccode,question_no:qno,question:question,options:options,answer:answer})
     .then(res => {console.log(res.data);
                   if(i===0){setQno(qno+1);}
                   else if(i===13){
@@ -75,7 +75,7 @@ function ConductExam({username}) {
   }
 
   useEffect(() => {
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getsubjects`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
       params: {
         regulation: regulation,
         branch: branch,

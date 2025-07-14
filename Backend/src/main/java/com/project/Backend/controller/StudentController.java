@@ -42,13 +42,13 @@ public class StudentController {
 	
 	@GetMapping("/noauth/loginstu")
 	public HashMap<String,Object> loginstu(@RequestParam("username") String username,@RequestParam("password") String password) {
-		return stus.loginstu(sturepo, username,password);
+		return stus.loginstu(sturepo, username.toUpperCase(),password);
 	}
 	
 	@Autowired
 	ScheduleRepo schr;
 	
-	@GetMapping("/getexams")
+	@GetMapping("/student/getexams")
 	public List<Schedule> getexams(@RequestParam("branch") String branch,@RequestParam("semester") String semester,@RequestParam("date") String date){
 		return stus.getexams(schr,branch,semester,date);
 	}
@@ -56,7 +56,7 @@ public class StudentController {
 	@Autowired
 	QuestionsRepo qr;
 	
-	@GetMapping("/examquestions")
+	@GetMapping("/student/examquestions")
 	public List<Questions> findallexamquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("examtype") String type)
 	{
 		List<Questions> q = stus.getAllexamQuestions(qr,year,type,branch,code);

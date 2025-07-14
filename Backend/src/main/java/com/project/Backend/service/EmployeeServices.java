@@ -1,5 +1,6 @@
 package com.project.Backend.service;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -55,9 +56,8 @@ public class EmployeeServices {
 		List<Teachers> t = teacherrepo.findByUsernameAndPassword(username, password);
 		if(!t.isEmpty()) {  //if document is present
 				JwtUtil jw = new JwtUtil();
-				jw.generateToken(username);
 				HashMap<String,Object> hm = new HashMap<>();
-				hm.put("token", jw.generateToken(username));
+				hm.put("token", jw.generateToken(username,"TEACHER"));
 				hm.put("details", t);
 				return hm; 
 		}
@@ -149,6 +149,8 @@ public class EmployeeServices {
 	
 	public List<Result> getresultswithoutusername(String batch, String branch, String code, String type,
 			String semester, String section) {
-		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, code, type, semester, section);
+		List<Result>  res = rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, code, type, semester, section);
+		res.sort(Comparator.comparing(Result::getUsername));
+		return res;
 	}
 }

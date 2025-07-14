@@ -22,6 +22,7 @@ public class StudentServices {
 	@Value("${imgbb.api.key}")
     private String imgbbApiKey;
 	
+	
 	public String createstu(StudentRepo sturepo, String name, String username, String batch, String regulation,
 			String branch, String semester, String section, MultipartFile image, String role) {
 		Students s = new Students();
@@ -51,9 +52,8 @@ public class StudentServices {
 		List<Object> l = sturepo.findByUsernameAndPassword(username, password);
 		if(!l.isEmpty()) {  //if document is present
 				JwtUtil jw = new JwtUtil();
-				jw.generateToken(username);
 				HashMap<String,Object> hm = new HashMap<>();
-				hm.put("token", jw.generateToken(username));
+				hm.put("token", jw.generateToken(username,"STUDENT"));
 				hm.put("details", l);
 				return hm; 
 		}

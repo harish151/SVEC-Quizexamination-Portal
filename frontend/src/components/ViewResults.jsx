@@ -19,7 +19,7 @@ function ViewResult() {
     const [displayres,setDisplayres] = useState(true);
 
     const handleregulation = (selectedBatch,selectedbranch) => {
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getregulation`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
       params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
@@ -32,14 +32,14 @@ function ViewResult() {
 
   const handleresult =(e)=>{
     e.preventDefault();
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getresultslist`,{params:{batch:batch,branch:branch,coursecode:ccode,exam_type:exam_type,semester:semester,section:selectedsec}})
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getresultslist`,{params:{batch:batch,branch:branch,coursecode:ccode,exam_type:exam_type,semester:semester,section:selectedsec}})
     .then(res=>{setResult(res.data);if(res.data.length==0){setDisplayres(1);}})
     .catch(err=>{alert(err);})
   }
 
 
     useEffect(() => {
-    axios.get(`http://${import.meta.env.VITE_HOST}:8080/getsubjects`, {
+    axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
       params: {
         regulation: regulation,
         branch: branch,

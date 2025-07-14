@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -26,6 +31,7 @@ import com.project.Backend.repository.ScheduleRepo;
 
 @Service
 public class CommonFuncServices {
+	
 	
 	public String uploadImage(MultipartFile file, String imgbbApiKey) {
         try {
@@ -52,10 +58,20 @@ public class CommonFuncServices {
 	
 	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
 			String u) {
-		return rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
+		 List<Result> r = rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
+		 System.out.println(r);
+		 
+		 return r;
 	}
 	
-	public void setresults(Result r) {
+	public void setresults(Result r, List<String> originalans, List<String> attemptedans) {
+		double marks = 0.0;
+		for(int i=0;i<20;i++) {
+			if((originalans.get(i)).equals(attemptedans.get(i))) {
+				marks+=0.5;
+			}
+		}
+		r.setMarks(Math.ceil(marks));
 		rr.save(r);	
 	}
 	
@@ -63,5 +79,6 @@ public class CommonFuncServices {
 		List<Schedule> sh = schr.findByBranchAndSemester(branch,semester);
 		return sh;
 	}
+
 	
 }

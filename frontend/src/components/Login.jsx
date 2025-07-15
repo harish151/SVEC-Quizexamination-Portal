@@ -13,12 +13,12 @@ const navigate = useNavigate();
         e.preventDefault();
          axios.get(`http://${import.meta.env.VITE_HOST}:8080/noauth/loginemp`,{params:{username:empusername,password:emppassword}})
          .then(res =>{console.log(res.data.details[0].name+" "+res.data.token);
-              if(res.data==null){
-                setResult("Invalid Username And Password")
-              }
-              else if(res.data.details[0].role.toLowerCase()==="teacher"){
+              if(res.data.details[0].role.toLowerCase()==="teacher"){
                 console.log(res.data);
                 navigate("/employee",{state:{details:res.data.details,token:res.data.token}});
+              }
+              else{
+                setResult("Invalid Username And Password")
               }
           })
          .catch(err =>{console.log(err)} );
@@ -28,11 +28,11 @@ const navigate = useNavigate();
         e.preventDefault();
          axios.get(`http://${import.meta.env.VITE_HOST}:8080/noauth/loginstu`,{params:{username:stuusername,password:stupassword}})
          .then(res =>{
-              if(res.data==null){
-                setResult("Invalid Username And Password")
-              }
-              else if(res.data.details[0].role.toLowerCase()==="student"){
+              if(res.data.details[0].role.toLowerCase()==="student"){
                 navigate("/student",{state:{details:res.data.details,token:res.data.token}});
+              }
+              else{
+                setResult("Invalid Username And Password")
               }
           })
          .catch(err =>{console.log(err)} );

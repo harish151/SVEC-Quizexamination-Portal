@@ -19,6 +19,7 @@ function ConductExam({username,token}) {
   const [answer,setAnswer]=useState("");
   const [qno,setQno] = useState(1);
   const [buttonname,setButtonname] = useState("Upload Questions");
+  const [ subjectText, setSubjectText] = useState("");
 
   const handleregulation = (selectedBatch,selectedbranch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
@@ -153,8 +154,10 @@ function ConductExam({username,token}) {
         setButtonname = {setButtonname}
         handleregulation={handleregulation}
         handlequestions={handleaddquestions}
+        setSubjectText={setSubjectText}
       />
       <div style={{marginTop:'10px',marginBottom:'10px'}}>
+      <div style={{display:'none'}}>{subjectText}</div>
       {displayque ===1 ? (divs):(null)}
       </div>
     </div>

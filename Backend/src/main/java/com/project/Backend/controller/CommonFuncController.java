@@ -35,6 +35,8 @@ public class CommonFuncController {
 	
 	@PostMapping("/common/setresults")
 	public void setresults(@RequestBody Result r,@RequestParam("originalans") List<String> originalans,@RequestParam("attemptedans") List<String> attemptedans) {
+		System.out.println(originalans);
+		System.out.println(attemptedans);
 		cfs.setresults(r,originalans,attemptedans);
 	}
 	

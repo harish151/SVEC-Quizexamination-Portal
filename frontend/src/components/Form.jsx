@@ -14,6 +14,7 @@ function FormComponent({
   buttonname,
   handleregulation,
   handlequestions,
+  setSubjectText,
 }) {
   return (
     <div>
@@ -61,7 +62,10 @@ function FormComponent({
                   name="branch"
                   id="branch"
                   value={branch}
-                  onChange={(e) => {const selectedbranch = e.target.value;setBranch(e.target.value);setDisplay(0);handleregulation(batch,selectedbranch);}}
+                  onChange={(e) => {
+                                    const selectedbranch = e.target.value;setBranch(e.target.value);
+                                    setDisplay(0);
+                                    handleregulation(batch,selectedbranch);}}
                 >
                   <option value="CSE">COMPUTER SCIENCE AND ENGINEERING</option>
                   <option value="ECE">ELECTRONICS AND COMMUNICATION ENGINEERING</option>
@@ -102,7 +106,9 @@ function FormComponent({
               <td>SUBJECT</td>
               <td>:</td>
               <td>
-                <select name="subject" id="subject-select" value={ccode} onChange={(e)=>{setCcode(e.target.value);setDisplay(0);}} >
+                <select name="subject" id="subject-select" value={ccode} onChange={(e)=>{
+                  const selectedText = e.target.options[e.target.selectedIndex].text;
+                  setSubjectText(selectedText);setCcode(e.target.value);setDisplay(0);}} >
                   {Array.isArray(subjects.subjectname) && subjects.subjectname.length > 0 ? (
                     subjects.subjectname.map((name, index) => (
                       <option key={index} value={subjects.coursecode?.[index]}>

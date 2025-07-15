@@ -49,6 +49,23 @@ function Exam() {
   document.addEventListener("fullscreenchange", onFullscreenChange);
   return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
 }, [exitcount]);
+
+
+useEffect(() => {
+    const handleVisibilityChange = (e) => {
+      if (document.visibilityState === 'hidden') {
+        calculatemarks(e);
+       }// else if (document.visibilityState === 'visible') {
+      //   alert('Exam submitted');
+        
+      //   navigate("/student",{state:{details,token}});
+      // }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [questions, originalans,answers]);
   
 
   const goFullscreen = () => {
@@ -90,16 +107,7 @@ function Exam() {
  const calculatemarks = (e)=>{
     if (e && e.preventDefault) e.preventDefault();
     alert("exam submitted.");
-    let total = 0;
-    for (let i = 0; i < questions.length; i++) {
-      if (originalans[i] === answers[i]) {
-        total += 0.5;
-      }
-    }
-    //console.log("Calculated Marks:", total);
-
     const params = new URLSearchParams();
-
     originalans.forEach(item => {
       params.append("originalans", item ?? "");  // handle nulls
     });
@@ -119,7 +127,8 @@ function Exam() {
    // .then(res=>{console.log(res.data)})
     .catch(err => alert(err))
     setSession(false);
-    if(total>=0.0){
+    let t = true;
+    if(t){
     navigate("/student",{state:{details,token}});}
   }
 
@@ -132,6 +141,7 @@ function Exam() {
         params: { batch:batch, branch:branch, coursecode:coursecode, examtype:examtype }
       })
       .then((res) => {
+        
         setQuestions(res.data);
         const ans = (res.data).map(q => q.answer);
         setOriginalans(ans);

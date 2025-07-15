@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Embed Google Drive Image</title>
-  </head>
-  <body>
-    <h1>My Google Drive Image</h1>
-    <img src="https://i.ibb.co/99cQJVGy/6051c88a3948.png" alt="Google Drive Image" style="max-width: 100%;">
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tab Visibility Alert</title>
+</head>
+<body>
+  <h1>Tab Change Detection</h1>
+  <p>Switch to another tab or back, and you'll see alerts.</p>
+
+  <script>
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        alert('You left this tab.');
+      } else if (document.visibilityState === 'visible') {
+        alert('You returned to this tab.');
+      }
+    });
+  </script>
+</body>
 </html>

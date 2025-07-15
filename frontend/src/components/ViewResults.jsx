@@ -2,7 +2,7 @@ import React from 'react'
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 import FormComponent from './Form';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { saveAs } from 'file-saver';
 
 function ViewResult({token}) {
@@ -19,6 +19,7 @@ function ViewResult({token}) {
     const [result,setResult] = useState([]);
     const [buttonname,setButtonname] = useState("View Result");
     const [displayres,setDisplayres] = useState(true);
+    const [subjectText, setSubjectText] = useState("LINEAR ALGEBRA AND DIFFERNTIAL EQUATIONS");
 
     const handleregulation = (selectedBatch,selectedbranch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
@@ -38,7 +39,7 @@ function ViewResult({token}) {
     e.preventDefault();
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getresultslist`,{headers:{Authorization:token},
       withCredentials: true,params:{batch:batch,branch:branch,coursecode:ccode,exam_type:exam_type,semester:semester,section:selectedsec}})
-    .then(res=>{setResult(res.data);if(res.data.length==0){setDisplayres(1);console.log(res.data)}})
+    .then(res=>{setResult(res.data);if(res.data.length==0){setDisplayres(1);}})
     .catch(err=>{alert(err);})
   }
 
@@ -61,24 +62,49 @@ function ViewResult({token}) {
   }, [branch, regulation, semester]);
 
 
-  const handleDownload = () => {
-    const filteredData = result.map((item,index) => ({
-      SNO:index+1,
-      ROLLNO: item.username,
-      SEMESTER:item.semester,
-      EXAM:item.examType,
-      SUBJECT:"",
-      MARKS:item.marks
-      
-    }));
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([wbout], { type: 'application/octet-stream' });
-    saveAs(blob, 'data.xlsx');
-  };
-
+const handleDownload = () => {
+  const filteredData = result.map((item, index) => ({
+    SNO: index + 1,
+    ROLLNO: item.username,
+    SEMESTER: item.semester,
+    EXAM: item.examType,
+    SUBJECT: subjectText,
+    MARKS: item.marks,
+  }));
+  const ws = XLSX.utils.json_to_sheet(filteredData);
+  ws['!cols'] = [
+    { wch: 6 },   // SNO
+    { wch: 15 },  // ROLLNO
+    { wch: 10 },  // SEMESTER
+    { wch: 10 },  // EXAM
+    { wch: 40 },  // SUBJECT
+    { wch: 10 },  // MARKS
+  ];
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    for (let c = range.s.c; c <= range.e.c; c++) {
+      const cell = XLSX.utils.encode_cell({ r, c });
+      if (!ws[cell]) continue;
+      const isHeader = r === range.s.r;
+      ws[cell].s = {
+        alignment: {
+          horizontal: 'center',
+          vertical: 'center',
+        },
+        font: {
+          name: 'Calibri',
+          sz: isHeader ? 12 : 11,
+          bold: isHeader,
+        },
+      };
+    }
+  }
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Results');
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([wbout], { type: 'application/octet-stream' });
+  saveAs(blob, `${branch+"_"+selectedsec+"_"+exam_type+"_"}_RESULTS.xlsx`);
+};
 
   return (
     <div>
@@ -103,6 +129,7 @@ function ViewResult({token}) {
         setButtonname = {setButtonname}
         handleregulation={handleregulation}
         handlequestions={handleresult}
+        setSubjectText={setSubjectText}
         
        />
       {Array.isArray(result) && result.length > 0 && (

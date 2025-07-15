@@ -15,7 +15,7 @@ function ViewQuestions({username,token}) {
       const [displayque,setDisplayque] = useState(0);
       const [question,setQuestion] = useState([]);
       const [buttonname,setButtonname] = useState("View Questions");
-
+      const [ subjectText,  setSubjectText] = useState("");
 
     const handleregulation = (selectedBatch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
@@ -104,9 +104,11 @@ function ViewQuestions({username,token}) {
         setButtonname = {setButtonname}
         handleregulation={handleregulation}
         handlequestions={handleviewquestions}
+        setSubjectText={setSubjectText}
       />
         {(displayque===1 && Array.isArray(question))?(
         question.map((result,index)=>(<form key={index} onSubmit={handleupdateque} id="que-form"><div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',marginBottom:'20px'}}>
+                <div style={{display:'none'}}>{subjectText}</div>
                 <div style={{display:'flex',width:'95%',padding:'10px',marginBottom:'10px'}}>
                   <div style={{display:'none'}}>{result.id}</div>
                   <div style={{width:'5%',display:'flex',alignItems:'center',justifyContent:'center'}}>Q{result.question_no}:</div>

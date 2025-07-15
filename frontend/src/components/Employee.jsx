@@ -26,7 +26,7 @@ function Employee() {
 
   return (
     <div className='h-100 w-100'>
-      <div className="p-2 bg-info text-dark w-100 text-start text-uppercase"><b>WELCOME {details?.name || "Student"}</b></div>
+      <div className="p-2 bg-info text-dark w-100 text-start text-uppercase"><b>WELCOME {details[0]?.name || "Employee"}</b></div>
         <div className='d-inline-block w-100 d-flex flex-row border' style={{height:'100vh'}}>
           <div className='border vertical list-group' style={{width:'16%',height:'100vh',borderRadius:'0'}}>
             <button className="list-group-item list-group-item-action active" ref={dashboardRef} data-bs-toggle="list" role="tab" 

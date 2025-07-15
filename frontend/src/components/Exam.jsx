@@ -189,7 +189,7 @@ useEffect(() => {
        fullscreen==false? (
           exitcount<=1 ?(<div id='fullscreenbutton' style={{display:'flex',backdropFilter:'blur(5px)',position:'absolute',width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}><button type='button' 
           onClick={(e)=>{e.preventDefault();goFullscreen();
-                      }}>full screen</button></div>):(calculatemarks())):("")}
+                      }}>CONTINUE TO EXAM</button></div>):(calculatemarks())):("")}
                     
       <form onSubmit={calculatemarks}>
         <div className="d-flex justify-content-end" style={{alignItems:'center',marginRight:'2%'}}>

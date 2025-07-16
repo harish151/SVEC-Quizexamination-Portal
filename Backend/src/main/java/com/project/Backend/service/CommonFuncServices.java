@@ -5,11 +5,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -64,7 +59,7 @@ public class CommonFuncServices {
 		 return r;
 	}
 	
-	public void setresults(Result r, List<String> originalans, List<String> attemptedans) {
+	public void uploadresults(Result r, List<String> originalans, List<String> attemptedans) {
 		double marks = 0.0;
 		for(int i=0;i<20;i++) {
 			if((originalans.get(i)).equals(attemptedans.get(i))) {

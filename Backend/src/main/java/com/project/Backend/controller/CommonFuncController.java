@@ -33,11 +33,11 @@ public class CommonFuncController {
 		return cfs.getresults(batch,branch,code,type,semester,section,u);
 	}
 	
-	@PostMapping("/common/setresults")
-	public void setresults(@RequestBody Result r,@RequestParam("originalans") List<String> originalans,@RequestParam("attemptedans") List<String> attemptedans) {
-		System.out.println(originalans);
-		System.out.println(attemptedans);
-		cfs.setresults(r,originalans,attemptedans);
+	@PostMapping("/common/uploadresults")
+	public void uploadresults(@RequestBody Result r,@RequestParam("originalans") List<String> originalans,@RequestParam("attemptedans") List<String> attemptedans) {
+//		System.out.println(originalans);
+//		System.out.println(attemptedans);
+		cfs.uploadresults(r,originalans,attemptedans);
 	}
 	
 	@Autowired

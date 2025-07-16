@@ -36,7 +36,7 @@ function Exam() {
     if (!document.fullscreenElement) {
       setFullscreen(false);
       if(exitcount<=0 && submitRef.current){
-      alert("If your are escape again then your exam will be auto submitted.");
+      alert("If your are escape again then your exam will be auto submitted. Don't open new tabs otherwise your exam will be submitted.");
     }
     setExitcount((prev) => prev + 1);
     const el = document.getElementById("fullscreenbutton");
@@ -118,7 +118,7 @@ useEffect(() => {
     });
 
 
-    axios.post(`http://${import.meta.env.VITE_HOST}:8080/common/setresults`, 
+    axios.post(`http://${import.meta.env.VITE_HOST}:8080/common/uploadresults`, 
       {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username},
       {
       headers: { Authorization: token},

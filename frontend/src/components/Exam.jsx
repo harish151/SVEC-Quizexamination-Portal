@@ -54,8 +54,8 @@ function Exam() {
 useEffect(() => {
     const handleVisibilityChange = (e) => {
       if (document.visibilityState === 'hidden') {
-        alert("exam submitted");
         calculatemarks(e);
+        alert("exam submitted.")
        }// else if (document.visibilityState === 'visible') {
          //alert('Exam submitted');
         

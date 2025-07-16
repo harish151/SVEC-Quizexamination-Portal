@@ -103,7 +103,7 @@ const handleDownload = () => {
   XLSX.utils.book_append_sheet(wb, ws, 'Results');
   const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
   const blob = new Blob([wbout], { type: 'application/octet-stream' });
-  saveAs(blob, `${branch+"_"+selectedsec+"_"+exam_type+"_"}_RESULTS.xlsx`);
+  saveAs(blob, `${branch+"_"+selectedsec+"_SEMESTER"+semester+"_"+exam_type+"_"}_RESULTS.xlsx`);
 };
 
   return (

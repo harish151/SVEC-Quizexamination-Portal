@@ -54,12 +54,13 @@ function Exam() {
 useEffect(() => {
     const handleVisibilityChange = (e) => {
       if (document.visibilityState === 'hidden') {
+        alert("exam submitted");
         calculatemarks(e);
        }// else if (document.visibilityState === 'visible') {
-      //   alert('Exam submitted');
+         //alert('Exam submitted');
         
       //   navigate("/student",{state:{details,token}});
-      // }
+       //}
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {

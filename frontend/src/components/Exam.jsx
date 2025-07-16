@@ -55,7 +55,7 @@ useEffect(() => {
     const handleVisibilityChange = (e) => {
       if (document.visibilityState === 'hidden') {
         calculatemarks(e);
-        alert("exam submitted.")
+        alert("exam submitted. You Opened New Tab.")
        }// else if (document.visibilityState === 'visible') {
          //alert('Exam submitted');
         

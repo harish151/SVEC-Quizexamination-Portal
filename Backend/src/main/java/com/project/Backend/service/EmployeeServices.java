@@ -55,9 +55,12 @@ public class EmployeeServices {
 	public HashMap<String,Object> loginemp(TeacherRepo teacherrepo, String username, String password) {
 		List<Teachers> t = teacherrepo.findByUsernameAndPassword(username, password);
 		if(!t.isEmpty()) {  //if document is present
+				Teachers teacher = t.get(0);        
+				String role = teacher.getRole();
 				JwtUtil jw = new JwtUtil();
 				HashMap<String,Object> hm = new HashMap<>();
-				hm.put("token", jw.generateToken(username,"TEACHER"));
+				//String r = (String) t.get("role");
+				hm.put("token", jw.generateToken(username,role));
 				hm.put("details", t);
 				return hm; 
 		}
@@ -100,7 +103,20 @@ public class EmployeeServices {
 	}
 	
 	public String createquestion(QuestionsRepo qr,Questions q) {
-		qr.save(q);
+		Questions que = new Questions();
+		que.setBatch(q.getBatch());
+		que.setExam_type(q.getExam_type());
+		que.setBranch(q.getBranch());
+		que.setSemester(q.getSemester());
+		que.setCoursecode(q.getCoursecode());
+		que.setQuestion_no(q.getQuestion_no());
+		que.setQuestion(q.getQuestion().trim());
+		List<String> options = q.getOptions();
+	    options.replaceAll(String::trim);
+	    que.setOptions(options);
+	    que.setAnswer(q.getAnswer().trim());
+		
+		qr.save(que);
 		return q.getId();
 	}
 
@@ -114,9 +130,11 @@ public class EmployeeServices {
 //	        existing.setSubject(q.getSubject());
 	        existing.setSemester(q.getSemester());
 	        existing.setQuestion_no(q.getQuestion_no());
-	        existing.setQuestion(q.getQuestion());
-	        existing.setOptions(q.getOptions());
-	        existing.setAnswer(q.getAnswer());
+	        existing.setQuestion(q.getQuestion().trim());
+	        List<String> options = q.getOptions();
+		    options.replaceAll(String::trim);
+		    existing.setOptions(options);
+	        existing.setAnswer(q.getAnswer().trim());
 	        qr.save(existing);
 	        return 1;
 	    } else {

@@ -33,8 +33,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/noauth/**").permitAll()
                 .requestMatchers("/student/**").hasRole("STUDENT")
-                .requestMatchers("/teacher/**").hasRole("TEACHER")
-                .requestMatchers("/common/**").hasAnyRole("STUDENT", "TEACHER")
+                .requestMatchers("/teacher/**").hasAnyRole("TEACHER","HOD")
+                .requestMatchers("/admin/**").hasAnyRole("HOD")
+                .requestMatchers("/common/**").hasAnyRole("STUDENT", "TEACHER","HOD")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

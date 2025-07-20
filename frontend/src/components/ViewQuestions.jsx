@@ -16,6 +16,7 @@ function ViewQuestions({username,token}) {
       const [question,setQuestion] = useState([]);
       const [buttonname,setButtonname] = useState("View Questions");
       const [ subjectText,  setSubjectText] = useState("");
+      const [updatebutton,setUpdatebutton] = useState("UPDATE");
 
     const handleregulation = (selectedBatch) => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
@@ -38,7 +39,7 @@ function ViewQuestions({username,token}) {
       if(res.data==="eligible"){
           axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getquestions`,{headers:{Authorization:token},
       withCredentials: true,params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
-          .then(res =>{ if(res.data!=""){setQuestion(res.data);setDisplayque(1);console.log(res.data);}
+          .then(res =>{ if(res.data!=""){setQuestion(res.data);setDisplayque(1);}
                         else{alert("No Questions entered.");}
           })
           .catch(err => alert(err))
@@ -52,7 +53,6 @@ function ViewQuestions({username,token}) {
 
   const handleupdateque = (e,index)=>{
       e.preventDefault();
-      console.log(index);
       axios.put(`http://${import.meta.env.VITE_HOST}:8080/teacher/updatequestion`,{id: question[index].id,batch: batch,exam_type: exam_type,
                                                                           branch: branch,semester: question[index].semester,
                                                                           coursecode: ccode,question_no: question[index].question_no,
@@ -76,7 +76,7 @@ function ViewQuestions({username,token}) {
     })
     .then(res => {
       setSubjects(res.data[0]);
-      setCcode(res.data[0].coursecode[0]);
+      setCcode("-1");
     })
     .catch(err => alert(err));
   }, [branch, regulation, semester]);
@@ -112,24 +112,23 @@ function ViewQuestions({username,token}) {
                 <div style={{display:'flex',width:'95%',padding:'10px',marginBottom:'10px'}}>
                   <div style={{display:'none'}}>{result.id}</div>
                   <div style={{width:'5%',display:'flex',alignItems:'center',justifyContent:'center'}}>Q{result.question_no}:</div>
-                  <div style={{width:'95%'}}><textarea id='textarea' style={{height:'100%',width:'100%'}} value={result.question} onChange={(e)=>{ const updated = [...question];updated[index] = {...updated[index],question: e.target.value};setQuestion(updated);}} required/></div>
+                  <div style={{width:'95%'}}><textarea id='textarea' style={{height:'100%',width:'100%'}} value={result.question} onChange={(e)=>{ const updated = [...question];updated[index] = {...updated[index],question: e.target.value};setQuestion(updated);}} onClick={()=>{setUpdatebutton("UPDATE")}}  required/></div>
                 </div>
                 <div style={{width:'95%',display:'flex',flexDirection:'column'}}>
                     {[0, 1, 2, 3].map((i) => (
                     <div key={i} style={{ display: 'flex',gap:'10px',marginLeft:'60px',marginBottom:'8px' }}>
                       <div>
-                        {String.fromCharCode(65 + i)} : <input type="text" id={`Q${index}input${i}`} value={result.options[i] || ""} onChange={(e) => { const updated = [...question];const updatedOptions = [...updated[index].options];updatedOptions[i] = e.target.value;updated[index].options = updatedOptions;setQuestion(updated);}} required />
+                        {String.fromCharCode(65 + i)} : <input type="text" id={`Q${index}input${i}`} value={result.options[i] || ""} onChange={(e) => { const updated = [...question];const updatedOptions = [...updated[index].options];updatedOptions[i] = e.target.value;updated[index].options = updatedOptions;setQuestion(updated);}} onClick={()=>{setUpdatebutton("UPDATE")}} required />
                       </div>
                     </div>
                     ))}
                     <div style={{display:'flex',justifyContent:'space-between'}}>
-                      <div style={{width:'50%',marginLeft:'60px',marginTop:'10px',color:'green'}}><b>ANSWER : </b><input type='text' id='ans' name='ans' value={result.answer} onChange={(e) => {const updated = [...question];updated[index].answer = e.target.value;setQuestion(updated);
-                    }} required /></div>
+                      <div style={{width:'50%',marginLeft:'60px',marginTop:'10px',color:'green'}}><b>ANSWER : </b><input type='text' id='ans' name='ans' value={result.answer} onChange={(e) => {const updated = [...question];updated[index].answer = e.target.value;setQuestion(updated);}} onClick={()=>{setUpdatebutton("UPDATE")}} required /></div>
                       <div style={{width:'20%',display:'flex',justifyContent:'space-evenly'}}>
                           <div style={{display:'flex',justifyContent:'space-evenly',gap:'12px'}}>
-                                      <button id='updatebutton' className='button' onClick={(e)=>{handleupdateque(e,index)}} >UPDATE</button>
+                                      <button id='updatebutton' className='button' onClick={(e)=>{handleupdateque(e,index);setUpdatebutton("UPDATED")}} >{updatebutton}</button>
                           </div>
-                          <button className='button'>CANCEL</button>
+                          {/* <button className='button'>CANCEL</button> */}
                       </div>
                     </div>
                 </div>

@@ -19,6 +19,7 @@ function ViewResult({token}) {
     const [result,setResult] = useState([]);
     const [buttonname,setButtonname] = useState("View Result");
     const [displayres,setDisplayres] = useState(true);
+    const [setDisplay] = useState(0);
     const [subjectText, setSubjectText] = useState("LINEAR ALGEBRA AND DIFFERNTIAL EQUATIONS");
 
     const handleregulation = (selectedBatch,selectedbranch) => {
@@ -56,7 +57,7 @@ function ViewResult({token}) {
     })
     .then(res => {
       setSubjects(res.data[0]);
-      setCcode(res.data[0].coursecode[0]);
+      setCcode("-1");
     })
     .catch(err => alert(err));
   }, [branch, regulation, semester]);
@@ -77,7 +78,7 @@ const handleDownload = () => {
     { wch: 15 },  // ROLLNO
     { wch: 10 },  // SEMESTER
     { wch: 10 },  // EXAM
-    { wch: 40 },  // SUBJECT
+    { wch: 50 },  // SUBJECT
     { wch: 10 },  // MARKS
   ];
   const range = XLSX.utils.decode_range(ws['!ref']);
@@ -124,7 +125,7 @@ const handleDownload = () => {
         setSections={setSections}
         selectedsec = {selectedsec}
         setSelectedsec = {setSelectedsec}
-        setDisplay={0}
+        setDisplay={setDisplay}
         buttonname = {buttonname}
         setButtonname = {setButtonname}
         handleregulation={handleregulation}

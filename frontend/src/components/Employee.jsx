@@ -4,6 +4,7 @@ import ExamSchedule from './ExamSchedule';
 import ConductExam from './ConductExam';
 import ViewQuestions from './ViewQuestions';
 import ViewResults from './ViewResults';
+import UpdateExamSchedule from './UpdateExamSchedule';
 function Employee() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ function Employee() {
   const [page,setPage] = useState(<ExamSchedule branch={details[0].branch} details={details} token={token} />);
   const dashboardRef = useRef(null);
   const conductexamRef = useRef(null);
+  const updatescheduleRef = useRef(null);
   const viewqueRef = useRef(null);
   const viewresultRef = useRef(null);
   const logoutRef = useRef(null);
@@ -35,6 +37,7 @@ function Employee() {
                            viewresultRef.current.classList.remove("active");
                            viewqueRef.current.classList.remove("active");
                            logoutRef.current.classList.remove("active");
+                           details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):(null)
                            setPage(<ExamSchedule details={details} branch={details[0].branch} token={token} />)
             }}>DASHBOARD</button>
             <button className="list-group-item list-group-item-action" ref={conductexamRef} data-bs-toggle="list" role="tab" 
@@ -43,14 +46,26 @@ function Employee() {
                           dashboardRef.current.classList.remove("active");
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
+                          details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):(null);
                           setPage(<ConductExam username={details[0].username} token={token} />);
             }}>CONDUCT EXAM</button>
+            {details[0].role==="HOD"?(
+            <button className="list-group-item list-group-item-action" ref={updatescheduleRef} data-bs-toggle="list" role="tab" 
+            onClick={()=>{conductexamRef.current.classList.remove("active");
+                          viewresultRef.current.classList.remove("active");
+                          dashboardRef.current.classList.remove("active");
+                          viewqueRef.current.classList.remove("active");
+                          logoutRef.current.classList.remove("active");
+                          details[0].role==="HOD"?(updatescheduleRef.current.classList.add("active")):(null)
+                          setPage(<UpdateExamSchedule username={details[0].username} token={token} />);
+            }}>UPDATE EXAM SCHEDULE</button>):(null)}
             <button className="list-group-item list-group-item-action" ref={viewqueRef} id='exams' data-bs-toggle="list" role="tab" 
             onClick={()=>{dashboardRef.current.classList.remove("active");
                           viewresultRef.current.classList.remove("active");
                           conductexamRef.current.classList.remove("active");
                           viewqueRef.current.classList.add("active");
                           logoutRef.current.classList.remove("active");
+                          details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):("")
                           setPage(<ViewQuestions username={details[0].username} token={token}/>)
             }} >VIEW QUESTION PAPER</button>
             <button className="list-group-item list-group-item-action" ref={viewresultRef} data-bs-toggle="list" role="tab"
@@ -59,6 +74,7 @@ function Employee() {
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
                           viewresultRef.current.classList.add("active");
+                          details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):("");
                           setPage(<ViewResults username={details[0].username} token={token} />)
             }} >VIEW RESULTS</button>
             <button className="list-group-item list-group-item-action" ref={logoutRef} data-bs-toggle="list" role="tab"
@@ -67,6 +83,7 @@ function Employee() {
                           conductexamRef.current.classList.remove("active");
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.add("active");
+                          details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):("")
                           navigate("/");
             }} >LOGOUT</button>
           </div>

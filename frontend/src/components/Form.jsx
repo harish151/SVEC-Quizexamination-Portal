@@ -88,7 +88,7 @@ function FormComponent({
                   name="semester"
                   id="semester"
                   value={semester}
-                  onChange={(e) => {setSemester(e.target.value);setDisplay(0);}}
+                  onChange={(e) => {setSemester(e.target.value);setSubjectText(subjects.subjectname[0]);}}
                 >
                   <option value="I">I</option>
                   <option value="II">II</option>
@@ -108,7 +108,8 @@ function FormComponent({
               <td>
                 <select name="subject" id="subject-select" value={ccode} onChange={(e)=>{
                   const selectedText = e.target.options[e.target.selectedIndex].text;
-                  setSubjectText(selectedText);setCcode(e.target.value);setDisplay(0);}} >
+                  setCcode(e.target.value);setSubjectText(selectedText);}} >
+                    <option value="-1" disabled>SELECT</option>
                   {Array.isArray(subjects.subjectname) && subjects.subjectname.length > 0 ? (
                     subjects.subjectname.map((name, index) => (
                       <option key={index} value={subjects.coursecode?.[index]}>

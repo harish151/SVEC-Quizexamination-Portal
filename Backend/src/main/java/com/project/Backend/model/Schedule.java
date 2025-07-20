@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Schedule {
 	@Id
 	private String id;
-	private String exam_type;
+	private String examtype;
 	private String branch;
 	private String semester;
 	private String coursecode;
@@ -21,11 +21,11 @@ public class Schedule {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getExam_type() {
-		return exam_type;
+	public String getExamtype() {
+		return examtype;
 	}
-	public void setExam_type(String exam_type) {
-		this.exam_type = exam_type;
+	public void setExamtype(String examtype) {
+		this.examtype = examtype;
 	}
 	public String getBranch() {
 		return branch;
@@ -71,7 +71,7 @@ public class Schedule {
 	}
 	@Override
 	public String toString() {
-		return "Schedule [id=" + id + ", exam_type=" + exam_type + ", branch=" + branch + ", semester=" + semester
+		return "Schedule [id=" + id + ", exam_type=" + examtype + ", branch=" + branch + ", semester=" + semester
 				+ ", coursecode=" + coursecode + ", subject=" + subject + ", date=" + date + ", startTime=" + startTime
 				+ ", endTime=" + endTime + "]";
 	}

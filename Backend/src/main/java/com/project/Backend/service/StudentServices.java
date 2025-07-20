@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Students;
+import com.project.Backend.model.Teachers;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.StudentRepo;
@@ -51,9 +52,11 @@ public class StudentServices {
 	public HashMap<String, Object> loginstu(StudentRepo sturepo, String username, String password) {
 		List<Object> l = sturepo.findByUsernameAndPassword(username, password);
 		if(!l.isEmpty()) {  //if document is present
+				Students stu = (Students) l.get(0);        
+				String role = stu.getRole();
 				JwtUtil jw = new JwtUtil();
 				HashMap<String,Object> hm = new HashMap<>();
-				hm.put("token", jw.generateToken(username,"STUDENT"));
+				hm.put("token", jw.generateToken(username,role));
 				hm.put("details", l);
 				return hm; 
 		}

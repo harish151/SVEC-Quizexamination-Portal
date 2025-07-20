@@ -14,4 +14,6 @@ public interface ScheduleRepo extends MongoRepository<Schedule, String> {
 
 	List<Schedule> findByBranchAndSemester(String branch, String semester);
 
+	List<Schedule> findByBranchAndSemesterAndCoursecodeAndSubjectAndExamtype(String branch, String semester, String coursecode, String subject, String exam_type);
+
 }

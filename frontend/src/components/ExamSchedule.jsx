@@ -13,7 +13,7 @@ function ExamSchedule(props) {
   const [result,setResult]= useState([])
   useEffect(() => {
       const fetchSchedules = async () => {
-        const listsemesters = details[0].role.toLowerCase() === "teacher"? ["I", "III","V","VII"]: [details[0].semester];
+        const listsemesters = details[0].role.toLowerCase() === "teacher" || details[0].role.toLowerCase() === "hod" ? ["I", "III","V","VII"]: [details[0].semester];
         try {
           const responses = await Promise.all(
             listsemesters.map((semester) =>
@@ -28,7 +28,7 @@ function ExamSchedule(props) {
           setResult(allData);
           setSchedule(allData.flat());
           if (allData[0]?.length > 0) {
-            setExam(allData[0][0].exam_type);
+            setExam(allData[0][0].examtype);
           }
         } catch (error) {
           console.error("Error fetching schedules:", error);

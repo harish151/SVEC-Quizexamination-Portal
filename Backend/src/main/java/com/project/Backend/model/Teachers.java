@@ -18,6 +18,7 @@ public class Teachers {
 	private List<String> teachsubjects=null;
 	private String image = null;
 	private String role = null;
+	private List<String> subjectsname=null;
 	public String getId() {
 		return id;
 	}
@@ -65,6 +66,12 @@ public class Teachers {
 	}
 	public void setRole(String role) {
 		this.role = role;
+	}
+	public List<String> getSubjectsname() {
+		return subjectsname;
+	}
+	public void setSubjectsname(List<String> subjectsname) {
+		this.subjectsname = subjectsname;
 	}
 	@Override
 	public String toString() {

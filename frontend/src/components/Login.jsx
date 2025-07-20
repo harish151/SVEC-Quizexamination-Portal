@@ -23,8 +23,7 @@ const navigate = useNavigate();
           return;
         }
         const user = data.details[0];
-        console.log(`${user.name} ${data.token}`);
-        if (user.role?.toLowerCase() === "teacher") {
+        if (user.role?.toLowerCase() === "teacher" || user.role?.toLowerCase() === "hod" ) {
           navigate("/employee", {
             state: { details: data.details, token: data.token }
           });

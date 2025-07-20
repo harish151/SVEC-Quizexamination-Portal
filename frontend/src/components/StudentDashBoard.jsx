@@ -78,7 +78,7 @@ function StudentDashBoard() {
           batch: details[0].batch,
           branch: details[0].branch,
           coursecode: exams.coursecode,
-          exam_type: exams.exam_type,
+          exam_type: exams.examtype,
           semester: details[0].semester,
           section: details[0].section,
           username: details[0].username
@@ -112,7 +112,7 @@ function StudentDashBoard() {
             <div className="card m-3" key={index} style={{width:"18rem",cursor:'pointer'}} onClick={(e)=>{setInd(index);handleSubmitOrNot(e,exams[index])}}>
                 <div className="card-body">
                     <h5 className="card-title">{items?.subject}</h5>
-                    <h6 className="card-subtitle mb-2 text-body-secondary">{items?.exam_type}</h6>
+                    <h6 className="card-subtitle mb-2 text-body-secondary">{items?.examtype}</h6>
                     <h6>{items?.startTime}-{items?.endTime}</h6>
                 </div>
             </div>))):("")}
@@ -124,7 +124,7 @@ function StudentDashBoard() {
                                     batch={ details[0].batch} 
                                     branch={ details[0].branch}
                                     coursecode={ exams[ind].coursecode}
-                                    examtype={ exams[ind].exam_type}
+                                    examtype={ exams[ind].examtype}
                                     semester={ details[0].semester}
                                     section={ details[0].section}
                                     username={ details[0].username}

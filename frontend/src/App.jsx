@@ -6,6 +6,7 @@ import React from 'react'
 import Instructions from './components/Instructions'
 import Exam from './components/Exam'
 import Employee from './components/Employee'
+import GroqChatDirect from './components/GrokChatDirect'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/employee" element={<Employee />} />
           <Route path="/instructions" element={<Instructions />} />
           <Route path="/exam" element={<Exam />} />
+          <Route path="/chat" element={<GroqChatDirect />} />
         </Routes>
       </Router>
   )

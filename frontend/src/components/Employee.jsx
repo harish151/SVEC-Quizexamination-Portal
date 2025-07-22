@@ -101,7 +101,7 @@ function Employee() {
           </div>
           <div style={{display:'flex',justifyContent:'flex-end',flexWrap:'nowrap'}}>
             <div ref={tdiv} style={{overflow:'scroll',display:'none',position:'absolute',border:'1px solid',backdropFilter:'blur(10px)',height:'315px',width:'30%'}}>
-              <div style={{height:'fit-content',width:'99%',display:'flex',justifyContent:'flex-end',marginTop:'5px',cursor:'pointer'}}>
+              <div style={{height:'fit-content',width:'99%',display:'flex',justifyContent:'flex-end',marginTop:'5px',cursor:'pointer',zIndex:'1'}}>
                 <svg onClick={()=>{setAi("");tdiv.current.style.display="none"}} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="red" className="bi bi-x-square-fill" viewBox="0 0 16 16" style={{cursor:'pointer'}}>
                   <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708"/>
                 </svg>

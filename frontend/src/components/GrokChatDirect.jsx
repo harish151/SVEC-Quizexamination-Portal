@@ -83,7 +83,6 @@ function GroqChatDirect() {
       {/* Updated input area: */}
       <div
         style={{
-          position: 'fixed',
           bottom: 0,
           left: 0,
           right: 0,
@@ -99,7 +98,7 @@ function GroqChatDirect() {
           rows={1}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          style={{ flexGrow: 1, resize: 'none', height: '40px', fontSize: '1rem', padding: '0.5rem' }}
+          style={{ flexGrow: 0, resize: 'none', height: '40px', fontSize: '1rem', padding: '0.5rem' }}
           placeholder="Type your message..."
           disabled={loading}
         />

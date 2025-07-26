@@ -18,6 +18,7 @@ function App() {
           <Route path="/employee" element={<Employee />} />
           <Route path="/instructions" element={<Instructions />} />
           <Route path="/exam" element={<Exam />} />
+          <Route path="/chat" element={<GroqChatDirect />} />
         </Routes>
       </Router>
   )

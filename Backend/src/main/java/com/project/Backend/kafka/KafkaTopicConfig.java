@@ -145,4 +145,36 @@ public class KafkaTopicConfig {
                            .replicas(1)
                            .build();
     }
+    
+    @Bean
+    public NewTopic getadminscheduleTopic() {
+        return TopicBuilder.name("admin-getschedule-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getadminscheduleresponseTopic() {
+        return TopicBuilder.name("admin-getschedule-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic updateadminscheduleTopic() {
+        return TopicBuilder.name("admin-updateschedule-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic updateadminscheduleresponseTopic() {
+        return TopicBuilder.name("admin-updateschedule-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
 }

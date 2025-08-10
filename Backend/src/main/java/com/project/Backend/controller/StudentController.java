@@ -40,12 +40,7 @@ import com.project.Backend.service.StudentServicesConsumer;
 @RestController
 public class StudentController {
 	
-//	private final StudentServicesConsumer stus;
-//    private final StudentRepo sturepo;
     private final KafkaProducerService kafkaProducerService;
-//    private final KafkaConsumerService kafkaconsumerservice;
-//    private final ScheduleRepo schr;
-//    private final QuestionsRepo qr;
     Map<String, Map<String, Object>> responseMap = new ConcurrentHashMap<>();
     Map<String, List<Object>> getexam = new ConcurrentHashMap<>();
     Map<String, List<Object>> getexamque = new ConcurrentHashMap<>();

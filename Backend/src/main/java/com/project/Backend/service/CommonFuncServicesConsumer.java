@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -14,9 +15,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.model.Result;
@@ -25,9 +28,14 @@ import com.project.Backend.repository.ResultRepo;
 import com.project.Backend.repository.ScheduleRepo;
 
 @Service
-public class CommonFuncServices {
+public class CommonFuncServicesConsumer {
 	
+	private final ObjectMapper objectMapper = new ObjectMapper();
 	
+	@Autowired
+	ResultRepo rr;
+
+
 	public String uploadImage(MultipartFile file, String imgbbApiKey) {
         try {
             byte[] bytes = file.getBytes();
@@ -48,27 +56,44 @@ public class CommonFuncServices {
         }
     }
 	
-	@Autowired
-	ResultRepo rr;
 	
 	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
 			String u) {
 		 List<Result> r = rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
-		 System.out.println(r);
 		 
 		 return r;
 	}
 	
-	public void uploadresults(Result r, List<String> originalans, List<String> attemptedans) {
-		double marks = 0.0;
-		for(int i=0;i<20;i++) {
-			if((originalans.get(i)).equals(attemptedans.get(i))) {
-				marks+=0.5;
-			}
-		}
-		r.setMarks(Math.ceil(marks));
-		rr.save(r);	
+	@KafkaListener(topics = "upload-result-topic", groupId = "quiz-group")
+	public void uploadresults(String message) {
+	    try {
+	        Map<String, Object> data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+	        Result r = new Result();
+	        r.setBatch((String) data.get("batch"));
+	        r.setUsername((String) data.get("username"));
+	        r.setBranch((String) data.get("branch"));
+	        r.setSemester((String) data.get("semester"));
+	        r.setCoursecode((String) data.get("coursecode"));
+	        r.setExamType((String) data.get("examtype"));
+	        r.setSection((String) data.get("section"));
+	        List<String> originalans = (List<String>) data.get("originalans");
+	        List<String> attemptedans = (List<String>) data.get("attemptedans");
+	        double marks = 0.0;
+	        for (int i = 0; i < Math.min(originalans.size(), attemptedans.size()); i++) {
+	            String origAns = originalans.get(i);
+	            String attAns = attemptedans.get(i);
+	            if (origAns != null && attAns != null && origAns.trim().equalsIgnoreCase(attAns.trim())) {
+	                marks += 0.5;
+	            }
+	        }
+	        r.setMarks(Math.ceil(marks));
+	        rr.save(r);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
+
 	
 	public List<Schedule> getschedule(ScheduleRepo schr, String branch, String semester) {
 		List<Schedule> sh = schr.findByBranchAndSemester(branch,semester);

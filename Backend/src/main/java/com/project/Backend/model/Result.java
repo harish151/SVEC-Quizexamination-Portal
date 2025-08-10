@@ -1,5 +1,7 @@
 package com.project.Backend.model;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +16,8 @@ public class Result {
 	String examType;
 	String section;
 	String username;
+	List<String> originalans;
+	List<String> attemptedans;
 	double marks;
 	public String getId() {
 		return id;
@@ -68,6 +72,18 @@ public class Result {
 	}
 	public void setMarks(double marks) {
 		this.marks = marks;
+	}
+	public List<String> getOriginalans() {
+		return originalans;
+	}
+	public void setOriginalans(List<String> originalans) {
+		this.originalans = originalans;
+	}
+	public List<String> getAttemptedans() {
+		return attemptedans;
+	}
+	public void setAttemptedans(List<String> attemptedans) {
+		this.attemptedans = attemptedans;
 	}
 	@Override
 	public String toString() {

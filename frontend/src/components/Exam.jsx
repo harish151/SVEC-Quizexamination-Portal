@@ -108,22 +108,21 @@ useEffect(() => {
  const calculatemarks = (e)=>{
     if (e && e.preventDefault) e.preventDefault();
     alert("exam submitted.");
-    const params = new URLSearchParams();
-    originalans.forEach(item => {
-      params.append("originalans", item ?? "");  // handle nulls
-    });
+    // const params = new URLSearchParams();
+    // originalans.forEach(item => {
+    //   params.append("originalans", item ?? "");  // handle nulls
+    // });
 
-    answers.forEach(item => {
-      params.append("attemptedans", item ?? "");
-    });
+    // answers.forEach(item => {
+    //   params.append("attemptedans", item ?? "");
+    // });
 
-
+  //console.log(batch,branch,semester,coursecode,examtype,section,username,originalans,answers)
     axios.post(`http://${import.meta.env.VITE_HOST}:8080/common/uploadresults`, 
-      {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username},
+      {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username,originalans:originalans,attemptedans:answers},
       {
-      headers: { Authorization: token},
-      withCredentials: true,
-      params:params
+      headers: { Authorization: token, 'Content-Type': 'application/json'},
+      withCredentials: true
     })
    // .then(res=>{console.log(res.data)})
     .catch(err => alert(err))

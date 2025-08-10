@@ -8,7 +8,7 @@ import com.project.Backend.model.Schedule;
 import com.project.Backend.repository.ScheduleRepo;
 
 @Service
-public class AdminService {
+public class AdminServiceConsumer {
 
 	public List<Schedule> getschedule(ScheduleRepo sr, String branch, String semester, String coursecode, String subject, String exam_type) {
 		return sr.findByBranchAndSemesterAndCoursecodeAndSubjectAndExamtype(branch,semester,coursecode,subject,exam_type);

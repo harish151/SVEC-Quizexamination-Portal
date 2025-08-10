@@ -1,15 +1,22 @@
 package com.project.Backend.service;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
 import com.project.Backend.model.Result;
@@ -25,32 +32,62 @@ import com.project.Backend.repository.TeacherRepo;
 import com.project.Backend.security.JwtUtil;
 
 @Service
-public class EmployeeServices {
+public class EmployeeServicesConsumer {
 	
 	@Value("${imgbb.api.key}")
     private String imgbbApiKey;
 	
-	public String createemp(TeacherRepo teacherrepo, String name, String username, String branch, List<String> teachsub,MultipartFile image, String role) {
-		Teachers t = new Teachers();
-		try {
-			t.setName(name);
-			t.setUsername(username);
-			t.setBranch(branch);
-			t.setTeachsubjects(teachsub);
-			if(image != null && !image.isEmpty()) {
-				CommonFuncServices cfs = new CommonFuncServices();
-				String imageUrl = cfs.uploadImage(image,imgbbApiKey);
-				t.setImage(imageUrl);
-			}
-			t.setRole(role);
-			teacherrepo.save(t);
-			return t.toString();
-		}
-		catch (Exception e) {
-			System.out.println(e);
-			return "failed";
-		}
+	private final ObjectMapper objectMapper = new ObjectMapper();
+    private final TeacherRepo teacherrepo;
+    private final CommonFuncServicesConsumer cfsc;
+    private final RegulationRepo rr;
+    private final ResultRepo rr1;
+    private final SubjectsRepo sr;
+    private final QuestionsRepo qr;
+    private final ScheduleRepo schr;
+    
+    public EmployeeServicesConsumer(TeacherRepo teacherrepo,CommonFuncServicesConsumer cfsc,RegulationRepo rr,ResultRepo rr1,SubjectsRepo sr,QuestionsRepo qr,ScheduleRepo schr) {
+        this.teacherrepo = teacherrepo;
+        this.cfsc = cfsc;
+        this.rr = rr;
+        this.rr1 = rr1;
+        this.sr=sr;
+        this.qr=qr;
+        this.schr=schr;
+    }
+	
+    @KafkaListener(topics = "employee-create-topic", groupId = "quiz-group")
+    public void createemp(String message) {
+        try {
+            Map<String, Object> data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+
+            Teachers t = new Teachers();
+            t.setName((String) data.get("name"));
+            t.setUsername((String) data.get("username"));
+            t.setBranch((String) data.get("branch"));
+            t.setTeachsubjects((List<String>) data.get("teachsub"));
+            t.setRole((String) data.get("role"));
+
+            if (data.containsKey("image")) {
+                String base64Image = (String) data.get("image");
+                MultipartFile file = base64ToMultipartFile(base64Image, "employee.jpg");
+                String imageUrl = cfsc.uploadImage(file, imgbbApiKey);
+                t.setImage(imageUrl);
+            }
+
+            teacherrepo.save(t);
+            System.out.println("Employee created successfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private MultipartFile base64ToMultipartFile(String base64, String filename) throws IOException {
+	    byte[] decoded = Base64.getDecoder().decode(base64);
+	    return new MockMultipartFile(filename, filename, "image/jpeg", decoded);
 	}
+
 	
 	public HashMap<String,Object> loginemp(TeacherRepo teacherrepo, String username, String password) {
 		List<Teachers> t = teacherrepo.findByUsernameAndPassword(username, password);
@@ -79,9 +116,15 @@ public class EmployeeServices {
 		}
 	}
 	
-	public String setregulation(RegulationRepo rr,Regulation reg) {
-		rr.save(reg);
-		return reg.toString();
+	@KafkaListener(topics = "set-regulation-topic", groupId = "quiz-group")
+	public void setregulation(String message) {
+	    try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        Regulation reg = objectMapper.readValue(message, Regulation.class);
+	        rr.save(reg);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	public List<Regulation> getregulation(RegulationRepo rr,String batch,String branch) {
@@ -92,32 +135,42 @@ public class EmployeeServices {
 			return reg;
 	}
 	
-	public String postsubjects(SubjectsRepo sr, Subjects s) {
-		Subjects sub = sr.save(s);
-		return sub.toString();
-		}
+	@KafkaListener(topics = "post-subjects-topic", groupId = "quiz-group")
+	public void postsubjects(String message) {
+		try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        Subjects sub = objectMapper.readValue(message, Subjects.class);
+	        sr.save(sub);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 	
 	public List<Subjects> getsubjects(SubjectsRepo sr, String reg, String branch, String sem) {
 		List<Subjects> s = sr.findByRegulationAndBranchAndSemester(reg,branch,sem);
 		return s;
 	}
 	
-	public String createquestion(QuestionsRepo qr,Questions q) {
-		Questions que = new Questions();
-		que.setBatch(q.getBatch());
-		que.setExam_type(q.getExam_type());
-		que.setBranch(q.getBranch());
-		que.setSemester(q.getSemester());
-		que.setCoursecode(q.getCoursecode());
-		que.setQuestion_no(q.getQuestion_no());
-		que.setQuestion(q.getQuestion().trim());
-		List<String> options = q.getOptions();
-	    options.replaceAll(String::trim);
-	    que.setOptions(options);
-	    que.setAnswer(q.getAnswer().trim());
-		
-		qr.save(que);
-		return q.getId();
+	@KafkaListener(topics = "add-question-topic", groupId = "quiz-group")
+	public void createquestion(String message) {
+		try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        Questions que = objectMapper.readValue(message, Questions.class);
+	        que.setBatch(que.getBatch());
+			que.setExam_type(que.getExam_type());
+			que.setBranch(que.getBranch());
+			que.setSemester(que.getSemester());
+			que.setCoursecode(que.getCoursecode());
+			que.setQuestion_no(que.getQuestion_no());
+			que.setQuestion(que.getQuestion().trim());
+			List<String> options = que.getOptions();
+		    options.replaceAll(String::trim);
+		    que.setOptions(options);
+		    que.setAnswer(que.getAnswer().trim());
+	        qr.save(que);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	public int updatequestion(QuestionsRepo qr, Questions q) {
@@ -127,7 +180,6 @@ public class EmployeeServices {
 	        existing.setBatch(q.getBatch());
 	        existing.setExam_type(q.getExam_type());
 	        existing.setBranch(q.getBranch());
-//	        existing.setSubject(q.getSubject());
 	        existing.setSemester(q.getSemester());
 	        existing.setQuestion_no(q.getQuestion_no());
 	        existing.setQuestion(q.getQuestion().trim());
@@ -147,27 +199,32 @@ public class EmployeeServices {
 		
 	}
 	
-	public String deleteQuestion(QuestionsRepo qr,String id) {
-		if(qr.existsById(id)) {
-			qr.deleteById(id);
-			return "deleted";
+	@KafkaListener(topics = "delete-question-topic", groupId = "quiz-group")
+	public void deleteQuestion(String message) {
+		try {
+			if(qr.existsById(message)) {
+				qr.deleteById(message);
+			}
 		}
-		else {
-			return "id not found";
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 
-	public String addschedule(ScheduleRepo schr, Schedule sch) {
-		schr.save(sch);
-		return sch.toString();
+	@KafkaListener(topics = "add-schedule-topic", groupId = "quiz-group")
+	public void addschedule(String message) {
+		try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        Schedule s = objectMapper.readValue(message, Schedule.class);
+	        schr.save(s);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
-	
-	@Autowired
-	ResultRepo rr;
 	
 	public List<Result> getresultswithoutusername(String batch, String branch, String code, String type,
 			String semester, String section) {
-		List<Result>  res = rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, code, type, semester, section);
+		List<Result>  res = rr1.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, code, type, semester, section);
 		res.sort(Comparator.comparing(Result::getUsername));
 		return res;
 	}

@@ -11,25 +11,105 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
-    public NewTopic userTopic() {
+    public NewTopic createstudentTopic() {
         return TopicBuilder.name("student-create-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic createemployeeTopic() {
+        return TopicBuilder.name("employee-create-topic")
                            .partitions(3)
                            .replicas(1)
                            .build();
     }
 
     @Bean
-    public NewTopic orderTopic() {
-        return TopicBuilder.name("result-topic")
-                           .partitions(2)
+    public NewTopic stuloginrequestTopic() {
+        return TopicBuilder.name("stulogin-request-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic stuloginresponseTopic() {
+        return TopicBuilder.name("student-login-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic postsubjectsTopic() {
+        return TopicBuilder.name("post-subjects-topic")
+                           .partitions(3)
                            .replicas(1)
                            .build();
     }
 
     @Bean
-    public NewTopic paymentTopic() {
-        return TopicBuilder.name("schedule-topic")
-                           .partitions(1)
+    public NewTopic addquestionTopic() {
+        return TopicBuilder.name("add-question-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic deletequestionTopic() {
+        return TopicBuilder.name("delete-question-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic addscheduleTopic() {
+        return TopicBuilder.name("add-schedule-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic uploadresultTopic() {
+        return TopicBuilder.name("upload-result-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getexamsTopic() {
+        return TopicBuilder.name("get-exams-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getexamsresponseTopic() {
+        return TopicBuilder.name("get-exam-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getexamsqueTopic() {
+        return TopicBuilder.name("get-examsque-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getexamsqueresponseTopic() {
+        return TopicBuilder.name("get-examque-response")
+                           .partitions(3)
                            .replicas(1)
                            .build();
     }

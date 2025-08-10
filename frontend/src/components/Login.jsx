@@ -12,13 +12,12 @@ const navigate = useNavigate();
     const [stuerr,setStuerr] = useState();
     const emp_handle_login = (e) => {
       e.preventDefault();
-      axios.get(`http://${import.meta.env.VITE_HOST}:8080/noauth/loginemp`, {
+      axios.post(`http://${import.meta.env.VITE_HOST}:8080/noauth/loginemp`,null, {
         params: { username: empusername, password: emppassword }
       })
       .then(res => {
         const data = res.data;
         if (!data || !Array.isArray(data.details) || data.details.length === 0) {
-          console.log("Empty or invalid employee data:", data);
           setEmperr("Invalid Username And Password");
           return;
         }
@@ -37,13 +36,12 @@ const navigate = useNavigate();
 
     const stu_handle_login = (e) => {
       e.preventDefault();
-      axios.get(`http://${import.meta.env.VITE_HOST}:8080/noauth/loginstu`, {
+      axios.post(`http://${import.meta.env.VITE_HOST}:8080/noauth/loginstu`,null, {
         params: { username: stuusername, password: stupassword }
       })
       .then(res => {
         const data = res.data;
         if (!data || !Array.isArray(data.details) || data.details.length === 0) {
-          console.log("Empty or invalid student data:", data);
           setStuerr("Invalid Username And Password");
           return;
         }

@@ -1,5 +1,6 @@
 package com.project.Backend.controller;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Backend.kafka.KafkaProducerService;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
 import com.project.Backend.model.Result;
@@ -26,7 +29,7 @@ import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.StudentRepo;
 import com.project.Backend.repository.SubjectsRepo;
 import com.project.Backend.repository.TeacherRepo;
-import com.project.Backend.service.EmployeeServices;
+import com.project.Backend.service.EmployeeServicesConsumer;
 //@CrossOrigin(
 //"*"
 ////origins = "http://localhost:3000",
@@ -39,15 +42,55 @@ import com.project.Backend.service.EmployeeServices;
 public class EmployeeController {
 	
 	
+	private final EmployeeServicesConsumer emps;
+	private final TeacherRepo teacherrepo;
+	private final KafkaProducerService kafkaProducerService;
+	private final QuestionsRepo qr;
+	private final ScheduleRepo schr;
+	private final StudentRepo sturepo;
+	private final RegulationRepo rr;
+	
 	@Autowired
-	EmployeeServices emps;
+	private ObjectMapper objectMapper;
 
-	@Autowired
-	TeacherRepo teacherrepo;
+	public EmployeeController(KafkaProducerService kafkaProducerService,
+							  QuestionsRepo qr,
+							  ScheduleRepo schr,
+							  EmployeeServicesConsumer emps,
+							  TeacherRepo teacherrepo,
+							  StudentRepo sturepo,
+							  RegulationRepo rr) {
+	    this.kafkaProducerService = kafkaProducerService;
+	    this.qr=qr;
+	    this.schr=schr;
+	    this.emps=emps;
+	    this.teacherrepo = teacherrepo;
+	    this.sturepo=sturepo;
+	    this.rr=rr;
+	}
 	
 	@PostMapping("/noauth/createteacher")
 	public String createTeacher(@RequestParam("name") String name,@RequestParam("username") String username,@RequestParam("branch") String branch,@RequestParam("teachsub") List<String> teachsub,@RequestParam(value="image",required = false) MultipartFile image,@RequestParam("role") String role) {
-		return emps.createemp(teacherrepo, name,username,branch,teachsub,image,role);
+		
+		try {
+			 HashMap<String, Object> kafkaData = new HashMap<>();
+		        kafkaData.put("name", name);
+		        kafkaData.put("username", username);
+		        kafkaData.put("branch", branch);
+		        kafkaData.put("teachsub", teachsub);
+		        kafkaData.put("role", role);
+		        if (image != null && !image.isEmpty()) {
+		            kafkaData.put("image", Base64.getEncoder().encodeToString(image.getBytes()));
+		        }
+		        String jsonMessage = objectMapper.writeValueAsString(kafkaData);
+	            kafkaProducerService.sendMessage("employee-create-topic", jsonMessage);
+		        return "employee creation request accepted";
+		        
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+	        return "Failed to enqueue teacher creation";
+		}
 	}
 	
 	@GetMapping("/teacher/getteachers")
@@ -56,16 +99,13 @@ public class EmployeeController {
 		return u;
 	}
 	
-	@Autowired
-	StudentRepo sturepo;
-	
 	@GetMapping("/teacher/getstudents")
 	public List<Students> getStudents(){
 		List<Students> s =sturepo.findAll();
 		return s;
 	}
 	
-	@GetMapping("/noauth/loginemp")
+	@PostMapping("/noauth/loginemp")
 	public HashMap<String,Object> loginemp(@RequestParam("username") String username,@RequestParam("password") String password) {
 		return emps.loginemp(teacherrepo, username.toUpperCase(),password);
 	}
@@ -75,12 +115,18 @@ public class EmployeeController {
 		return emps.checkeligibility(teacherrepo, username, coursecode);
 	}
 	
-	@Autowired
-	RegulationRepo rr;
 	
 	@PostMapping("/teacher/setregulation")
 	public String setregulation(@RequestBody Regulation reg) {
-		return emps.setregulation(rr,reg);
+		try {
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonMessage = objectMapper.writeValueAsString(reg);
+		kafkaProducerService.sendMessage("set-regulation-topic", jsonMessage);}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		//return emps.setregulation(rr,reg);
+		return "succesfully added";
 	}
 	
 	@GetMapping("/teacher/getregulation")
@@ -93,7 +139,15 @@ public class EmployeeController {
 	
 	@PostMapping("/teacher/postsubjects")
 	public String postsubjects(@RequestBody Subjects s) {
-		return emps.postsubjects(sr,s);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String jsonMessage = objectMapper.writeValueAsString(s);
+			kafkaProducerService.sendMessage("post-subjects-topic", jsonMessage);}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			return "succesfully subjects posted";
+		//return emps.postsubjects(sr,s);
 	}
 	
 	@GetMapping("/teacher/getsubjects")
@@ -101,12 +155,18 @@ public class EmployeeController {
 		return emps.getsubjects(sr,reg,branch,sem);
 	}
 	
-	@Autowired
-	QuestionsRepo qr;
 	
 	@PostMapping("/teacher/addquestions")
 	public String addquestion(@RequestBody Questions q) {
-		return emps.createquestion(qr,q);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String jsonMessage = objectMapper.writeValueAsString(q);
+			kafkaProducerService.sendMessage("add-question-topic", jsonMessage);}
+		catch(Exception e) {
+				e.printStackTrace();
+			}
+			return "succesfully added";
+		//return emps.createquestion(qr,q);
 	}
 	
 	@PutMapping("/teacher/updatequestion")
@@ -130,15 +190,27 @@ public class EmployeeController {
 	
 	@DeleteMapping("/teacher/deletequestion")
 	public String deletequestion(@RequestParam("id") String id) {
-		return emps.deleteQuestion(qr,id);
+		try {
+			kafkaProducerService.sendMessage("delete-question-topic", id);
+			}
+		catch(Exception e) {
+				e.printStackTrace();
+			}
+		return "successfully question deleted";
+		//return emps.deleteQuestion(qr,id);
 	}
-	
-	@Autowired
-	ScheduleRepo schr;
 	
 	@PostMapping("/teacher/addschedule")
 	public String addschedule(@RequestBody Schedule sch) {
-		return emps.addschedule(schr,sch);
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String jsonMessage = objectMapper.writeValueAsString(sch);
+			kafkaProducerService.sendMessage("add-schedule-topic", jsonMessage);}
+		catch(Exception e) {
+				e.printStackTrace();
+			}
+			return "succesfully added";
+		//return emps.addschedule(schr,sch);
 	}
 	
 	@GetMapping("/teacher/getresultslist")

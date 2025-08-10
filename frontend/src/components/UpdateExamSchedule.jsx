@@ -59,7 +59,7 @@ function UpdateExamSchedule({token}) {
       {headers:{Authorization:token},
       withCredentials: true,}
     )
-    .then(res=>{console.log(res.data);})
+    .then(res=>{console.log(res.data);alert("schedule updated")})
   }
 
   useEffect(() => {

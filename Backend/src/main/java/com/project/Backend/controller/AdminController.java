@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Backend.model.Schedule;
 import com.project.Backend.repository.ScheduleRepo;
-import com.project.Backend.service.AdminService;
+import com.project.Backend.service.AdminServiceConsumer;
 
 @RestController
 public class AdminController {
 	
 	@Autowired
-	AdminService as;
+	AdminServiceConsumer as;
 	
 	@Autowired
 	ScheduleRepo sr;

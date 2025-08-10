@@ -61,11 +61,6 @@ public class StudentController {
                              ScheduleRepo schr,
                              QuestionsRepo qr) {
     	this.kafkaProducerService = kafkaProducerService;
-//        this.kafkaconsumerservice = kafkaconsumerservice;
-//        this.stus = stus;
-//        this.sturepo = sturepo;
-//        this.schr=schr;
-//        this.qr=qr;
     }
 	
 	

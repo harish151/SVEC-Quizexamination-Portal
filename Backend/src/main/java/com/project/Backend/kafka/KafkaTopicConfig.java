@@ -113,4 +113,36 @@ public class KafkaTopicConfig {
                            .replicas(1)
                            .build();
     }
+    
+    @Bean
+    public NewTopic getsturesultTopic() {
+        return TopicBuilder.name("get-sturesult-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getsturesultresponseTopic() {
+        return TopicBuilder.name("get-sturesult-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getscheduleTopic() {
+        return TopicBuilder.name("get-schedule-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getscheduleresponseTopic() {
+        return TopicBuilder.name("get-schedule-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
 }

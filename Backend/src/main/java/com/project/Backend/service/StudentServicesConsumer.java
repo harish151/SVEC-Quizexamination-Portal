@@ -40,11 +40,13 @@ public class StudentServicesConsumer {
     private final StudentRepo studentRepo;
     private final ScheduleRepo schr;
     private final QuestionsRepo qr;
+    private final CommonFuncServicesConsumer cfs;
     
-    public StudentServicesConsumer(StudentRepo studentRepo,ScheduleRepo schr,QuestionsRepo qr) {
+    public StudentServicesConsumer(StudentRepo studentRepo,ScheduleRepo schr,QuestionsRepo qr,CommonFuncServicesConsumer cfs) {
         this.studentRepo = studentRepo;
         this.qr = qr;
-        this.schr=schr;    }
+        this.schr=schr;
+        this.cfs = cfs;}
 	
 	@KafkaListener(topics = "student-create-topic", groupId = "quiz-group")
     public void createstu(String message) {
@@ -62,7 +64,7 @@ public class StudentServicesConsumer {
             if (data.containsKey("image")) {
                 String base64Image = (String) data.get("image");
                 MultipartFile file = base64ToMultipartFile(base64Image, "student.jpg");
-                String imageUrl = new CommonFuncServicesConsumer().uploadImage(file, imgbbApiKey);
+                String imageUrl = cfs.uploadImage(file, imgbbApiKey);
                 student.setImage(imageUrl);
             }
             studentRepo.save(student);

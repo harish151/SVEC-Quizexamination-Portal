@@ -3,6 +3,7 @@ package com.project.Backend.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,26 +15,45 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Backend.kafka.KafkaProducerService;
+import com.project.Backend.model.Questions;
 import com.project.Backend.model.Result;
 import com.project.Backend.model.Schedule;
+import com.project.Backend.model.Students;
 import com.project.Backend.repository.ResultRepo;
 import com.project.Backend.repository.ScheduleRepo;
+import com.project.Backend.security.JwtUtil;
 
 @Service
 public class CommonFuncServicesConsumer {
 	
-	private final ObjectMapper objectMapper = new ObjectMapper();
-	
 	@Autowired
-	ResultRepo rr;
+	private KafkaTemplate<String, Object> kafkaTemplate;
+	
+	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final KafkaProducerService kafkaProducerService;
+	private final ResultRepo rr;
+	private final ScheduleRepo schr;
+	
+	
+	public CommonFuncServicesConsumer(KafkaProducerService kafkaProducerService,ResultRepo rr,ScheduleRepo schr) {
+		super();
+		this.kafkaProducerService = kafkaProducerService;
+		this.rr = rr;
+		this.schr = schr;
+	}
 
 
 	public String uploadImage(MultipartFile file, String imgbbApiKey) {
@@ -56,12 +76,26 @@ public class CommonFuncServicesConsumer {
         }
     }
 	
-	
-	public List<Result> getresults(String batch, String branch, String code, String type, String semester, String section,
-			String u) {
-		 List<Result> r = rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
-		 
-		 return r;
+	@KafkaListener(topics = "get-sturesult-topic", groupId = "quiz-group")
+	public void getresults(String message) {
+		Map<String, Object> data;
+		try {
+			data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+			String reqId = (String) data.get("id");
+			String batch = (String) data.get("batch");
+			String branch = (String) data.get("branch");
+			String code = (String) data.get("coursecode");
+			String type = (String) data.get("examtype");
+			String semester = (String) data.get("semester");
+			String section = (String) data.get("section");
+			String u = (String) data.get("username");
+			List<Result> r = rr.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSectionAndUsername(batch, branch, code, type, semester, section, u);
+			String jsonResponse = objectMapper.writeValueAsString(r);
+			kafkaTemplate.send("get-sturesult-response",reqId,jsonResponse);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@KafkaListener(topics = "upload-result-topic", groupId = "quiz-group")
@@ -94,10 +128,22 @@ public class CommonFuncServicesConsumer {
 	    }
 	}
 
-	
-	public List<Schedule> getschedule(ScheduleRepo schr, String branch, String semester) {
-		List<Schedule> sh = schr.findByBranchAndSemester(branch,semester);
-		return sh;
+	@KafkaListener(topics = "get-schedule-topic", groupId = "quiz-group")
+	public void getschedule( String message) {
+		
+		Map<String, Object> data;
+		try {
+			data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+			String reqId = (String) data.get("id");
+			String branch = (String) data.get("branch");
+			String semester = (String) data.get("semester");
+			List<Schedule> sh = schr.findByBranchAndSemester(branch,semester);
+			String jsonResponse = objectMapper.writeValueAsString(sh);
+			kafkaTemplate.send("get-schedule-response",reqId,jsonResponse);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	

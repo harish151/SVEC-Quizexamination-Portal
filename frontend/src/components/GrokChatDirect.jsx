@@ -17,7 +17,7 @@ function GroqChatDirect() {
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer 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', // ⚠️ Do NOT use this key in production or frontend
+          'Authorization': 'Bearer SECRET_KEY', // ⚠️ Do NOT use this key in production or frontend
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({

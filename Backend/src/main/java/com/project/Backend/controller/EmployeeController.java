@@ -1,10 +1,16 @@
 package com.project.Backend.controller;
 
+import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.kafka.KafkaProducerService;
 import com.project.Backend.model.Questions;
@@ -49,6 +57,8 @@ public class EmployeeController {
 	private final ScheduleRepo schr;
 	private final StudentRepo sturepo;
 	private final RegulationRepo rr;
+	private final Map<String, List<Object>> allstures = new ConcurrentHashMap<>();
+	private final Map<String, Object> noofque = new ConcurrentHashMap<>();
 	
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -177,26 +187,66 @@ public class EmployeeController {
 	@GetMapping("/teacher/getquestions")
 	public List<Questions> findallquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type)
 	{
-		List<Questions> q = emps.getAllQuestions(qr,year,type,branch,code);
+		List<Questions> q = emps.getAllQuestions(year,type,branch,code);
 		return q;
+	}
+	
+	@KafkaListener(topics = "get-noofqueposted-response", groupId = "quiz-group")
+	public void ReceiveNoOfQuePostedResponse(ConsumerRecord<String, String> record) {
+	    String reqId = record.key();
+	    String json = record.value();
+	    try {
+	        int data = objectMapper.readValue(json, Integer.class);
+	        noofque.put(reqId, data);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	@GetMapping("/teacher/getnumofqueposted")
 	public int findnumofqueposted(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type) {
-		List<Questions> faqc = findallquestions(year,branch,code,type);
-		int count = faqc.size();
-		return count;
+		String reqId = UUID.randomUUID().toString();
+		try {
+				HashMap<String, Object> kafkaData = new HashMap<>();
+			 	kafkaData.put("id", reqId);
+			 	kafkaData.put("batch", year);
+		        kafkaData.put("branch", branch);
+		        kafkaData.put("coursecode", code);
+		        kafkaData.put("examtype", type);
+		        String jsonMessage = objectMapper.writeValueAsString(kafkaData);
+				kafkaProducerService.sendMessage("get-noofqueposted-topic", jsonMessage);  
+		}
+		catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		int waitTime=0;
+	    while(!noofque.containsKey(reqId) && waitTime < 50) {
+	    	try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+	    	waitTime++;
+	    }
+	    if (noofque.containsKey(reqId)) {
+	    	int response = (int) noofque.get(reqId);
+	    	return response;
+	    }
+	    else {
+	    	return 0;
+	    }
 	}
 	
 	@DeleteMapping("/teacher/deletequestion")
 	public String deletequestion(@RequestParam("id") String id) {
 		try {
 			kafkaProducerService.sendMessage("delete-question-topic", id);
+			return "successfully question deleted";
 			}
 		catch(Exception e) {
 				e.printStackTrace();
+				return "error occurred";
 			}
-		return "successfully question deleted";
 		//return emps.deleteQuestion(qr,id);
 	}
 	
@@ -205,17 +255,64 @@ public class EmployeeController {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonMessage = objectMapper.writeValueAsString(sch);
-			kafkaProducerService.sendMessage("add-schedule-topic", jsonMessage);}
+			kafkaProducerService.sendMessage("add-schedule-topic", jsonMessage);
+			return "succesfully added";
+			}
 		catch(Exception e) {
 				e.printStackTrace();
+				return "error occurred";
 			}
-			return "succesfully added";
 		//return emps.addschedule(schr,sch);
 	}
 	
+	
+	@KafkaListener(topics = "all-sturesults-response",groupId = "quiz-group")
+	public void ReceiveGetResultsWithoutUsernameResponse(ConsumerRecord<String, String> record) {
+		String reqId = record.key();
+	    String json = record.value();
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    try {
+	    	List<Object> data = objectMapper.readValue(json, new TypeReference<>() {});
+	    	allstures.put(reqId, data);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 	@GetMapping("/teacher/getresultslist")
-	public List<Result> getresultswithoutusername(@RequestParam("batch") String batch,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type,@RequestParam("semester") String semester,@RequestParam("section") String section) {
-		return emps.getresultswithoutusername(batch,branch,code,type,semester,section);
+	public List<Object> getresultswithoutusername(@RequestParam("batch") String batch,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("exam_type") String type,@RequestParam("semester") String semester,@RequestParam("section") String section) {
+		String reqId = UUID.randomUUID().toString();
+		try {
+				HashMap<String, Object> kafkaData = new HashMap<>();
+			 	kafkaData.put("id", reqId);
+			 	kafkaData.put("batch", batch);
+		        kafkaData.put("branch", branch);
+		        kafkaData.put("coursecode", code);
+		        kafkaData.put("examtype", type);
+		        kafkaData.put("semester", semester);
+		        kafkaData.put("section", section);
+		        String jsonMessage = objectMapper.writeValueAsString(kafkaData);
+				kafkaProducerService.sendMessage("all-sturesults-topic", jsonMessage);  
+		}
+		catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		int waitTime=0;
+	    while(!allstures.containsKey(reqId) && waitTime < 50) {
+	    	try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+	    	waitTime++;
+	    }
+	    if (allstures.containsKey(reqId)) {
+	    	List<Object> response = allstures.get(reqId);
+	    	return response;
+	    }
+	    else {
+	    	return null;
+	    }
 	}
 	
 }

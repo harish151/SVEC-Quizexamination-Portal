@@ -177,4 +177,36 @@ public class KafkaTopicConfig {
                            .replicas(1)
                            .build();
     }
+    
+    @Bean
+    public NewTopic allsturesultsTopic() {
+        return TopicBuilder.name("all-sturesults-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic allsturesultsresponseTopic() {
+        return TopicBuilder.name("all-sturesults-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getnoofquepostedTopic() {
+        return TopicBuilder.name("get-noofqueposted-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getnoofquepostedresponseTopic() {
+        return TopicBuilder.name("get-noofqueposted-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
 }

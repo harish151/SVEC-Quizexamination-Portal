@@ -7,16 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Backend.controller.EmployeeController;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
 import com.project.Backend.model.Result;
@@ -36,6 +41,9 @@ public class EmployeeServicesConsumer {
 	
 	@Value("${imgbb.api.key}")
     private String imgbbApiKey;
+	
+	@Autowired
+	private KafkaTemplate<String, Object> kafkaTemplate;
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();
     private final TeacherRepo teacherrepo;
@@ -194,10 +202,28 @@ public class EmployeeServicesConsumer {
 	    }
 	}
 	
-	public List<Questions> getAllQuestions(QuestionsRepo qr, String year, String type, String branch,String code) {
+	public List<Questions> getAllQuestions(String year, String type, String branch,String code) {
 		return qr.findQuestions(year,type,branch,code);
 		
 	}
+	
+	@KafkaListener(topics = "get-noofqueposted-topic", groupId = "quiz-group")
+    public void handleGetNoOfQuePosted(String message) {
+        try {
+            Map<String, Object> data = objectMapper.readValue(message, new TypeReference<>() {});
+            String reqId = (String) data.get("id");
+            String batch = (String) data.get("batch");
+            String branch = (String) data.get("branch");
+            String coursecode = (String) data.get("coursecode");
+            String examtype = (String) data.get("examtype");
+            List<Questions> questions = qr.findQuestions(batch,examtype, branch, coursecode);
+            int count = questions.size();
+            String jsonResponse = objectMapper.writeValueAsString(count);
+            kafkaTemplate.send("get-noofqueposted-response", reqId, jsonResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@KafkaListener(topics = "delete-question-topic", groupId = "quiz-group")
 	public void deleteQuestion(String message) {
@@ -222,10 +248,25 @@ public class EmployeeServicesConsumer {
 	    }
 	}
 	
-	public List<Result> getresultswithoutusername(String batch, String branch, String code, String type,
-			String semester, String section) {
-		List<Result>  res = rr1.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, code, type, semester, section);
-		res.sort(Comparator.comparing(Result::getUsername));
-		return res;
+	@KafkaListener(topics = "all-sturesults-topic", groupId = "quiz-group")
+	public void getresultswithoutusername(String message) {
+		Map<String, Object> data;
+		try {
+			data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+			String reqId = (String) data.get("id");
+			String batch = (String) data.get("batch");
+			String branch = (String) data.get("branch");
+			String coursecode = (String) data.get("coursecode");
+			String examtype = (String) data.get("examtype");
+			String semester = (String) data.get("semester");
+			String section = (String) data.get("section");
+			List<Result>  res = rr1.findByBatchAndBranchAndCoursecodeAndExamTypeAndSemesterAndSection(batch, branch, coursecode, examtype, semester, section);
+			res.sort(Comparator.comparing(Result::getUsername));
+			String jsonResponse = objectMapper.writeValueAsString(res);
+			kafkaTemplate.send("all-sturesults-response",reqId,jsonResponse);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -22,23 +22,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.kafka.KafkaProducerService;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.repository.ScheduleRepo;
-import com.project.Backend.service.AdminServiceConsumer;
 
 @RestController
 public class AdminController {
 	
 	Map<String, List<Object>> getadminexamsche = new ConcurrentHashMap<>();
 	private final KafkaProducerService kafkaProducerService;
-	private final AdminServiceConsumer as;
 	
 	@Autowired
     private ObjectMapper objectMapper;
 	
 	
-	public AdminController(KafkaProducerService kafkaProducerService,AdminServiceConsumer as, ScheduleRepo sr) {
+	public AdminController(KafkaProducerService kafkaProducerService, ScheduleRepo sr) {
 		super();
 		this.kafkaProducerService = kafkaProducerService;
-		this.as = as;
 	}
 	
 	@KafkaListener(topics = "admin-getschedule-response",groupId = "quiz-group")

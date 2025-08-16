@@ -43,6 +43,22 @@ public class KafkaTopicConfig {
     }
     
     @Bean
+    public NewTopic emploginrequestTopic() {
+        return TopicBuilder.name("emplogin-request-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic emploginresponseTopic() {
+        return TopicBuilder.name("employee-login-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
     public NewTopic postsubjectsTopic() {
         return TopicBuilder.name("post-subjects-topic")
                            .partitions(3)
@@ -205,6 +221,70 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic getnoofquepostedresponseTopic() {
         return TopicBuilder.name("get-noofqueposted-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic checkeligibilityTopic() {
+        return TopicBuilder.name("check-eligible-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic checkeligibilityresponseTopic() {
+        return TopicBuilder.name("check-eligible-topic-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getregulationTopic() {
+        return TopicBuilder.name("get-regulation-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getregulationresponseTopic() {
+        return TopicBuilder.name("get-regulation-topic-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getsubjectsTopic() {
+        return TopicBuilder.name("get-subjects-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic getsubjectsresponseTopic() {
+        return TopicBuilder.name("get-subject-topic-response")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic updatequeTopic() {
+        return TopicBuilder.name("update-question-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
+    
+    @Bean
+    public NewTopic updatequeresponseTopic() {
+        return TopicBuilder.name("update-question-topic-response")
                            .partitions(3)
                            .replicas(1)
                            .build();

@@ -21,17 +21,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.kafka.KafkaProducerService;
 import com.project.Backend.model.Result;
-import com.project.Backend.model.Schedule;
-import com.project.Backend.repository.ScheduleRepo;
-import com.project.Backend.service.CommonFuncServicesConsumer;
 
-//@CrossOrigin(
-//"*"
-////origins = "http://localhost:3000",
-////allowedHeaders = "*",
-////exposedHeaders = "Authorization",
-////allowCredentials = "true"
-//)
+
 
 @RestController
 public class CommonFuncController {
@@ -40,17 +31,11 @@ public class CommonFuncController {
 	private ObjectMapper objectMapper;
 	
 	private final KafkaProducerService kafkaProducerService;
-	private final CommonFuncServicesConsumer cfs;
-	private final ScheduleRepo schr;
 	Map<String, List<Object>> getresult = new ConcurrentHashMap<>();
 	Map<String, List<Object>> getschedule = new ConcurrentHashMap<>();
 	
-	public CommonFuncController(KafkaProducerService kafkaProducerService,
-								CommonFuncServicesConsumer cfs,
-								ScheduleRepo schr) {
+	public CommonFuncController(KafkaProducerService kafkaProducerService) {
 	    this.kafkaProducerService = kafkaProducerService;
-	    this.schr = schr; 
-	    this.cfs = cfs;
 	}
 	
 	@KafkaListener(topics = "get-sturesult-response",groupId = "quiz-group")

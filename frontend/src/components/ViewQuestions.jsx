@@ -36,7 +36,7 @@ function ViewQuestions({username,token}) {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/checkeligibility`,{headers:{Authorization:token},
       withCredentials: true,params:{username:username,coursecode:ccode}})
     .then(res =>{
-      if(res.data==="eligible"){
+      if(res.data.output==="eligible"){
           axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getquestions`,{headers:{Authorization:token},
       withCredentials: true,params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
           .then(res =>{ if(res.data!=""){setQuestion(res.data);setDisplayque(1);}

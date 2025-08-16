@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.controller.EmployeeController;
 import com.project.Backend.model.Questions;
@@ -97,8 +98,15 @@ public class EmployeeServicesConsumer {
 	}
 
 	
-	public HashMap<String,Object> loginemp(TeacherRepo teacherrepo, String username, String password) {
-		List<Teachers> t = teacherrepo.findByUsernameAndPassword(username, password);
+    @KafkaListener(topics = "emplogin-request-topic", groupId = "quiz-group")
+	public void loginemp(String message) {
+    	Map<String, Object> data;
+    	try {
+    		data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+			String reqId = (String) data.get("id");
+			String username = (String) data.get("username");
+			String password = (String) data.get("password");
+			List<Teachers> t = teacherrepo.findByUsernameAndPassword(username, password);
 		if(!t.isEmpty()) {  //if document is present
 				Teachers teacher = t.get(0);        
 				String role = teacher.getRole();
@@ -107,20 +115,58 @@ public class EmployeeServicesConsumer {
 				//String r = (String) t.get("role");
 				hm.put("token", jw.generateToken(username,role));
 				hm.put("details", t);
-				return hm; 
+				try {
+					String json = objectMapper.writeValueAsString(hm);
+					kafkaTemplate.send("employee-login-response",reqId,json);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				} 
 		}
 		else {
-			return null; //there is no document
-		}
+			Map<String, Object> errorResponse = Map.of(
+				    "error", "Invalid credentials"
+				);
+			kafkaTemplate.send("employee-login-response",reqId,errorResponse);
+		}}
+    	catch(Exception e) {
+    		e.printStackTrace();
+    	}
 	}
 	
-	public String checkeligibility(TeacherRepo teacherrepo,String username,String coursecode) {
-		Teachers u = teacherrepo.findByUsernameAndTeachsubjects(username,coursecode);
-		if(u!=null) {
-			return "eligible";
+    @KafkaListener(topics = "check-eligible-topic", groupId = "quiz-group")
+	public void checkeligibility(String message) {
+		Map<String, Object> data;
+		try {
+			data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+			String reqId = (String) data.get("id");
+			String username = (String) data.get("username");
+			String coursecode = (String) data.get("coursecode");
+			Teachers u = teacherrepo.findByUsernameAndTeachsubjects(username,coursecode);
+			if(u!=null) {
+				HashMap<String,Object> hm = new HashMap<>();
+				hm.put("id",reqId);
+				hm.put("output","eligible");
+				try {
+					String json = objectMapper.writeValueAsString(hm);
+					kafkaTemplate.send("check-eligible-topic-response",reqId,json);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				HashMap<String,Object> hm = new HashMap<>();
+				hm.put("id",reqId);
+				hm.put("output","noteligible");
+				try {
+					String json = objectMapper.writeValueAsString(hm);
+					kafkaTemplate.send("check-eligible-topic-response",reqId,json);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		else {
-			return "noteligible";
+		catch(Exception e) {
+			return;
 		}
 	}
 	
@@ -135,13 +181,27 @@ public class EmployeeServicesConsumer {
 	    }
 	}
 	
-	public List<Regulation> getregulation(RegulationRepo rr,String batch,String branch) {
-		List<Regulation> reg = rr.findByBatchAndBranch(batch,branch);
-		if(reg == null)	
-			return null;
-		else 
-			return reg;
-	}
+	@KafkaListener(topics = "get-regulation-topic", groupId = "quiz-group")
+    public void getRegulation(String message) {
+		Map<String, Object> data;
+        try {
+        	data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+			String reqId = (String) data.get("id");
+			String batch = (String) data.get("batch");
+			String branch = (String) data.get("branch");
+
+            List<Regulation> result = rr.findByBatchAndBranch(batch, branch);
+
+            // Serialize response
+            String responseJson = objectMapper.writeValueAsString(result);
+
+            // Send back to response topic with same key (reqId)
+            kafkaTemplate.send("get-regulation-topic-response", reqId, responseJson);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@KafkaListener(topics = "post-subjects-topic", groupId = "quiz-group")
 	public void postsubjects(String message) {
@@ -154,10 +214,23 @@ public class EmployeeServicesConsumer {
 	    }
 	}
 	
-	public List<Subjects> getsubjects(SubjectsRepo sr, String reg, String branch, String sem) {
-		List<Subjects> s = sr.findByRegulationAndBranchAndSemester(reg,branch,sem);
-		return s;
-	}
+	@KafkaListener(topics = "get-subject-topics", groupId = "quiz-group")
+    public void getSubjects(String message) {
+		Map<String, Object> data;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
+            String reqId = (String) data.get("id");
+            String reg = (String) data.get("regulation");
+            String branch = (String) data.get("branch");
+            String sem = (String) data.get("semester");
+            List<Subjects> result = sr.findByRegulationAndBranchAndSemester(reg, branch, sem);
+            String responseJson = objectMapper.writeValueAsString(result);
+            kafkaTemplate.send("get-subject-topic-response", reqId, responseJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@KafkaListener(topics = "add-question-topic", groupId = "quiz-group")
 	public void createquestion(String message) {
@@ -181,31 +254,72 @@ public class EmployeeServicesConsumer {
 	    }
 	}
 
-	public int updatequestion(QuestionsRepo qr, Questions q) {
-	    Optional<Questions> optional = qr.findById(q.getId());
-	    if (optional.isPresent()) {
-	        Questions existing = optional.get();
-	        existing.setBatch(q.getBatch());
-	        existing.setExam_type(q.getExam_type());
-	        existing.setBranch(q.getBranch());
-	        existing.setSemester(q.getSemester());
-	        existing.setQuestion_no(q.getQuestion_no());
-	        existing.setQuestion(q.getQuestion().trim());
-	        List<String> options = q.getOptions();
-		    options.replaceAll(String::trim);
-		    existing.setOptions(options);
-	        existing.setAnswer(q.getAnswer().trim());
-	        qr.save(existing);
-	        return 1;
-	    } else {
-	    	return 2;
+	@KafkaListener(topics = "update-question-topic", groupId = "quiz-group")
+	public void updateQuestion(String message) {
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    try {
+	        JsonNode root = objectMapper.readTree(message);
+	        
+	        // Extract request ID and question object from the message
+	        String reqId = root.get("id").asText();
+	        JsonNode questionNode = root.get("question");
+
+	        Questions q = objectMapper.treeToValue(questionNode, Questions.class);
+
+	        Optional<Questions> optional = qr.findById(q.getId());
+	        int result;
+
+	        if (optional.isPresent()) {
+	            Questions existing = optional.get();
+	            existing.setBatch(q.getBatch());
+	            existing.setExam_type(q.getExam_type());
+	            existing.setBranch(q.getBranch());
+	            existing.setSemester(q.getSemester());
+	            existing.setQuestion_no(q.getQuestion_no());
+	            existing.setQuestion(q.getQuestion().trim());
+
+	            List<String> options = q.getOptions();
+	            if (options != null) {
+	                options.replaceAll(String::trim);
+	                existing.setOptions(options);
+	            }
+
+	            existing.setAnswer(q.getAnswer().trim());
+
+	            qr.save(existing);
+	            result = 1;
+	        } else {
+	            result = 2;
+	        }
+
+	        kafkaTemplate.send("update-question-topic-response", reqId, String.valueOf(result));
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        // You may not have a reqId here, so log it at least
+	        kafkaTemplate.send("update-question-topic-response", null, "-1");
 	    }
 	}
+
 	
-	public List<Questions> getAllQuestions(String year, String type, String branch,String code) {
-		return qr.findQuestions(year,type,branch,code);
-		
-	}
+	@KafkaListener(topics = "get-question-topic", groupId = "quiz-group")
+    public void getQuestions(String message) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode root = objectMapper.readTree(message);
+            String reqId = root.get("id").asText();
+            String year = root.get("batch").asText();
+            String branch = root.get("branch").asText();
+            String code = root.get("coursecode").asText();
+            String type = root.get("exam_type").asText();
+            List<Questions> questions = qr.findQuestions(year, type, branch, code);
+            String responseJson = objectMapper.writeValueAsString(questions);
+            kafkaTemplate.send("get-question-topic-response", reqId, responseJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@KafkaListener(topics = "get-noofqueposted-topic", groupId = "quiz-group")
     public void handleGetNoOfQuePosted(String message) {

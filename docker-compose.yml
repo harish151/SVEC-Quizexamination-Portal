@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  zookeeper:
+    image: zookeeper:3.8
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.2.1  # ✅ specific version that works with Zookeeper
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      
+  postgres:
+    image: postgres:13
+    container_name: judge0-postgres
+    environment:
+      POSTGRES_USER: judge0
+      POSTGRES_PASSWORD: judge0
+      POSTGRES_DB: judge0
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - judge0
+
+  redis:
+    image: redis:6
+    container_name: judge0-redis
+    networks:
+      - judge0
+
+  api:
+    image: judge0/judge0:latest
+    container_name: judge0-api
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=judge0
+      - DB_USERNAME=judge0
+      - DB_PASSWORD=judge0
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JUDGE0_WORKERS=4
+      - JUDGE0_USE_SECCOMP=true
+    ports:
+      - "2358:2358"
+    networks:
+      - judge0
+
+volumes:
+  postgres-data:
+
+networks:
+  judge0:
+    driver: bridge

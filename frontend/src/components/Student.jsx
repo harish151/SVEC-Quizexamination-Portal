@@ -10,7 +10,7 @@ function Student() {
   const location = useLocation();
   const details = location.state?.details || null;
   const token = location.state?.token || null;
-  const [page,setPage] = useState(<StudentDashBoard details={details} branch={details[0].branch} token={token} />);
+  const [page,setPage] = useState(<StudentDashBoard details={details} token={token} />);
   const dashboardRef = useRef(null);
   const profileRef = useRef(null);
   const examsRef = useRef(null);

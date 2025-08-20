@@ -9,7 +9,7 @@ function ExamSchedule(props) {
   const token = props.token;
   const [schedule,setSchedule] = useState([]);
   const [exam,setExam] = useState("");
-  const[branch]=useState(props.branch);
+  const[branch]=useState(details[0].branch);
   const [result,setResult]= useState([])
   useEffect(() => {
       const fetchSchedules = async () => {

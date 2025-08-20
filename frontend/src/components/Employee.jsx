@@ -11,7 +11,7 @@ function Employee() {
   const navigate = useNavigate();
   const details = location.state?.details || null;
   const token = location.state?.token || null;
-  const [page,setPage] = useState(<ExamSchedule branch={details[0].branch} details={details} token={token} />);
+  const [page,setPage] = useState(<ExamSchedule details={details} token={token} />);
   const dashboardRef = useRef(null);
   const conductexamRef = useRef(null);
   const updatescheduleRef = useRef(null);

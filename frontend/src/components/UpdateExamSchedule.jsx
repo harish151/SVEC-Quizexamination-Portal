@@ -54,12 +54,12 @@ function UpdateExamSchedule({token}) {
 
   const updateschedule =(e)=>{
     e.preventDefault();
-    console.log(date,starttime,endtime);
+    // console.log(date,starttime,endtime);
     axios.post(`http://${import.meta.env.VITE_HOST}:8080/admin/updateschedule`,{id:id,examtype:exam_type,branch:branch,semester:semester,coursecode:ccode,subject:subjectText,date:date,startTime:starttime,endTime:endtime},
       {headers:{Authorization:token},
       withCredentials: true,}
     )
-    .then(res=>{console.log(res.data);alert("schedule updated")})
+    .then(res=>{alert(res.data);})
   }
 
   useEffect(() => {

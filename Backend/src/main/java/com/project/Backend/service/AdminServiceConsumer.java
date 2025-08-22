@@ -2,7 +2,6 @@ package com.project.Backend.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.Backend.model.Questions;
-import com.project.Backend.model.Regulation;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.repository.ScheduleRepo;
 
@@ -69,8 +66,17 @@ public class AdminServiceConsumer {
 			s.setStartTime(sc.getStartTime());
 			s.setEndTime(sc.getEndTime());
 			sr.save(s);
+			String jsonResponse = "sucessfully schedule updated";
+			kafkaTemplate.send("admin-updateschedule-response",s.getId(),jsonResponse);
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	    	try {
+		    	Schedule sc = objectMapper.readValue(message, Schedule.class);
+		    	String jsonResponse = "error occured";
+				kafkaTemplate.send("admin-updateschedule-response",sc.getId(),jsonResponse);
+	    	}
+	    	catch(Exception e1) {
+	    		e1.printStackTrace();
+	        }
 	    }
 	}
 	

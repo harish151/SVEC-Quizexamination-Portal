@@ -27,6 +27,7 @@ import com.project.Backend.repository.ScheduleRepo;
 public class AdminController {
 	
 	Map<String, List<Object>> getadminexamsche = new ConcurrentHashMap<>();
+	Map<String, String> scheupdate = new ConcurrentHashMap<>();
 	private final KafkaProducerService kafkaProducerService;
 	
 	@Autowired
@@ -87,9 +88,22 @@ public class AdminController {
 	}
 	
 	
+	@KafkaListener(topics = "admin-updateschedule-response",groupId = "quiz-group")
+	public void ReceiveUpdateScheduleResponse(ConsumerRecord<String, String> record) {
+		String reqId = record.key();
+	    String json = record.value();
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    try {
+	    	String data = json;
+	    	scheupdate.put(reqId, data);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 	
 	@PostMapping("/admin/updateschedule")
-	public void updateschedule(@RequestBody Schedule sc) {
+	public String updateschedule(@RequestBody Schedule sc) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonMessage = objectMapper.writeValueAsString(sc);
@@ -98,6 +112,21 @@ public class AdminController {
 		catch(Exception e) {
 				e.printStackTrace();
 			}
-		//as.updateschedule(sc);
+		int waitTime=0;
+	    while(!scheupdate.containsKey(sc.getId()) && waitTime < 50) {
+	    	try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+	    	waitTime++;
+	    }
+	    if (scheupdate.containsKey(sc.getId())) {
+	    	String response = scheupdate.get(sc.getId());
+	    	return response;
+	    }
+	    else {
+	    	return null;
+	    }
 	}
 }

@@ -19,9 +19,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Backend.model.QuesAndAnsProgress;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Students;
+import com.project.Backend.model.Subjects;
+import com.project.Backend.repository.ProgressRepo;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.StudentRepo;
@@ -40,13 +43,16 @@ public class StudentServicesConsumer {
     private final StudentRepo studentRepo;
     private final ScheduleRepo schr;
     private final QuestionsRepo qr;
+    private final ProgressRepo pr;
     private final CommonFuncServicesConsumer cfs;
     
-    public StudentServicesConsumer(StudentRepo studentRepo,ScheduleRepo schr,QuestionsRepo qr,CommonFuncServicesConsumer cfs) {
+    public StudentServicesConsumer(StudentRepo studentRepo,ScheduleRepo schr,QuestionsRepo qr,ProgressRepo pr,CommonFuncServicesConsumer cfs) {
         this.studentRepo = studentRepo;
         this.qr = qr;
         this.schr=schr;
-        this.cfs = cfs;}
+        this.pr = pr;
+        this.cfs = cfs;
+        }
 	
 	@KafkaListener(topics = "student-create-topic", groupId = "quiz-group")
     public void createstu(String message) {
@@ -140,14 +146,37 @@ public class StudentServicesConsumer {
 		try {
 			data = objectMapper.readValue(message, new TypeReference<Map<String, Object>>() {});
 			String reqId = (String) data.get("id");
+			String username = (String) data.get("username");
 			String batch = (String) data.get("batch");
 			String branch = (String) data.get("branch");
 			String coursecode = (String) data.get("coursecode");
 			String examtype = (String) data.get("examtype");
-			List<Questions> q = qr.findQuestions(batch,examtype,branch,coursecode);
-			List<Questions> shuffle = shuffleQuestions(q);
-			String jsonResponse = objectMapper.writeValueAsString(shuffle);
-			kafkaTemplate.send("get-examque-response",reqId,jsonResponse);
+			List<QuesAndAnsProgress> p = pr.findByUsername(username);
+			if(p.isEmpty()) {
+				List<Questions> q = qr.findQuestions(batch,examtype,branch,coursecode);
+				List<Questions> shuffle = shuffleQuestions(q);
+				QuesAndAnsProgress pro = new QuesAndAnsProgress();
+				for(Questions ques : shuffle) {
+					pro.setId(ques.getId());
+					pro.setBatch(ques.getBatch());          // batch
+				    pro.setExam_type(ques.getExam_type());  // exam type
+				    pro.setBranch(ques.getBranch());        // branch
+				    pro.setSemester(ques.getSemester());    // semester
+				    pro.setCoursecode(ques.getCoursecode());// course code
+				    pro.setQuestion_no(ques.getQuestion_no());// question number
+				    pro.setQuestion(ques.getQuestion());    // question text
+				    pro.setOptions(ques.getOptions());      // options
+				    pro.setAnswer(ques.getAnswer());
+				    pro.setUsername(username); 
+				    pr.save(pro);
+				}
+				String jsonResponse = objectMapper.writeValueAsString(shuffle);
+				kafkaTemplate.send("get-examque-response",reqId,jsonResponse);
+			}
+			else {
+				String jsonResponse = objectMapper.writeValueAsString(p);
+				kafkaTemplate.send("get-examque-response",reqId,jsonResponse);
+			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -160,5 +189,16 @@ public class StudentServicesConsumer {
             Collections.shuffle(que.getOptions());
         }
 		return q;
+	}
+	
+	@KafkaListener(topics = "update-progress-topic", groupId = "quiz-group")
+	public void updateprogess(String message) {
+		try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        QuesAndAnsProgress pro = objectMapper.readValue(message, QuesAndAnsProgress.class);
+	        pr.save(pro);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 }

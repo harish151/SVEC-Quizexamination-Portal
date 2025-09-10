@@ -29,6 +29,7 @@ function Exam() {
   const details =[{"batch":batch,"branch":branch,"name":name,"semester":semester,"section":section,"username":username,"role":role,"image":image}]
   const [exitcount,setExitcount]=useState(0);
   const [fullscreen,setFullscreen]=useState(true);
+  const [getAnswers,setGetAnswers]=useState(new Array(20).fill(null));
   const submitRef = useRef(false);
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function Exam() {
     if (!document.fullscreenElement) {
       setFullscreen(false);
       if(exitcount<=0 && submitRef.current){
-      alert("If your are escape again then your exam will be auto submitted. Don't open new tabs otherwise your exam will be submitted.");
+      alert("dont click esc again.");
     }
     setExitcount((prev) => prev + 1);
     const el = document.getElementById("fullscreenbutton");
@@ -105,8 +106,20 @@ useEffect(() => {
       }
   }
 
+ const updateprogress = (e,id,username,batch,exam_type,branch,semester,coursecode,question_no,question,options,answer,selectedopt)=>{
+  e.preventDefault();
+  axios.put(`http://${import.meta.env.VITE_HOST}:8080/student/updateprogress`, 
+      {id:id,username:username,batch:batch,exam_type:exam_type,branch:branch,semester:semester,coursecode:coursecode,question_no:question_no,question:question,options:options,answer:answer,selectedopt:selectedopt},
+      {
+      headers: { Authorization: token, 'Content-Type': 'application/json'},
+      withCredentials: true
+    })
+    .catch(err => alert(err))
+ }
+
  const calculatemarks = (e)=>{
     if (e && e.preventDefault) e.preventDefault();
+    console.log(getAnswers);
     alert("exam submitted.");
     // const params = new URLSearchParams();
     // originalans.forEach(item => {
@@ -119,7 +132,7 @@ useEffect(() => {
 
   //console.log(batch,branch,semester,coursecode,examtype,section,username,originalans,answers)
     axios.post(`http://${import.meta.env.VITE_HOST}:8080/common/uploadresults`, 
-      {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username,originalans:originalans,attemptedans:answers},
+      {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username,originalans:originalans,attemptedans:getAnswers},
       {
       headers: { Authorization: token, 'Content-Type': 'application/json'},
       withCredentials: true
@@ -138,13 +151,16 @@ useEffect(() => {
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/student/examquestions`, {
         headers:{Authorization:token},
         withCredentials: true,
-        params: { batch:batch, branch:branch, coursecode:coursecode, examtype:examtype }
+        params: { username:username ,batch:batch, branch:branch, coursecode:coursecode, examtype:examtype }
       })
       .then((res) => {
-        
+        console.log(res.data);
         setQuestions(res.data);
         const ans = (res.data).map(q => q.answer);
         setOriginalans(ans);
+        const selectedoption = (res.data).map(q => q.selectedopt);
+        setAnswers(selectedoption);
+        setGetAnswers(selectedoption);
       })
       .catch((err) => alert(err));}
   }, [batch, branch, coursecode, examtype]);
@@ -167,10 +183,23 @@ useEffect(() => {
     return `${m}:${s}`;
   };
 
+  // useEffect(() => {
+  //   if (timeLeft > 0 && timeLeft % 10 === 0) {
+  //     axios.post("http://localhost:8080/api/exam/save-time", {
+  //       username: username,
+  //       exam_type: examtype,
+  //       remainingTime: timeLeft,
+  //     })
+  //     .then(() => console.log("Saved remaining time:", timeLeft))
+  //     .catch(err => console.error("Error saving time:", err));
+  //   }
+  // }, [timeLeft]);
+
   const divs = [];
   for(let i=0;i<20;i++){
   divs.push(
-      <li key={i} className='border' id={`qno${i}`} style={{width:'40px',height:'45px',lineHeight:'40px',textAlign:'center',cursor:'pointer'}} onClick={()=>setQno(i)} >{i+1}</li>
+    
+      <li key={i} className='border' id={`qno${i}`} style={{width:'40px',height:'45px',lineHeight:'40px',textAlign:'center',cursor:'pointer',backgroundColor:getAnswers[i]!=null?'green':''}} onClick={()=>setQno(i)} >{i+1}</li>
   );}
 
 
@@ -211,11 +240,11 @@ useEffect(() => {
               </b>
               {questions[qno].options.map((opt, index) => (
                 <div key={index} style={{ padding: '10px' }}>
-                  <input type='radio' id={`qno${qno}option${index}`} value={opt} checked={answers[qno] === opt}
+                  <input type='radio' id={`qno${qno}option${index}`} name={`qno${qno}`} value={opt} checked={answers[qno] === opt}
                     onChange={() => {
-                      const updatedAnswers = [...answers];
-                      updatedAnswers[qno] = opt;
-                      setAnswers(updatedAnswers);
+                       const updatedAnswers = [...answers];
+                       updatedAnswers[qno] = opt;
+                       setAnswers(updatedAnswers);
                     }} />
                   <label htmlFor={`qno${qno}option${index}`} style={{ cursor: 'pointer' }}>
                     {opt}
@@ -225,9 +254,16 @@ useEffect(() => {
                 <div className='d-flex gap-5 justify-content-end'>
                   <button type="button" className="btn btn-outline-secondary" onClick={()=>{if(qno!=0){setQno(qno-1)}}} >Previous</button>
                   <button type="button" className="btn btn-outline-secondary" 
-                      onClick={()=>{if(qno<19){setQno(qno+1)}else{setQno(0);}
+                      onClick={(e)=>{const updatedAnswers = [...answers];
+                                    const selectedOption = document.querySelector(
+                                      `input[name="qno${qno}"]:checked`
+                                    )?.value;
+                                    updatedAnswers[qno] = selectedOption;
+                                    setGetAnswers(updatedAnswers);
+                                    if(qno<19){setQno(qno+1)}else{setQno(0);}
                                     if(answers[qno]===null){document.getElementById(`qno${qno}`).style.backgroundColor = "red";}
                                     else{document.getElementById(`qno${qno}`).style.backgroundColor = "green";}
+                                    updateprogress(e,questions[qno].id,username,batch,examtype,branch,semester,coursecode,qno+1,questions[qno].question,questions[qno].options,questions[qno].answer,answers[qno]);
                                     }}> &nbsp;&nbsp; Next &nbsp;&nbsp;&nbsp; </button>
                 </div>
                 </div>

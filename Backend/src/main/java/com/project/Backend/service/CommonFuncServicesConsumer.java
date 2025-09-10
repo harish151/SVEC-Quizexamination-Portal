@@ -3,7 +3,6 @@ package com.project.Backend.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,26 +14,20 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.kafka.KafkaProducerService;
-import com.project.Backend.model.Questions;
 import com.project.Backend.model.Result;
 import com.project.Backend.model.Schedule;
-import com.project.Backend.model.Students;
 import com.project.Backend.repository.ResultRepo;
 import com.project.Backend.repository.ScheduleRepo;
-import com.project.Backend.security.JwtUtil;
 
 @Service
 public class CommonFuncServicesConsumer {

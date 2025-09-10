@@ -289,4 +289,12 @@ public class KafkaTopicConfig {
                            .replicas(1)
                            .build();
     }
+    
+    @Bean
+    public NewTopic updateprogressTopic() {
+        return TopicBuilder.name("update-progress-topic")
+                           .partitions(3)
+                           .replicas(1)
+                           .build();
+    }
 }

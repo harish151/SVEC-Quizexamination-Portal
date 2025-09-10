@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +24,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.kafka.KafkaConsumerService;
 import com.project.Backend.kafka.KafkaProducerService;
+import com.project.Backend.model.QuesAndAnsProgress;
+import com.project.Backend.model.Subjects;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.ScheduleRepo;
 import com.project.Backend.repository.StudentRepo;
@@ -193,12 +197,13 @@ public class StudentController {
 	}
 	
 	@GetMapping("/student/examquestions")
-	public List<Object> findallexamquestions(@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("examtype") String type)
+	public List<Object> findallexamquestions(@RequestParam("username") String username ,@RequestParam("batch") String year,@RequestParam("branch") String branch,@RequestParam("coursecode") String code,@RequestParam("examtype") String type)
 	{
 		String reqId = UUID.randomUUID().toString();
 		try {
 				HashMap<String, Object> kafkaData = new HashMap<>();
 			 	kafkaData.put("id", reqId);
+			 	kafkaData.put("username", username);
 			 	kafkaData.put("batch",year );
 		        kafkaData.put("branch", branch);
 		        kafkaData.put("coursecode", code);
@@ -227,4 +232,14 @@ public class StudentController {
 	}
 	
 
+	@PutMapping("/student/updateprogress")
+	public void updateprogress(@RequestBody QuesAndAnsProgress p) {
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			String jsonMessage = objectMapper.writeValueAsString(p);
+			kafkaProducerService.sendMessage("update-progress-topic", jsonMessage);}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
 }

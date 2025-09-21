@@ -55,7 +55,6 @@ function Exam() {
   return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
 }, [exitcount]);
 
-
 useEffect(() => {
     const handleVisibilityChange = (e) => {
       if (document.visibilityState === 'hidden') {
@@ -105,6 +104,7 @@ useEffect(() => {
         document.msExitFullscreen();
       }
   }
+
 
  const updateprogress = (e,id,username,batch,exam_type,branch,semester,coursecode,question_no,question,options,answer,selectedopt)=>{
   e.preventDefault();
@@ -164,18 +164,6 @@ useEffect(() => {
       })
       .catch((err) => alert(err));}
   }, [batch, branch, coursecode, examtype]);
-
-  // useEffect(() => {
-  //   if(session){
-  //   if (timeLeft <= 0){
-  //     calculatemarks();
-  //     return;
-  //   }
-  //   const interval = setInterval(() => {
-  //     setTimeLeft(prevTime => prevTime - 1);
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }}, [timeLeft]);
 
   useEffect(() => {
   if (isActive) {

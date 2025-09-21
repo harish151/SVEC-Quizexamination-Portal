@@ -3,6 +3,7 @@ package com.project.Backend.model;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "results")
@@ -15,6 +16,7 @@ public class Result {
 	String coursecode;
 	String examType;
 	String section;
+	@Indexed(unique = true)
 	String username;
 	List<String> originalans;
 	List<String> attemptedans;

@@ -26,6 +26,8 @@ function Exam() {
   const [originalans,setOriginalans] = useState(new Array(20).fill(null));
   const [answers, setAnswers] = useState(new Array(20).fill(null));
   const [timeLeft, setTimeLeft] = useState(20*60);
+  const [isActive, setIsActive] = useState(true);
+  const intervalRef = useRef(null);
   const details =[{"batch":batch,"branch":branch,"name":name,"semester":semester,"section":section,"username":username,"role":role,"image":image}]
   const [exitcount,setExitcount]=useState(0);
   const [fullscreen,setFullscreen]=useState(true);
@@ -37,6 +39,8 @@ function Exam() {
     if (!document.fullscreenElement) {
       setFullscreen(false);
       if(exitcount<=0 && submitRef.current){
+      togglePause();
+      setIsActive(false);
       alert("dont click esc again.");
     }
     setExitcount((prev) => prev + 1);
@@ -57,11 +61,7 @@ useEffect(() => {
       if (document.visibilityState === 'hidden') {
         calculatemarks(e);
         alert("exam submitted. You Opened New Tab.")
-       }// else if (document.visibilityState === 'visible') {
-         //alert('Exam submitted');
-        
-      //   navigate("/student",{state:{details,token}});
-       //}
+       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
@@ -154,32 +154,58 @@ useEffect(() => {
         params: { username:username ,batch:batch, branch:branch, coursecode:coursecode, examtype:examtype }
       })
       .then((res) => {
-        console.log(res.data);
         setQuestions(res.data);
         const ans = (res.data).map(q => q.answer);
         setOriginalans(ans);
         const selectedoption = (res.data).map(q => q.selectedopt);
         setAnswers(selectedoption);
         setGetAnswers(selectedoption);
+        setIsActive(true);
       })
       .catch((err) => alert(err));}
   }, [batch, branch, coursecode, examtype]);
 
+  // useEffect(() => {
+  //   if(session){
+  //   if (timeLeft <= 0){
+  //     calculatemarks();
+  //     return;
+  //   }
+  //   const interval = setInterval(() => {
+  //     setTimeLeft(prevTime => prevTime - 1);
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }}, [timeLeft]);
+
   useEffect(() => {
-    if(session){
-    if (timeLeft <= 0){
-      calculatemarks();
-      return;
-    }
-    const interval = setInterval(() => {
-      setTimeLeft(prevTime => prevTime - 1);
+  if (isActive) {
+    intervalRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev > 0) {
+          return prev - 1;
+        } else {
+          clearInterval(intervalRef.current);
+          calculatemarks(); // auto-submit
+          return 0; // ✅ must return a number
+        }
+      });
     }, 1000);
-    return () => clearInterval(interval);
-  }}, [timeLeft]);
+  } else {
+    clearInterval(intervalRef.current);
+  }
+
+  return () => clearInterval(intervalRef.current);
+}, [isActive]);
+
+
+  const togglePause = () => {
+    setIsActive((prev) => !prev);
+  };
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
+    
     return `${m}:${s}`;
   };
 
@@ -217,7 +243,7 @@ useEffect(() => {
        {
        fullscreen==false? (
           exitcount<=1 ?(<div id='fullscreenbutton' style={{display:'flex',backdropFilter:'blur(5px)',position:'absolute',width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}><button type='button' 
-          onClick={(e)=>{e.preventDefault();goFullscreen();
+          onClick={(e)=>{e.preventDefault();goFullscreen();togglePause(); setIsActive(true);
                       }}>CONTINUE TO EXAM</button></div>):(calculatemarks())):("")}
                     
       <form onSubmit={calculatemarks}>
@@ -225,7 +251,7 @@ useEffect(() => {
           <table border="0" cellPadding={10}>
             <tbody>
               <tr>
-                <td><h4 className='fs-1'>{formatTime(timeLeft)}</h4></td>
+                <td><h4 className='fs-1'>{questions.length > 0 ? formatTime(timeLeft) : "Loading..."}</h4></td>
                 <td><button type="submit" className="btn btn-success" ref={submitRef} onClick={()=>{exitFullscreen()}}>SUBMIT</button></td>
               </tr>
             </tbody>
@@ -264,7 +290,7 @@ useEffect(() => {
                                     if(answers[qno]===null){document.getElementById(`qno${qno}`).style.backgroundColor = "red";}
                                     else{document.getElementById(`qno${qno}`).style.backgroundColor = "green";}
                                     updateprogress(e,questions[qno].id,username,batch,examtype,branch,semester,coursecode,qno+1,questions[qno].question,questions[qno].options,questions[qno].answer,answers[qno]);
-                                    }}> &nbsp;&nbsp; Next &nbsp;&nbsp;&nbsp; </button>
+                                    }}> &nbsp;&nbsp; Save & Next &nbsp;&nbsp;&nbsp; </button>
                 </div>
                 </div>
               )}

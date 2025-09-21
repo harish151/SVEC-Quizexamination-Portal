@@ -107,7 +107,7 @@ public class StudentController {
 	    String reqId = UUID.randomUUID().toString();
 	    HashMap<String, Object> kafkaData = new HashMap<>();
 	    kafkaData.put("id", reqId);
-        kafkaData.put("username", username);
+        kafkaData.put("username", username.toUpperCase().trim());
         kafkaData.put("password", password);
 		String jsonMessage;
 		try {

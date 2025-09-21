@@ -23,7 +23,6 @@ import com.project.Backend.model.QuesAndAnsProgress;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Students;
-import com.project.Backend.model.Subjects;
 import com.project.Backend.repository.ProgressRepo;
 import com.project.Backend.repository.QuestionsRepo;
 import com.project.Backend.repository.ScheduleRepo;

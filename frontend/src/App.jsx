@@ -8,6 +8,7 @@ import Exam from './components/Exam'
 import Employee from './components/Employee'
 import GroqChatDirect from './components/GrokChatDirect'
 import MyCodeEditor from './components/MyCodeEditor'
+import Timer from './components/Timer'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
           <Route path="/exam" element={<Exam />} />
           <Route path="/chat" element={<GroqChatDirect />} />
           <Route path="/editor" element={<MyCodeEditor />} />
+          <Route path="/timer" element={<Timer />} />
         </Routes>
       </Router>
   )

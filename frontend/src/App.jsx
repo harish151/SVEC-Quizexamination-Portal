@@ -8,7 +8,6 @@ import Exam from './components/Exam'
 import Employee from './components/Employee'
 import GroqChatDirect from './components/GrokChatDirect'
 import MyCodeEditor from './components/MyCodeEditor'
-import Timer from './components/Timer'
 
 function App() {
 

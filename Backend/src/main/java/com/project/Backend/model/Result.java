@@ -20,6 +20,7 @@ public class Result {
 	String username;
 	List<String> originalans;
 	List<String> attemptedans;
+	String status = null;
 	double marks;
 	public String getId() {
 		return id;
@@ -86,6 +87,12 @@ public class Result {
 	}
 	public void setAttemptedans(List<String> attemptedans) {
 		this.attemptedans = attemptedans;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	@Override
 	public String toString() {

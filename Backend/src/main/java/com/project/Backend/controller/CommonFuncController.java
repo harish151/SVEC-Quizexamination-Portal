@@ -101,7 +101,7 @@ public class CommonFuncController {
 	        kafkaData.put("username", r.getUsername());
 	        kafkaData.put("originalans", r.getOriginalans());
 	        kafkaData.put("attemptedans", r.getAttemptedans());
-	        System.out.println(r.getAttemptedans());
+	        kafkaData.put("status", r.getStatus());
 	        String jsonMessage = objectMapper.writeValueAsString(kafkaData);
 	        kafkaProducerService.sendMessage("upload-result-topic", jsonMessage);
 

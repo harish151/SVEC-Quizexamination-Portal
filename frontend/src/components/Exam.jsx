@@ -35,6 +35,17 @@ function Exam() {
   const submitRef = useRef(false);
 
   useEffect(() => {
+  const handleUnload = () => {
+    console.log("Page is closing, cleanup here.");
+    return null;
+    // cancel API calls, stop timers, etc.
+  };
+
+  window.addEventListener("beforeunload", handleUnload);
+  return () => window.removeEventListener("beforeunload", handleUnload);
+}, []);
+
+  useEffect(() => {
   const onFullscreenChange = () => {
     if (!document.fullscreenElement) {
       setFullscreen(false);

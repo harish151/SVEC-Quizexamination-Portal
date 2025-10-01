@@ -7,7 +7,7 @@ services:
       - "2181:2181"
 
   kafka:
-    image: confluentinc/cp-kafka:7.2.1  # ✅ specific version that works with Zookeeper
+    image: confluentinc/cp-kafka:7.2.1
     depends_on:
       - zookeeper
     ports:
@@ -20,7 +20,36 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
- 
+  # postgres:
+  #   image: postgres:14
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: judge0
+  #     POSTGRES_PASSWORD: judge0
+  #     POSTGRES_DB: judge0
+  #   ports:
+  #     - "5432:5432"
+
+  # redis:
+  #   image: redis:6
+  #   restart: always
+  #   ports:
+  #     - "6379:6379"
+
+  # judge0:
+  #   image: judge0/judge0:latest
+  #   restart: always
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   environment:
+  #     - POSTGRES_USER=judge0
+  #     - POSTGRES_PASSWORD=judge0
+  #     - POSTGRES_DB=judge0
+  #     - POSTGRES_HOST=postgres
+  #     - REDIS_HOST=redis
+  #   ports:
+  #     - "2359:2359"   # Judge0 API available at http://localhost:2358
 
 networks:
   default:

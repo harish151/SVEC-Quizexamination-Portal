@@ -27,6 +27,7 @@ function Exam() {
   const [answers, setAnswers] = useState(new Array(20).fill(null));
   const [timeLeft, setTimeLeft] = useState(20*60);
   const [isActive, setIsActive] = useState(true);
+  const [status, setStatus] = useState("incomplete");
   const intervalRef = useRef(null);
   const details =[{"batch":batch,"branch":branch,"name":name,"semester":semester,"section":section,"username":username,"role":role,"image":image}]
   const [exitcount,setExitcount]=useState(0);
@@ -34,6 +35,7 @@ function Exam() {
   const [getAnswers,setGetAnswers]=useState(new Array(20).fill(null))
   const [isreloaded,setIsreloaded] = useState(false);
   const submitRef = useRef(false);
+  const isSubmitted = useRef(false);
   const examStateKey = `examState_${username}_${examtype}_${coursecode}`;
 
   useEffect(() => {
@@ -88,8 +90,7 @@ function Exam() {
 useEffect(() => {
   const handleVisibilityChange = (e) => {
     if (document.visibilityState === 'hidden' && document.hasFocus()) {
-      calculatemarks(e);
-      alert("Exam submitted. You Opened New Tab.");
+      calculatemarks(e, "auto-submitted");
     }
   };
   document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -147,29 +148,28 @@ useEffect(() => {
     .catch(err => alert(err))
  }
 
- const calculatemarks = (e)=>{
+ const calculatemarks = (e, submissionStatus)=>{
+    if (isSubmitted.current) {
+        if (e && e.preventDefault) e.preventDefault();
+        return;
+    }
+    isSubmitted.current = true;
+
     if (e && e.preventDefault) e.preventDefault();
+    
     console.log(getAnswers);
-    alert("exam submitted.");
-    // const params = new URLSearchParams();
-    // originalans.forEach(item => {
-    //   params.append("originalans", item ?? "");  // handle nulls
-    // });
+    
+    const finalStatus = submissionStatus || status;
 
-    // answers.forEach(item => {
-    //   params.append("attemptedans", item ?? "");
-    // });
-
-  //console.log(batch,branch,semester,coursecode,examtype,section,username,originalans,answers)
     axios.post(`http://${import.meta.env.VITE_HOST}:8080/common/uploadresults`, 
-      {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username,originalans:originalans,attemptedans:getAnswers},
+      {batch:batch,branch:branch,semester:semester,coursecode:coursecode,examType: examtype,section:section,username:username,originalans:originalans,attemptedans:getAnswers,status:finalStatus},
       {
       headers: { Authorization: token, 'Content-Type': 'application/json'},
       withCredentials: true
     })
-   // .then(res=>{console.log(res.data)})
     .catch(err => alert(err))
     setSession(false);
+    alert("exam submitted.");
     let t = true;
     if(t){
     navigate("/student",{state:{details,token}});}
@@ -228,7 +228,7 @@ useEffect(() => {
           return prev - 1;
         } else {
           clearInterval(intervalRef.current);
-          calculatemarks(); // auto-submit
+          calculatemarks(null, "auto-submitted"); // auto-submit
           return 0; // ✅ must return a number
         }
       });
@@ -306,7 +306,7 @@ useEffect(() => {
             <tbody>
               <tr>
                 <td><h4 className='fs-1'>{questions.length > 0 ? formatTime(timeLeft) : "Loading..."}</h4></td>
-                <td><button type="submit" className="btn btn-success" ref={submitRef} onClick={()=>{exitFullscreen()}}>SUBMIT</button></td>
+                <td><button type="submit" className="btn btn-success" ref={submitRef} onClick={()=>{exitFullscreen();setStatus("submitted")}}>SUBMIT</button></td>
               </tr>
             </tbody>
           </table>

@@ -31,19 +31,38 @@ function Exam() {
   const details =[{"batch":batch,"branch":branch,"name":name,"semester":semester,"section":section,"username":username,"role":role,"image":image}]
   const [exitcount,setExitcount]=useState(0);
   const [fullscreen,setFullscreen]=useState(true);
-  const [getAnswers,setGetAnswers]=useState(new Array(20).fill(null));
+  const [getAnswers,setGetAnswers]=useState(new Array(20).fill(null))
+  const [isreloaded,setIsreloaded] = useState(false);
   const submitRef = useRef(false);
+  const examStateKey = `examState_${username}_${examtype}_${coursecode}`;
 
   useEffect(() => {
   const handleUnload = () => {
     console.log("Page is closing, cleanup here.");
-    return null;
     // cancel API calls, stop timers, etc.
   };
 
   window.addEventListener("beforeunload", handleUnload);
   return () => window.removeEventListener("beforeunload", handleUnload);
 }, []);
+
+  useEffect(() => {
+    // Check sessionStorage for the reloaded state
+    const reloaded = sessionStorage.getItem('reloaded');
+    if (reloaded === 'true') {
+      setIsreloaded(true);
+      setFullscreen(false);
+      togglePause();
+      setIsActive(false);
+    }
+    else{
+      window.addEventListener("beforeunload", (ev) => {
+              ev.returnValue = "Exam cannot be submitted due to system sleep or power off.";
+              alert("Exam cannot be submitted due to system sleep or power off.");
+          });
+      }
+  }, []);
+
 
   useEffect(() => {
   const onFullscreenChange = () => {
@@ -67,17 +86,17 @@ function Exam() {
 }, [exitcount]);
 
 useEffect(() => {
-    const handleVisibilityChange = (e) => {
-      if (document.visibilityState === 'hidden') {
-        calculatemarks(e);
-        alert("exam submitted. You Opened New Tab.")
-       }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+  const handleVisibilityChange = (e) => {
+    if (document.visibilityState === 'hidden' && document.hasFocus()) {
+      calculatemarks(e);
+      alert("Exam submitted. You Opened New Tab.");
+    }
+  };
+  document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [questions, originalans,answers]);
+  };
+}, [questions, originalans, answers]);
   
 
   const goFullscreen = () => {
@@ -156,6 +175,24 @@ useEffect(() => {
     navigate("/student",{state:{details,token}});}
   }
 
+  const saveExamState = () => {
+    const examState = {
+      answers: answers,
+      timeLeft: timeLeft,
+      qno: qno,
+    };
+    localStorage.setItem(examStateKey, JSON.stringify(examState));
+  };
+
+  const restoreExamState = () => {
+    const savedState = localStorage.getItem(examStateKey);
+    if (savedState) {
+      const { answers: savedAnswers, timeLeft: savedTimeLeft, qno: savedQno } = JSON.parse(savedState);
+      setAnswers(savedAnswers);
+      setTimeLeft(savedTimeLeft);
+      setQno(savedQno);
+    }
+  };
 
   useEffect(() => {
     if(session){
@@ -166,12 +203,18 @@ useEffect(() => {
       })
       .then((res) => {
         setQuestions(res.data);
+        restoreExamState();
         const ans = (res.data).map(q => q.answer);
         setOriginalans(ans);
         const selectedoption = (res.data).map(q => q.selectedopt);
         setAnswers(selectedoption);
         setGetAnswers(selectedoption);
         setIsActive(true);
+        window.addEventListener("beforeunload", (ev) => {
+              ev.preventDefault();
+              sessionStorage.setItem('reloaded', 'false');
+              setIsreloaded(true);
+          });
       })
       .catch((err) => alert(err));}
   }, [batch, branch, coursecode, examtype]);
@@ -181,6 +224,7 @@ useEffect(() => {
     intervalRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev > 0) {
+          saveExamState();
           return prev - 1;
         } else {
           clearInterval(intervalRef.current);
@@ -239,7 +283,18 @@ useEffect(() => {
 
   return (
     <div >
+       {console.log(isreloaded)}
        {
+       isreloaded?(
+       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <h2 style={{ color: 'red' }}>ERROR: PAGE RELOADED.</h2>
+      </div>
+       ):
+       (
+        <>
+        {
+
+
        fullscreen==false? (
           exitcount<=1 ?(<div id='fullscreenbutton' style={{display:'flex',backdropFilter:'blur(5px)',position:'absolute',width:'100%',height:'100%',alignItems:'center',justifyContent:'center'}}><button type='button' 
           onClick={(e)=>{e.preventDefault();goFullscreen();togglePause(); setIsActive(true);
@@ -247,7 +302,7 @@ useEffect(() => {
                     
       <form onSubmit={calculatemarks}>
         <div className="d-flex justify-content-end" style={{alignItems:'center',marginRight:'2%'}}>
-          <table border="0" cellPadding={10}>
+          <table border="0" cellPadding={10} >
             <tbody>
               <tr>
                 <td><h4 className='fs-1'>{questions.length > 0 ? formatTime(timeLeft) : "Loading..."}</h4></td>
@@ -257,7 +312,7 @@ useEffect(() => {
           </table>
         </div>
         <div className='d-flex border' style={{height:'100vh',width:'100vw'}}>
-            <div className='border w-75'>
+            <div className='border w-75' >
               { 
                 questions[qno] && (<div style={{display:'flex',flexDirection:'column',padding:'10px'}}>
               <b style={{paddingBottom:'10px'}}>
@@ -306,6 +361,8 @@ useEffect(() => {
             </div>
         </div>
       </form>
+      </>
+       )}
     </div>
   )
 }

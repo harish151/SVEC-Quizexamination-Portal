@@ -4,31 +4,32 @@ import { useState,useEffect } from 'react';
 import FormComponent from './Form';
 
 function ViewQuestions({username,token}) {
-     const [regulation, setRegulation] = useState("V20");
-      const [batch, setBatch] = useState("2021");
-      const [branch, setBranch] = useState("CSE");
-      const [semester, setSemester] = useState("I");
+     const [regulation, setRegulation] = useState();
+      const [batch, setBatch] = useState(-1);
+      const [branch, setBranch] = useState(-1);
+      const [semester, setSemester] = useState(-1);
       const [subjects, setSubjects] = useState({});
-      const [sections,setSections] = useState(["ALL"]);
+      const [sections,setSections] = useState([-1,"ALL"]);
       const [ccode,setCcode] = useState("");
-      const [exam_type,setExam_type] = useState("MID-1");
+      const [exam_type,setExam_type] = useState(-1);
       const [displayque,setDisplayque] = useState(0);
       const [question,setQuestion] = useState([]);
       const [buttonname,setButtonname] = useState("View Questions");
       const [ subjectText,  setSubjectText] = useState("");
       const [updatebutton,setUpdatebutton] = useState("UPDATE");
 
-    const handleregulation = (selectedBatch) => {
+    const handleregulation = (selectedBatch,selectedbranch) => {
+    if (selectedBatch === -1 || selectedbranch === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
       headers:{Authorization:token},
       withCredentials: true,
-      params: { batch: selectedBatch,branch:branch}
+      params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
       console.log(res.data[0].regulation);
       setRegulation(res.data[0].regulation);
     })
-    .catch(err => {alert(err);setSubjects([""])});
+    .catch(err => {alert(err);setSubjects({})});
   };
 
   const handleviewquestions =(e)=>{
@@ -65,6 +66,7 @@ function ViewQuestions({username,token}) {
   }
 
     useEffect(() => {
+    if(batch === -1 || branch === -1 || semester === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
       headers:{Authorization:token},
       withCredentials: true,

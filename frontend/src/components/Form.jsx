@@ -14,6 +14,7 @@ function FormComponent({
   buttonname,
   handleregulation,
   handlequestions,
+  // subjectText,
   setSubjectText,
 }) {
   return (
@@ -46,10 +47,11 @@ function FormComponent({
                     setDisplay(0);
                   }}
                 >
-                  <option value="2021">2021</option>
+                  <option value="-1" disabled>SELECT</option>
                   <option value="2022">2022</option>
                   <option value="2023">2023</option>
                   <option value="2024">2024</option>
+                  <option value="2025">2025</option>
                 </select>
               </td>
             </tr>
@@ -67,6 +69,7 @@ function FormComponent({
                                     setDisplay(0);
                                     handleregulation(batch,selectedbranch);}}
                 >
+                  <option value="-1" disabled>SELECT</option>
                   <option value="CSE">COMPUTER SCIENCE AND ENGINEERING</option>
                   <option value="ECE">ELECTRONICS AND COMMUNICATION ENGINEERING</option>
                   <option value="ECT">ELECTRICAL AND ELECTRONICS ENGINEERING (ECT)</option>
@@ -88,8 +91,11 @@ function FormComponent({
                   name="semester"
                   id="semester"
                   value={semester}
-                  onChange={(e) => {setSemester(e.target.value);setSubjectText(subjects.subjectname[0]);}}
+                  onChange={(e) => {setSemester(e.target.value);setSubjectText(subjects.subjectname[0]);
+                    setExam_type(-1);
+                  }}
                 >
+                  <option value="-1" disabled>SELECT</option>
                   <option value="I">I</option>
                   <option value="II">II</option>
                   <option value="III">III</option>
@@ -107,8 +113,8 @@ function FormComponent({
               <td>:</td>
               <td>
                 <select name="subject" id="subject-select" value={ccode} onChange={(e)=>{
-                  const selectedText = e.target.options[e.target.selectedIndex].text;
-                  setCcode(e.target.value);setSubjectText(selectedText);}} >
+                  let selectedText = e.target.options[e.target.selectedIndex].text;
+                  setCcode(e.target.value);setSubjectText(selectedText);setExam_type(-1);}} >
                     <option value="-1" disabled>SELECT</option>
                   {Array.isArray(subjects.subjectname) && subjects.subjectname.length > 0 ? (
                     subjects.subjectname.map((name, index) => (
@@ -126,18 +132,27 @@ function FormComponent({
               <td>SECTION</td>
               <td>:</td>
               <td>
-              <select name="section" id="section" value={selectedsec} onChange={(e)=>{setSelectedsec(e.target.value);}}>
-                {sections.map((i)=>(<option key={i} value={i}>{i}</option>))}
+              <select name="section" id="section" value={selectedsec} onChange={(e)=>{setSelectedsec(e.target.value);setExam_type(-1);}}>
+                {sections.map((i)=>(<option key={i} value={i}>{i==-1?"SELECT":i}</option>))}
               </select></td>
             </tr>
             <tr>
               <td>EXAM</td>
               <td>:</td>
               <td>
+                {(ccode && ccode.length >= 3 && ccode[ccode.length - 3] === 'L' || ccode.includes('CSTJE01') || ccode.includes('CSTJE02'))?(
                 <select name="exam" id="exam-select" value={exam_type} onChange={(e)=>{setExam_type(e.target.value);setDisplay(0);}}>
+                  <option value="-1" disabled>SELECT</option>
+                  <option value="INTERNAL">INTERNAL</option>
+                  <option value="EXTERNAL">EXTERNAL</option>
+                </select>
+                ):
+                (<select name="exam" id="exam-select" value={exam_type} onChange={(e)=>{setExam_type(e.target.value);setDisplay(0);}}>
+                  <option value="-1" disabled>SELECT</option>
                   <option value="MID-1">MID-1</option>
                   <option value="MID-2">MID-2</option>
                 </select>
+                )}
               </td>
             </tr>
           </tbody>

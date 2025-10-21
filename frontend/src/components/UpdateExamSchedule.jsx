@@ -5,17 +5,17 @@ import FormComponent from './Form';
 
 function UpdateExamSchedule({token}) {
 
-  const [regulation, setRegulation] = useState("V20");
-    const [batch, setBatch] = useState("2021");
-    const [branch, setBranch] = useState("CSE");
-    const [semester, setSemester] = useState("I");
+  const [regulation, setRegulation] = useState();
+    const [batch, setBatch] = useState(-1);
+    const [branch, setBranch] = useState(-1);
+    const [semester, setSemester] = useState(-1);
     const [subjects, setSubjects] = useState({});
     const [sections,setSections] = useState(["ALL"]);
     const [ccode,setCcode] = useState("");
-    const [exam_type,setExam_type] = useState("MID-1");
+    const [exam_type,setExam_type] = useState(-1);
     const [displayque,setDisplayque] = useState(0);
     const [buttonname,setButtonname] = useState("SHOW");
-    const [ subjectText, setSubjectText] = useState("LINEAR ALGEBRA AND DIFFERNTIAL EQUATIONS");
+    const [ subjectText, setSubjectText] = useState("");
     const [schedule,setSchedule] = useState({});
     const [starttime,setStarttime] = useState("");
     const [endtime,setEndtime] = useState("");
@@ -25,6 +25,7 @@ function UpdateExamSchedule({token}) {
 
 
     const handleregulation = (selectedBatch,selectedbranch) => {
+    if (selectedBatch === -1 || selectedbranch === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
       headers:{Authorization:token},
       withCredentials: true,
@@ -63,6 +64,7 @@ function UpdateExamSchedule({token}) {
   }
 
   useEffect(() => {
+    if(batch === -1 || branch === -1 || semester === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
       headers:{Authorization:token},
       withCredentials: true,

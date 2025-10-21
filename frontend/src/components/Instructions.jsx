@@ -18,7 +18,12 @@ function Instructions(props) {
     const handleexam = (e)=>{
       e.preventDefault();
       goFullscreen();
+      if(examtype==="MID-1" || examtype==="MID-2"){
       navigate("/exam",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:examtype,semester:semester,section:section,username:username,image:image,session:true,role:role,token:token}});
+      }
+      else{
+      navigate("/labexam",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:examtype,semester:semester,section:section,username:username,image:image,session:true,role:role,token:token}});
+      }
     }
     const goFullscreen = () => {
         const elem = document.documentElement;

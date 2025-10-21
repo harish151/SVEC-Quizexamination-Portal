@@ -7,26 +7,27 @@ import { saveAs } from 'file-saver';
 
 function ViewResult({token}) {
 
-    const [regulation, setRegulation] = useState("V20");
-    const [batch, setBatch] = useState("2021");
-    const [branch, setBranch] = useState("CSE");
-    const [semester, setSemester] = useState("I");
+    const [regulation, setRegulation] = useState();
+    const [batch, setBatch] = useState(-1);
+    const [branch, setBranch] = useState(-1);
+    const [semester, setSemester] = useState(-1);
     const [subjects, setSubjects] = useState({});
-    const [sections,setSections] = useState(["A","B","C","D"]);
-    const[selectedsec,setSelectedsec] = useState("A");
+    const [sections,setSections] = useState([-1,"A","B","C","D"]);
+    const[selectedsec,setSelectedsec] = useState();
     const [ccode,setCcode] = useState("");
-    const [exam_type,setExam_type] = useState("MID-1");
+    const [exam_type,setExam_type] = useState(-1);
     const [result,setResult] = useState([]);
     const [buttonname,setButtonname] = useState("View Result");
     const [displayres,setDisplayres] = useState(true);
-    const [setDisplay] = useState(0);
-    const [subjectText, setSubjectText] = useState("LINEAR ALGEBRA AND DIFFERNTIAL EQUATIONS");
+    const [display,setDisplay] = useState(0);
+    const [subjectText, setSubjectText] = useState();
 
     const handleregulation = (selectedBatch,selectedbranch) => {
+    if (selectedBatch === -1 || selectedbranch === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
       headers:{Authorization:token},
       withCredentials: true,
-      params: { batch: selectedBatch, branch:selectedbranch }
+      params: { batch: selectedBatch, branch:selectedbranch  }
     })
     .then(res => {
       console.log(res.data);
@@ -46,6 +47,7 @@ function ViewResult({token}) {
 
 
     useEffect(() => {
+    if(batch === -1 || branch === -1 || semester === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
       headers:{Authorization:token},
       withCredentials: true,

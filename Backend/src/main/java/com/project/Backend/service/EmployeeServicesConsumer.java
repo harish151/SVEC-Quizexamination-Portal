@@ -237,6 +237,7 @@ public class EmployeeServicesConsumer {
 		try {
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        Questions que = objectMapper.readValue(message, Questions.class);
+	        que.setQueformate(que.getQueformate());
 	        que.setBatch(que.getBatch());
 			que.setExam_type(que.getExam_type());
 			que.setBranch(que.getBranch());

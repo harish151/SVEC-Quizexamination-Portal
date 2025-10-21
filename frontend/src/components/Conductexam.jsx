@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FormComponent from './Form';
+import CodingQuestions from './CodingQuestions';
 
 function ConductExam({username,token}) {
   // console.log(username);
 
-  const [regulation, setRegulation] = useState("V20");
-  const [batch, setBatch] = useState("2021");
-  const [branch, setBranch] = useState("CSE");
-  const [semester, setSemester] = useState("I");
+  const [regulation, setRegulation] = useState();
+  const [batch, setBatch] = useState(-1);
+  const [branch, setBranch] = useState(-1);
+  const [semester, setSemester] = useState(-1);
   const [subjects, setSubjects] = useState({});
   const [sections,setSections] = useState(["ALL"]);
   const [ccode,setCcode] = useState("");
-  const [exam_type,setExam_type] = useState("MID-1");
+  const [exam_type,setExam_type] = useState(-1);
   const [displayque,setDisplayque] = useState(0);
   const [question,setQuestion] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
@@ -22,13 +23,13 @@ function ConductExam({username,token}) {
   const [ subjectText, setSubjectText] = useState("");
 
   const handleregulation = (selectedBatch,selectedbranch) => {
+    if (selectedBatch === -1 || selectedbranch === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getregulation`, {
       headers:{Authorization:token},
       withCredentials: true,
       params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
-      console.log(res.data[0].regulation);
       setRegulation(res.data[0].regulation);
     })
     .catch(err => alert(err));
@@ -83,6 +84,7 @@ function ConductExam({username,token}) {
   }
 
   useEffect(() => {
+    if(batch === -1 || branch === -1 || semester === -1) return;
     axios.get(`http://${import.meta.env.VITE_HOST}:8080/teacher/getsubjects`, {
       headers:{Authorization:token},
       withCredentials: true,
@@ -154,11 +156,13 @@ function ConductExam({username,token}) {
         setButtonname = {setButtonname}
         handleregulation={handleregulation}
         handlequestions={handleaddquestions}
+        subjectText={subjectText}
         setSubjectText={setSubjectText}
       />
       <div style={{marginTop:'10px',marginBottom:'10px'}}>
       <div style={{display:'none'}}>{subjectText}</div>
-      {displayque ===1 ? (divs):(null)}
+      {displayque ===1 && (exam_type==="MID-1" || exam_type==="MID-2")? (divs):(null)}
+      {displayque ===1 && (exam_type==="INTERNAL" || exam_type==="EXTERNAL")? (<CodingQuestions />):(null)}
       </div>
     </div>
   );

@@ -8,18 +8,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "exam_questions")
 public class Questions {
 	@Id
-	String id;
-	String batch="";
-	String exam_type="";
-	String branch="";
-	String semester="";
-	String coursecode="";
-	String question_no="";
-	String question="";
-	public List<String> options=null;
-	String answer="";
+	private String id;
+	private String batch="";
+	private String exam_type="";
+	private String branch="";
+	private String semester="";
+	private String coursecode="";
+	private String question_no="";
+	private String question="";
+	private List<String> options=null;
+	private String answer="";
+	private String queformate="";
 	
 	
+	public String getQueformate() {
+		return queformate;
+	}
+	public void setQueformate(String queformate) {
+		this.queformate = queformate;
+	}
 	public String getId() {
 		return id;
 	}
@@ -80,12 +87,6 @@ public class Questions {
 	}
 	public void setAnswer(String answer) {
 		this.answer = answer;
-	}
-	@Override
-	public String toString() {
-		return "Questions [batch=" + batch + ", exam_type=" + exam_type + ", branch=" + branch
-				+ ", semester=" + semester + ", question=" + question + ", options=" + options + ", answer=" + answer
-				+ "] "+id;
 	}
 	
 	

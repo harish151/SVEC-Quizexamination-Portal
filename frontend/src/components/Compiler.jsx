@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const SAMPLES = {
   c: `#include <stdio.h>
@@ -29,20 +30,36 @@ int main() {
 };
 
 function Compiler() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const name = location.state?.name || null;
+  const batch = location.state?.batch || null;
+  const branch = location.state?.branch || null;
+  const coursecode = location.state?.coursecode || null;
+  const examtype = location.state?.examtype || null;
+  const semester = location.state?.semester || null;
+  const section = location.state?.section || null;
+  const username = location.state?.username || null;
+  const image = location.state?.image || null;
+  const role = location.state?.role || null;
+  let sess = location.state?.session || false;
+  const token = location.state?.token || false;
   const [language, setLanguage] = useState('c');
   const [code, setCode] = useState(SAMPLES['c']);
   const [compilationOutput, setCompilationOutput] = useState('');
   const [stdinValue, setStdinValue] = useState('');
   const editorRef = useRef(null);
-
-  // question-related states
-  // default semester=4 and branch=CSE (no UI for them as requested)
-  const [semester] = useState('4');
-  const [branch] = useState('CSE');
   const [questions, setQuestions] = useState([]); // [{ id, question_title, question_description }]
   const [selectedQuestionId, setSelectedQuestionId] = useState('');
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [questionsError, setQuestionsError] = useState('');
+
+  function htmlToText(html) {
+    if (!html) return '';
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  }
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
@@ -64,10 +81,11 @@ function Compiler() {
       setSelectedQuestionId('');
       try {
         const res = await axios.get(`http://${import.meta.env.VITE_HOST}:8081/student/getQuestions`, {
-          params: { semester, branch }
+          params: { batch:batch, branch:branch, exam_type: examtype, coursecode:coursecode },
         });
         const data = Array.isArray(res.data) ? res.data : (res.data.questions || []);
         setQuestions(data || []);
+        console.log(questions)
         // default select first question if available
         if (Array.isArray(data) && data.length > 0) {
           setSelectedQuestionId(data[0].id ?? data[0].question_id ?? data[0].questionTitle ?? '');
@@ -187,17 +205,49 @@ function Compiler() {
   };
 
   const handleSubmit = async () => {
-    setCompilationOutput('Submitting (submit button)...');
+    if (!selectedQuestion) {
+      alert("Please select a question before submitting.");
+      return;
+    }
+
+    setCompilationOutput('Submitting your code...');
+
+    const body = {
+      id: selectedQuestion.id || selectedQuestion.question_id,
+      batch: batch,
+      branch: branch,
+      semester: semester,
+      coursecode: coursecode,
+      examType: examtype,
+      section: section,
+      username: username,
+      question_title: selectedQuestion.question_title,
+      source_code: code,
+      marks: 0, // Assuming marks are part of the question object
+    };
+
     try {
-      const res = await axios.post(`http://${import.meta.env.VITE_HOST}:8081/api/submit`, {
-        language,
-        source_code: code,
-        stdin: stdinValue || '',
-        expectedoutput: ''
-      }, { headers: { 'Content-Type': 'application/json' } });
-      setCompilationOutput(JSON.stringify(res.data, null, 2));
+      const response = await axios.post(`http://${import.meta.env.VITE_HOST}:8081/student/submitCode`, body, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.status === 200) {
+        alert('Code submitted successfully!');
+        const details = location.state;
+        // navigate("/student", { state: { details, token } });
+      }
     } catch (err) {
-      setCompilationOutput('Submit failed: ' + String(err));
+      console.error(err);
+      let errorMessage = 'Failed to submit code.';
+      if (err.response) {
+        errorMessage += ` Server responded with ${err.response.status}: ${err.response.data}`;
+      } else if (err.request) {
+        errorMessage += ' No response from server.';
+      } else {
+        errorMessage += ` ${err.message}`;
+      }
+      setCompilationOutput(errorMessage);
+      alert(errorMessage);
     }
   };
 
@@ -221,7 +271,7 @@ function Compiler() {
       <div style={{ color: '#333', whiteSpace: 'pre-wrap' }}>
         {desc ? (
           <>
-            <div style={{ marginBottom: 10 }}>{desc}</div>
+            <div style={{ marginBottom: 10 }}>{htmlToText(desc)}</div>
             {(firstInput !== '' || firstOutput !== '') && (
               <div style={{ marginTop: 8 }}>
                 <strong style={{ display: 'block', marginBottom: 6 }}>Example Input:</strong>

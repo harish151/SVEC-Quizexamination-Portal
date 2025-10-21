@@ -162,7 +162,7 @@ function ConductExam({username,token}) {
       <div style={{marginTop:'10px',marginBottom:'10px'}}>
       <div style={{display:'none'}}>{subjectText}</div>
       {displayque ===1 && (exam_type==="MID-1" || exam_type==="MID-2")? (divs):(null)}
-      {displayque ===1 && (exam_type==="INTERNAL" || exam_type==="EXTERNAL")? (<CodingQuestions />):(null)}
+      {displayque ===1 && (exam_type==="INTERNAL" || exam_type==="EXTERNAL")? (<CodingQuestions batch={batch} branch={branch} semester={semester} coursecode={ccode} exam_type={exam_type} />):(null)}
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ function Instructions(props) {
       navigate("/exam",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:examtype,semester:semester,section:section,username:username,image:image,session:true,role:role,token:token}});
       }
       else{
-      navigate("/labexam",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:examtype,semester:semester,section:section,username:username,image:image,session:true,role:role,token:token}});
+      navigate("/compiler",{state:{name:name,batch:batch,branch:branch,coursecode:coursecode,examtype:examtype,semester:semester,section:section,username:username,image:image,session:true,role:role,token:token}});
       }
     }
     const goFullscreen = () => {

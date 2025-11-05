@@ -16,6 +16,10 @@ function FormComponent({
   handlequestions,
   // subjectText,
   setSubjectText,
+  listofstu,
+  selectedstudent,
+  setSelectedstudent,
+  liststudents,
 }) {
   return (
     <div>
@@ -44,6 +48,7 @@ function FormComponent({
                     const selectedValue = e.target.value;
                     setBatch(selectedValue);
                     handleregulation(selectedValue,branch);
+                    liststudents(selectedValue,branch,semester,selectedsec);
                     setDisplay(0);
                   }}
                 >
@@ -67,7 +72,9 @@ function FormComponent({
                   onChange={(e) => {
                                     const selectedbranch = e.target.value;setBranch(e.target.value);
                                     setDisplay(0);
-                                    handleregulation(batch,selectedbranch);}}
+                                    handleregulation(batch,selectedbranch);
+                                    liststudents(batch,selectedbranch,semester,selectedsec);
+                                  }}
                 >
                   <option value="-1" disabled>SELECT</option>
                   <option value="CSE">COMPUTER SCIENCE AND ENGINEERING</option>
@@ -91,8 +98,8 @@ function FormComponent({
                   name="semester"
                   id="semester"
                   value={semester}
-                  onChange={(e) => {setSemester(e.target.value);setSubjectText(subjects.subjectname[0]);
-                    setExam_type(-1);
+                  onChange={(e) => {const selectedsemester = e.target.value;setSemester(e.target.value);setSubjectText(subjects.subjectname[0]);
+                    setExam_type(-1);liststudents(batch,branch,selectedsemester,selectedsec);
                   }}
                 >
                   <option value="-1" disabled>SELECT</option>
@@ -132,7 +139,9 @@ function FormComponent({
               <td>SECTION</td>
               <td>:</td>
               <td>
-              <select name="section" id="section" value={selectedsec} onChange={(e)=>{setSelectedsec(e.target.value);setExam_type(-1);}}>
+              <select name="section" id="section" value={selectedsec} onChange={(e)=>{const selectedsection = e.target.value;setSelectedsec(e.target.value);setExam_type(-1);
+                                                                                liststudents(batch,branch,semester,selectedsection);}}>
+                <option value="-1" disabled>SELECT</option>
                 {sections.map((i)=>(<option key={i} value={i}>{i==-1?"SELECT":i}</option>))}
               </select></td>
             </tr>
@@ -155,6 +164,27 @@ function FormComponent({
                 )}
               </td>
             </tr>
+            {
+              (buttonname=="View code Result") &&
+              (<tr>
+                <td>STUDENT</td>
+                <td>:</td>
+                <td>
+                  <select name="student" id="student-select" value={selectedstudent} onChange={(e)=>{setSelectedstudent(e.target.value);setDisplay(0);}}>
+                    <option value="-1" disabled>SELECT</option>
+                    {Array.isArray(listofstu) && listofstu.length > 0 ? (
+                      listofstu.map((stu, index) => (
+                        <option key={index} value={stu.username}>
+                          {stu.username}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>No students available</option>
+                    )}
+                  </select>
+                </td>
+              </tr>)
+        }
           </tbody>
           <tfoot>
             <tr>

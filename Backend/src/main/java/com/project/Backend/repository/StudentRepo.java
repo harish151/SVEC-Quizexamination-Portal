@@ -12,5 +12,7 @@ public interface StudentRepo extends MongoRepository<Students, String> {
 
 	List<Object> findByUsernameAndPassword(String username, String password);
 
+	List<Students> findByBatchAndBranchAndSemesterAndSection(String batch, String branch, String semester, String section);
+
 
 }

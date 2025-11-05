@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react'
+import React, { useState,useRef } from 'react';
 import { useLocation,useNavigate } from 'react-router-dom';
 import ExamSchedule from './ExamSchedule';
 import ConductExam from './ConductExam';
@@ -6,6 +6,7 @@ import ViewQuestions from './ViewQuestions';
 import ViewResults from './ViewResults';
 import UpdateExamSchedule from './UpdateExamSchedule';
 import GroqChatDirect from './GrokChatDirect';
+import VerifyCodeResult from './VerifyCodeResult';
 function Employee() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ function Employee() {
   const updatescheduleRef = useRef(null);
   const viewqueRef = useRef(null);
   const viewresultRef = useRef(null);
+  const verifycoderesRef = useRef(null);
   const logoutRef = useRef(null);
   const [ai,setAi] = useState();
   const tdiv = useRef(null);
@@ -46,6 +48,7 @@ function Employee() {
                            viewresultRef.current.classList.remove("active");
                            viewqueRef.current.classList.remove("active");
                            logoutRef.current.classList.remove("active");
+                           verifycoderesRef.current.classList.remove("active");
                            details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):(null)
                            setPage(<ExamSchedule details={details} branch={details[0].branch} token={token} />)
             }}>DASHBOARD</button>
@@ -55,6 +58,7 @@ function Employee() {
                           dashboardRef.current.classList.remove("active");
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
+                          verifycoderesRef.current.classList.remove("active");
                           details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):(null);
                           setPage(<ConductExam username={details[0].username} token={token} />);
             }}>CONDUCT EXAM</button>
@@ -65,6 +69,7 @@ function Employee() {
                           dashboardRef.current.classList.remove("active");
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
+                          verifycoderesRef.current.classList.remove("active");
                           details[0].role==="HOD"?(updatescheduleRef.current.classList.add("active")):(null)
                           setPage(<UpdateExamSchedule username={details[0].username} token={token} />);
             }}>UPDATE EXAM SCHEDULE</button>):(null)}
@@ -73,6 +78,7 @@ function Employee() {
                           viewresultRef.current.classList.remove("active");
                           conductexamRef.current.classList.remove("active");
                           viewqueRef.current.classList.add("active");
+                          verifycoderesRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
                           details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):("")
                           setPage(<ViewQuestions username={details[0].username} token={token}/>)
@@ -83,14 +89,26 @@ function Employee() {
                           viewqueRef.current.classList.remove("active");
                           logoutRef.current.classList.remove("active");
                           viewresultRef.current.classList.add("active");
+                          verifycoderesRef.current.classList.remove("active");
                           details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):("");
                           setPage(<ViewResults username={details[0].username} token={token} />)
             }} >VIEW RESULTS</button>
+            <button className="list-group-item list-group-item-action" ref={verifycoderesRef} data-bs-toggle="list" role="tab"
+             onClick={()=>{dashboardRef.current.classList.remove("active");
+                          conductexamRef.current.classList.remove("active");
+                          viewqueRef.current.classList.remove("active");
+                          logoutRef.current.classList.remove("active");
+                          viewresultRef.current.classList.remove("active");
+                          verifycoderesRef.current.classList.add("active");
+                          details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):("");
+                          setPage(<VerifyCodeResult username={details[0].username} token={token} />)
+            }} >VERIFY CODE RESULT</button>
             <button className="list-group-item list-group-item-action" ref={logoutRef} data-bs-toggle="list" role="tab"
              onClick={()=>{dashboardRef.current.classList.remove("active");
                           viewresultRef.current.classList.remove("active");
                           conductexamRef.current.classList.remove("active");
                           viewqueRef.current.classList.remove("active");
+                          verifycoderesRef.current.classList.remove("active");
                           logoutRef.current.classList.add("active");
                           details[0].role==="HOD"?(updatescheduleRef.current.classList.remove("active")):("")
                           navigate("/");

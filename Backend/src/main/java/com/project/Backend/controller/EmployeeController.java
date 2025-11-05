@@ -31,7 +31,9 @@ import com.project.Backend.kafka.KafkaProducerService;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
 import com.project.Backend.model.Schedule;
+import com.project.Backend.model.Students;
 import com.project.Backend.model.Subjects;
+import com.project.Backend.repository.StudentRepo;
 
 
 @RestController
@@ -84,11 +86,15 @@ public class EmployeeController {
 //		return u;
 //	}
 //	
-//	@GetMapping("/teacher/getstudents")
-//	public List<Students> getStudents(){
-//		List<Students> s =sturepo.findAll();
-//		return s;
-//	}
+	@Autowired
+	StudentRepo sturepo;
+	
+	@GetMapping("/teacher/getstudents")
+	public List<Students> getStudents(@RequestParam("batch") String batch,@RequestParam("branch") String branch, 
+									  @RequestParam("semester") String semester,@RequestParam("section") String section){
+		List<Students> s =sturepo.findByBatchAndBranchAndSemesterAndSection(batch,branch,semester,section);
+		return s;
+	}
 	
 	@KafkaListener(topics = "employee-login-response",groupId = "quiz-group")
 	public void ReceiveLoginResponse(ConsumerRecord<String, String> record) {
@@ -541,3 +547,5 @@ public class EmployeeController {
 	}
 	
 }
+
+

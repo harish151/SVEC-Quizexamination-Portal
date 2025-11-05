@@ -139,7 +139,7 @@ function FormComponent({
               <td>SECTION</td>
               <td>:</td>
               <td>
-              <select name="section" id="section" value={selectedsec} onChange={(e)=>{const selectedsection = e.target.value;setSelectedsec(e.target.value);setExam_type(-1);
+              <select name="section" id="section" value={selectedsec} onChange={(e)=>{const selectedsection = e.target.value;setSelectedsec(e.target.value);setExam_type(-1);setSelectedstudent(-1);
                                                                                 liststudents(batch,branch,semester,selectedsection);}}>
                 <option value="-1" disabled>SELECT</option>
                 {sections.map((i)=>(<option key={i} value={i}>{i==-1?"SELECT":i}</option>))}

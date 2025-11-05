@@ -3,6 +3,7 @@ package com.project.Backend.controller;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.Backend.kafka.KafkaProducerService;
 import com.project.Backend.model.Questions;
 import com.project.Backend.model.Regulation;
+import com.project.Backend.model.Result;
 import com.project.Backend.model.Schedule;
 import com.project.Backend.model.Students;
 import com.project.Backend.model.Subjects;
@@ -93,6 +95,7 @@ public class EmployeeController {
 	public List<Students> getStudents(@RequestParam("batch") String batch,@RequestParam("branch") String branch, 
 									  @RequestParam("semester") String semester,@RequestParam("section") String section){
 		List<Students> s =sturepo.findByBatchAndBranchAndSemesterAndSection(batch,branch,semester,section);
+		s.sort(Comparator.comparing(Students::getUsername));
 		return s;
 	}
 	

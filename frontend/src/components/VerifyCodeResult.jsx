@@ -49,9 +49,31 @@ function VerifyCodeResult({token}) {
         .catch(err => alert(err));
   };
 
-  const handleresult =(e)=>{
+  const handleresult =async (e)=>{
     e.preventDefault();
     console.log(batch,branch,semester,selectedsec,ccode,exam_type,selectedstudent);
+    try {
+      axios.get(`http://${import.meta.env.VITE_HOST}:8081/faculty/viewcodingresultsbyuser`, {
+        //headers:{Authorization:token},
+        //withCredentials: true,
+        params: {
+          batch: batch,
+          branch: branch,
+          coursecode: ccode,
+          exam_type: exam_type,
+          semester: semester,
+          section: selectedsec,
+          username: selectedstudent
+        },
+      })
+        .then(res => {
+          console.log(res.data);})
+        .catch(err => alert(err));
+    } catch (error) {
+      console.error(error);
+    }
+
+      
   }
 
   useEffect(() => {

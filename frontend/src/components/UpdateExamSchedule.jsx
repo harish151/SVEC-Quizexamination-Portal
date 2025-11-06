@@ -32,7 +32,7 @@ function UpdateExamSchedule({token}) {
       params: { batch: selectedBatch, branch:selectedbranch }
     })
     .then(res => {
-      console.log(res.data[0].regulation);
+      // console.log(res.data[0].regulation);
       setRegulation(res.data[0].regulation);
     })
     .catch(err => alert(err));

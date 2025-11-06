@@ -51,7 +51,7 @@ function VerifyCodeResult({token}) {
 
   const handleresult =async (e)=>{
     e.preventDefault();
-    console.log(batch,branch,semester,selectedsec,ccode,exam_type,selectedstudent);
+    //console.log(batch,branch,semester,selectedsec,ccode,exam_type,selectedstudent);
     try {
       axios.get(`http://${import.meta.env.VITE_HOST}:8081/faculty/viewcodingresultsbyuser`, {
         //headers:{Authorization:token},

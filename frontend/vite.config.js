@@ -10,5 +10,4 @@ export default defineConfig({
     strictPort:true,
     cors:true
   },
-  base: '/'
 })

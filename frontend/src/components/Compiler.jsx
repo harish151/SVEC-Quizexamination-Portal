@@ -213,7 +213,7 @@ function Compiler() {
     setCompilationOutput('Submitting your code...');
 
     const body = {
-      id: selectedQuestion.id || selectedQuestion.question_id,
+      //id: selectedQuestion.id || selectedQuestion.question_id,
       batch: batch,
       branch: branch,
       semester: semester,

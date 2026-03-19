@@ -1,4 +1,4 @@
-package src.com.exam.ui;
+package com.exam.ui;
 
 import java.awt.*;
 import java.awt.event.ActionListener;

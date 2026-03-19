@@ -1,12 +1,12 @@
-package src.com.exam.ui;
+package com.exam.ui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import src.com.exam.model.CurrentExam;
-import src.com.exam.model.ExamAnswers;
-import src.com.exam.model.Student;
-import src.com.exam.service.SubmitAnswers;
+import com.exam.model.CurrentExam;
+import com.exam.model.ExamAnswers;
+import com.exam.model.Student;
+import com.exam.service.SubmitAnswers;
 
 import java.awt.*;
 import java.awt.event.ActionListener;

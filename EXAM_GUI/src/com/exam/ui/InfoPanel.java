@@ -1,4 +1,4 @@
-package src.com.exam.ui;
+package com.exam.ui;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -7,8 +7,8 @@ import java.awt.event.ComponentEvent;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import src.com.exam.model.CurrentExam;
-import src.com.exam.model.Student;
+import com.exam.model.CurrentExam;
+import com.exam.model.Student;
 
 public class InfoPanel extends JPanel {
 

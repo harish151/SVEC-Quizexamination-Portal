@@ -46,11 +46,11 @@ public class MainPage extends JFrame {
 
         /* ================= SERVICES ================= */
 
-         StudentService service = new StudentService();
-         Student s = service.getStudentFromWeb();
+        StudentService service = new StudentService();
+        Student s = service.getStudentFromWeb();
 
-         CurrentExamService currentExamService = new CurrentExamService();
-         CurrentExam currentExam = currentExamService.GetCurrentExam();
+        CurrentExamService currentExamService = new CurrentExamService();
+        CurrentExam currentExam = currentExamService.GetCurrentExam();
 
         ExamAnswers examanswers = new ExamAnswers();
 
@@ -215,28 +215,28 @@ public class MainPage extends JFrame {
     public static void main(String[] args) {
         new MainPage();
 
-    // try {
+    //  try {
 
-    //     String studentJson =
-    //             URLDecoder.decode(args[0], StandardCharsets.UTF_8);
+    //      String studentJson =
+    //              URLDecoder.decode(args[0], StandardCharsets.UTF_8);
 
-    //     String examJson =
-    //             URLDecoder.decode(args[1], StandardCharsets.UTF_8);
+    //      String examJson =
+    //              URLDecoder.decode(args[1], StandardCharsets.UTF_8);
 
-    //     ObjectMapper mapper = new ObjectMapper();
+    //      ObjectMapper mapper = new ObjectMapper();
 
-    //     Student student =
-    //             mapper.readValue(studentJson, Student.class);
+    //      Student student =
+    //              mapper.readValue(studentJson, Student.class);
 
-    //     CurrentExam exam =
-    //             mapper.readValue(examJson, CurrentExam.class);
+    //      CurrentExam exam =
+    //              mapper.readValue(examJson, CurrentExam.class);
 
-    //     SwingUtilities.invokeLater(() -> {
-    //         new MainPage(student, exam);
-    //     });
+    //      SwingUtilities.invokeLater(() -> {
+    //          new MainPage(student, exam);
+    //      });
 
-    // } catch (Exception e) {
-    //     e.printStackTrace();
-    // }
+    //  } catch (Exception e) {
+    //      e.printStackTrace();
+    //  }
 }
 }

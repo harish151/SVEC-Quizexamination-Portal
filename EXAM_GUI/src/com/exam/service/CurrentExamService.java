@@ -1,5 +1,5 @@
-package src.com.exam.service;
-import src.com.exam.model.*;
+package com.exam.service;
+import com.exam.model.*;
 
 public class CurrentExamService {
 

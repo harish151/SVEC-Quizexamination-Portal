@@ -1,4 +1,4 @@
-package src.com.exam.service;
+package com.exam.service;
 
 import java.net.URI;
 import java.net.URLEncoder;

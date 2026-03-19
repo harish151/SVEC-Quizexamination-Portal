@@ -1,4 +1,4 @@
-package src.com.exam.service;
+package com.exam.service;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -7,8 +7,8 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import src.com.exam.model.CurrentExam;
-import src.com.exam.model.Student;
+import com.exam.model.CurrentExam;
+import com.exam.model.Student;
 
 public class SubmitAnswers {
     public SubmitAnswers(String host ,String token, Student student, CurrentExam currentexam, List<String> originalans,List<String> answers ){

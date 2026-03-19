@@ -1,4 +1,4 @@
-package src.com.exam.model;
+package com.exam.model;
 
 public class Student {
 

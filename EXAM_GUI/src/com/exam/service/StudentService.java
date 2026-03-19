@@ -1,6 +1,6 @@
-package src.com.exam.service;
+package com.exam.service;
 
-import src.com.exam.model.*;
+import com.exam.model.*;
 
 public class StudentService {
 

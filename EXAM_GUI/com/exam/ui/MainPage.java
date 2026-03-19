@@ -1,4 +1,4 @@
-package src.com.exam.ui;
+package com.exam.ui;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -12,11 +12,11 @@ import javax.swing.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import src.com.exam.model.CurrentExam;
-import src.com.exam.model.ExamAnswers;
-import src.com.exam.model.Student;
-import src.com.exam.service.CurrentExamService;
-import src.com.exam.service.StudentService;
+import com.exam.model.CurrentExam;
+import com.exam.model.ExamAnswers;
+import com.exam.model.Student;
+import com.exam.service.CurrentExamService;
+import com.exam.service.StudentService;
 
 public class MainPage extends JFrame {
 

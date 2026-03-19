@@ -1,4 +1,4 @@
-package com.exam.service;
+package src.com.exam.service;
 
 import com.exam.model.*;
 

@@ -150,7 +150,7 @@ public class StudentServicesConsumer {
 			String branch = (String) data.get("branch");
 			String coursecode = (String) data.get("coursecode");
 			String examtype = (String) data.get("examtype");
-			List<QuesAndAnsProgress> p = pr.findByUsername(username);
+			List<QuesAndAnsProgress> p = pr.findByDetails(username,examtype,branch,coursecode);
 			if(p.isEmpty()) {
 				List<Questions> q = qr.findQuestions(batch,examtype,branch,coursecode);
 				List<Questions> shuffle = shuffleQuestions(q);
@@ -164,12 +164,16 @@ public class StudentServicesConsumer {
 				    pro.setCoursecode(ques.getCoursecode());// course code
 				    pro.setQuestion_no(ques.getQuestion_no());// question number
 				    pro.setQuestion(ques.getQuestion());    // question text
+				    pro.setQuestionurl(ques.getQuestionurl()); //question url
 				    pro.setOptions(ques.getOptions());      // options
+				    pro.setOptimgurl(ques.getOptimgurl()); //option images
 				    pro.setAnswer(ques.getAnswer());
 				    pro.setUsername(username); 
 				    pr.save(pro);
 				}
-				String jsonResponse = objectMapper.writeValueAsString(shuffle);
+				// String jsonResponse = objectMapper.writeValueAsString(shuffle);
+				List<QuesAndAnsProgress> r = pr.findByDetails(username,examtype,branch,coursecode);
+				String jsonResponse = objectMapper.writeValueAsString(r);
 				kafkaTemplate.send("get-examque-response",reqId,jsonResponse);
 			}
 			else {

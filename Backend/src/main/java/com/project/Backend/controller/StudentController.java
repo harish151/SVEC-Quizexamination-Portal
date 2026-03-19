@@ -174,6 +174,7 @@ public class StudentController {
 	    }
 	    if (getexam.containsKey(reqId)) {
 	        List<Object> response = getexam.get(reqId);
+	        System.out.println(response);
 	        return response;
 	    } else {
 	        return null;
@@ -225,6 +226,7 @@ public class StudentController {
 	    }
 	    if (getexamque.containsKey(reqId)) {
 	        List<Object> response = getexamque.get(reqId);
+	        //System.out.println(response);
 	        return  response;
 	    } else {
 	        return null;

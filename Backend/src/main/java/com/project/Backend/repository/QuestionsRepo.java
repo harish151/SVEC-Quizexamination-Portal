@@ -15,6 +15,4 @@ public interface QuestionsRepo extends MongoRepository<Questions,String>{
 	@Query("{ 'batch': ?0, 'exam_type': ?1, 'branch': ?2, 'coursecode':?3}")
 	List<Questions> findQuestions(String year, String examType, String branch,String code);
 
-
-
 }

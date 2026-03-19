@@ -1,29 +1,29 @@
-package com.project.Backend.model;
-
+package src.com.exam.model;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Question {
 
-@Document(collection = "progress")
-public class QuesAndAnsProgress {
-	@Id
-	private String id;
-	private String username=null;
-	private String batch=null;
-	private String exam_type=null;
-	private String branch=null;
-	private String semester=null;
-	private String coursecode=null;
-	private String question_no=null;
-	private String question=null;
-	private String questionurl=null;
-	private List<String> options=null;
-	private List<String> optimgurl=null;
-	private String answer="";
-	private String selectedopt=null;
-	
-	public String getQuestionurl() {
+    public String id;
+    public String batch;
+    public String exam_type;
+    public String branch;
+    public String semester;
+    public String coursecode;
+    public String question_no;
+    public String question;
+    public String questionurl;
+    public List<String> options;
+    public List<String> optimgurl;
+    public String answer;
+    public String selectedopt;
+    public String username;
+    public Question get(int index) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    }
+    public String getQuestionurl() {
 		return questionurl;
 	}
 	public void setQuestionurl(String questionurl) {
@@ -107,6 +107,6 @@ public class QuesAndAnsProgress {
 	public void setSelectedopt(String selectedopt) {
 		this.selectedopt = selectedopt;
 	}
-	
-	
+    
+
 }

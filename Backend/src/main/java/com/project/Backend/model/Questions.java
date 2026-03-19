@@ -16,16 +16,25 @@ public class Questions {
 	private String coursecode="";
 	private String question_no="";
 	private String question="";
+	private String questionurl="";
 	private List<String> options=null;
+	private List<String> optimgurl=null;
 	private String answer="";
-	private String queformate="";
+	//private String queformate="";
 	
 	
-	public String getQueformate() {
-		return queformate;
+//	public String getQueformate() {
+//		return queformate;
+//	}
+//	public void setQueformate(String queformate) {
+//		this.queformate = queformate;
+//	}
+	
+	public String getQuestionurl() {
+		return questionurl;
 	}
-	public void setQueformate(String queformate) {
-		this.queformate = queformate;
+	public void setQuestionurl(String questionurl) {
+		this.questionurl = questionurl;
 	}
 	public String getId() {
 		return id;
@@ -79,9 +88,16 @@ public class Questions {
 	public List<String> getOptions() {
 		return options;
 	}
+	public List<String> getOptimgurl() {
+		return optimgurl;
+	}
+	public void setOptimgurl(List<String> optimgurl) {
+		this.optimgurl = optimgurl;
+	}
 	public void setOptions(List<String> options) {
 		this.options = options;
 	}
+	
 	public String getAnswer() {
 		return answer;
 	}

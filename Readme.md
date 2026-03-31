@@ -1,3 +1,13 @@
+<center><h1>Project Requirements</h1></center>
+<ul>
+  <li>Vscode</li>
+  <li>Ecllipse</li>
+  <li>Docker Desktop</li>
+  <li>Judge0</li>
+  <li>Java21 or above versions is installed in pc.</li>
+</ul>
+
+<hr />
 <center><h1>Setup Project</h1></center>
 <ul>
   <li>

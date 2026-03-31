@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FormComponent from './Form';
 import CodingQuestions from './CodingQuestions';
+import { useToast } from './Toast';
 
 function ConductExam({username,token}) {
-  // console.log(username);
+  const toast = useToast();
 
   const [regulation, setRegulation] = useState();
   const [batch, setBatch] = useState(-1);
@@ -32,7 +33,7 @@ function ConductExam({username,token}) {
     .then(res => {
       setRegulation(res.data[0].regulation);
     })
-    .catch(err => alert(err));
+    .catch(err => toast.error('Error', err?.response?.data?.message || err.message || String(err)));
   };
 
   const handleaddquestions =(e)=>{
@@ -45,22 +46,22 @@ function ConductExam({username,token}) {
       withCredentials: true,params:{batch:batch,exam_type:exam_type,branch:branch,coursecode:ccode}})
           .then(res =>{
             if(res.data===20){
-              alert("Already Question are Assigned. Click on view question paper to see.");
+              toast.info('Already Assigned', 'Questions are already assigned. View the question paper to see them.');
             }
             else{
               setDisplayque(1);
               setQno(res.data+1);
             }
           })
-          .catch(err => alert(err))
+          .catch(err => toast.error('Error', err?.response?.data?.message || err.message || String(err)))
         }
         else{
           setDisplayque(0);
-          alert("you are not eligible to assign questions to this subject.");
+          toast.warning('Access Denied', 'You are not eligible to assign questions to this subject.');
         }
-      
+
     })
-    
+
   }
 
   const handlequestion =(e,i=0)=>{
@@ -72,7 +73,7 @@ function ConductExam({username,token}) {
     .then(res => {console.log(res.data);
                   if(i===0){setQno(qno+1);}
                   else if(i===13){
-                      alert("successfully posted all questions.");
+                      toast.success('Questions Assigned', 'All questions have been posted successfully.');
                       setDisplayque(0);
                     }
                     setQuestion("");
@@ -98,72 +99,82 @@ function ConductExam({username,token}) {
       setSubjects(res.data[0]);
       setCcode("-1");
     })
-    .catch(err => alert(err));
+    .catch(err => toast.error('Error', err?.response?.data?.message || err.message || String(err)));
   }, [branch, regulation, semester]);
 
+  const inputStyle = { padding: '9px 12px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: '0.88rem', color: 'var(--text-primary)', outline: 'none', transition: 'var(--transition)', background: 'var(--bg-card)' };
 
   var divs = [];
-  if(qno<=20){
-    divs.push(<form key={qno} id="que-form" onSubmit={handlequestion}><div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',marginBottom:'20px'}}>
-                <div style={{display:'flex',width:'90%',padding:'20px',marginBottom:'10px'}}>
-                  <div style={{width:'5%',display:'flex',alignItems:'center',justifyContent:'center'}}><h6 style={{height:'35px',display:'flex',alignItems:'center'}}>Q{qno}:</h6></div>
-                  <div style={{width:'100%'}}><textarea id='textarea' className="form-control" aria-label="With textarea" placeholder='Enter Question' style={{height:'100%',width:'100%'}} value={question} onChange={(e)=>setQuestion(e.target.value)} required/></div>
-                </div>
-                <div style={{width:'95%',display:'flex',flexDirection:'column'}}>
-                    <div style={{display:'flex',justifyContent:'space-around',paddingBottom:'7px'}}>
-                        <div key={"option1"} style={{display:'flex'}}><h6 style={{height:'35px',display:'flex',alignItems:'center'}}>A&nbsp;:</h6> &nbsp;&nbsp;<input type="text" className="form-control" placeholder='option1' name="options" id="options" value={options[0]} required autoComplete='on' onChange={(e)=>{var updated = [...options];updated[0] = e.target.value;setOptions(updated)}} style={{height:'35px'}} /></div>
-                        <div style={{display:'flex'}}><h6 style={{height:'35px',display:'flex',alignItems:'center'}}>B&nbsp;:</h6> &nbsp;&nbsp;<input type="text" name="option2" className="form-control" placeholder='option2' id="option2" value={options[1]} required onChange={(e)=>{var updated = [...options];updated[1] = e.target.value;setOptions(updated)}} style={{height:'35px'}} /></div>
-                    </div>
-                    <div style={{display:'flex',justifyContent:'space-around',marginBottom:'20px'}}>
-                        <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}><h6 style={{height:'35px',display:'flex',alignItems:'center'}}>C&nbsp;:</h6> &nbsp;&nbsp;<input type="text" className="form-control" placeholder='option3' name="option3" id="option3" value={options[2]} required onChange={(e)=>{var updated = [...options];updated[2] = e.target.value;setOptions(updated)}} style={{height:'35px'}}/></div>
-                        <div style={{display:'flex'}}><h6 style={{height:'35px',display:'flex',alignItems:'center'}}>D&nbsp;:</h6> &nbsp;&nbsp;<input type="text" className="form-control" placeholder='option4' name="option4" id="option4" value={options[3]} required onChange={(e)=>{var updated = [...options];updated[3] = e.target.value;setOptions(updated)}} style={{height:'35px'}} /></div>
-                    </div>
-                    <div style={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
-                      <div style={{width:'100%',marginLeft:'10%',display:'flex',alignItems:'center'}}><div><h6 style={{height:'35px',display:'flex',alignItems:'center',width:'fit-content'}}>ANSWER :&nbsp;</h6></div><div><input type='text' className="form-control" placeholder='Enter Answer' id='ans' name='ans' value={answer} onChange={(e)=>{setAnswer(e.target.value)}} required /></div></div>
-                      <div style={{width:'20%',display:'flex',justifyContent:'space-evenly'}}>
-                          {
-                            qno===20?(<div style={{display:'flex',justifyContent:'space-evenly',gap:'12px'}}>
-                                      <button type="submit"submit id='savebutton' onClick={(e)=>{handlequestion(e,13);}}>SAVE</button>
-                                      </div>):(<button type="submit">SAVE & NEXT</button>)
-                          }
-                      </div>
-                    </div>
-                </div>
+  if (qno <= 20) {
+    divs.push(
+      <form key={qno} id="que-form" onSubmit={handlequestion}>
+        <div className="svec-form-panel">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', paddingBottom: '10px', borderBottom: '2px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '3px', height: '14px', background: 'var(--accent)', borderRadius: '2px', display: 'inline-block', flexShrink: 0 }}></span>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)' }}>Question {qno} of 20</span>
+            </div>
+            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              {Array.from({length: 20}, (_, i) => (
+                <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: i < qno - 1 ? 'var(--success)' : i === qno - 1 ? 'var(--accent)' : 'var(--border)', transition: 'background 0.2s' }} />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'flex-start' }}>
+            <span style={{ background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius-sm)', padding: '6px 10px', fontSize: '0.8rem', fontWeight: 700, whiteSpace: 'nowrap' }}>Q{qno}</span>
+            <textarea style={{ ...inputStyle, flex: 1, minHeight: '80px', resize: 'vertical' }} placeholder='Enter Question' value={question} onChange={(e) => setQuestion(e.target.value)} required />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+            {['A','B','C','D'].map((letter, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontWeight: 700, color: 'var(--text-secondary)', fontSize: '0.82rem', minWidth: '16px' }}>{letter}</span>
+                <input type="text" style={{ ...inputStyle, flex: 1 }} placeholder={`Option ${letter}`} value={options[i]} required autoComplete='on' onChange={(e) => { var updated = [...options]; updated[i] = e.target.value; setOptions(updated); }} />
               </div>
-              <center><p style={{color:'blue'}}>*Click On Save&Next To Add More Questions</p></center>
-              </form>
-              );
-            }
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--success)', letterSpacing: '0.06em' }}>✓ ANSWER:</span>
+              <input type='text' style={{ ...inputStyle, width: '220px' }} placeholder='Enter correct answer' value={answer} onChange={(e) => setAnswer(e.target.value)} required />
+            </div>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', margin: 0 }}>Save to continue to next question</p>
+              {qno === 20 ? (
+                <button type="submit" className="svec-btn svec-btn-success" onClick={(e) => handlequestion(e, 13)}>✓ Finish</button>
+              ) : (
+                <button type="submit" className="svec-btn svec-btn-accent">Save & Next →</button>
+              )}
+            </div>
+          </div>
+        </div>
+      </form>
+    );
+  }
 
   return (
-    <div>
-      <FormComponent
-        batch={batch}
-        setBatch={setBatch}
-        branch={branch}
-        setBranch={setBranch}
-        semester={semester}
-        setSemester={setSemester}
-        subjects={subjects}
-        ccode={ccode}
-        setCcode={setCcode}
-        exam_type={exam_type}
-        setExam_type={setExam_type}
-        sections={sections}
-        setSections={setSections}
-        setDisplay={setDisplayque}
-        buttonname = {buttonname}
-        setButtonname = {setButtonname}
-        handleregulation={handleregulation}
-        handlequestions={handleaddquestions}
-        subjectText={subjectText}
-        setSubjectText={setSubjectText}
-      />
-      <div style={{marginTop:'10px',marginBottom:'10px'}}>
-      <div style={{display:'none'}}>{subjectText}</div>
-      {displayque ===1 && (exam_type==="MID-1" || exam_type==="MID-2")? (divs):(null)}
-      {displayque ===1 && (exam_type==="INTERNAL" || exam_type==="EXTERNAL")? (<CodingQuestions batch={batch} branch={branch} semester={semester} coursecode={ccode} exam_type={exam_type} />):(null)}
+    <div style={{ padding: '24px 28px', width: '100%', boxSizing: 'border-box' }}>
+      <div className="svec-form-panel" style={{ marginBottom: '24px' }}>
+        <div className="svec-form-panel-title">SET EXAM</div>
+        <FormComponent
+          batch={batch} setBatch={setBatch}
+          branch={branch} setBranch={setBranch}
+          semester={semester} setSemester={setSemester}
+          subjects={subjects} ccode={ccode} setCcode={setCcode}
+          exam_type={exam_type} setExam_type={setExam_type}
+          sections={sections} setSections={setSections}
+          setDisplay={setDisplayque} buttonname={buttonname} setButtonname={setButtonname}
+          handleregulation={handleregulation} handlequestions={handleaddquestions}
+          subjectText={subjectText} setSubjectText={setSubjectText}
+        />
       </div>
+      <div style={{display:'none'}}>{subjectText}</div>
+      {displayque === 1 && (exam_type === "MID-1" || exam_type === "MID-2") ? (divs) : (null)}
+      {displayque === 1 && (exam_type === "INTERNAL" || exam_type === "EXTERNAL") ? (
+        <CodingQuestions batch={batch} branch={branch} semester={semester} coursecode={ccode} exam_type={exam_type} />
+      ) : (null)}
     </div>
   );
 }

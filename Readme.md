@@ -9,7 +9,7 @@ The frontend is developed using React, backend using Spring Boot, and database u
 We used Docker to run services easily.
 This project makes online exams secure, reliable, and easy to manage for both students and faculty.
 
-<hr />
+
 <center><h1>Project Requirements</h1></center>
 <ul>
   <li>Vscode</li>
@@ -20,7 +20,7 @@ This project makes online exams secure, reliable, and easy to manage for both st
   <li>Java21 or above versions is installed in pc.</li>
 </ul>
 
-<hr />
+
 <center><h1>Setup Project</h1></center>
 <ul>
   <li>
@@ -44,8 +44,15 @@ This project makes online exams secure, reliable, and easy to manage for both st
       <li>execute the command to clone project -> "git clone https://github.com/harish151/SVEC-Quizexamination-Portal.git"</li>
     </ul>
   </li>
+  <li>
+    use the following commands to import data to localmongodb:
+    mongoimport --uri mongodb+srv://harish151:Harish_151@cluster1.rcsq9om.mongodb.net/Cluster1 --collection <COLLECTION> --type JSON --file Cluster1
+    mongoexport --uri mongodb+srv://harish151:Harish_151@cluster1.rcsq9om.mongodb.net/Cluster1 --collection <COLLECTION> --type JSON --out Cluster1
+    mongodump --uri "mongodb+srv://harish151:Harish_151@cluster1.rcsq9om.mongodb.net/Cluster1" --out C:\Users\user\Documents\dumpAtlas
+    mongorestore --uri "mongodb://localhost:27017" "C:\Users\user\Documents\dumpAtlas"
+  </li>
 </ul>
-<hr />
+
 
 <center><h1>Execution Steps</h1></center>
 <ul>

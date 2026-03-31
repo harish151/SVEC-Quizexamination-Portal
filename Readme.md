@@ -1,7 +1,20 @@
+<center><h1>Summary</h1></center><br/>
+Our project name is GOQuiz, which is a secure online quiz system for students and faculty.
+This system helps faculty create quizzes, schedule exams, and download results easily.
+Students can login, attend quizzes, and view their scores in dashboard.
+To prevent cheating, our system has auto-submit feature when students switch tabs.
+To avoid answer loss during network problems, we used Apache Kafka for quiz continuity.
+We also added coding quiz support using Judge0, which allows students to write and run programs during exams.
+The frontend is developed using React, backend using Spring Boot, and database using MongoDB.
+We used Docker to run services easily.
+This project makes online exams secure, reliable, and easy to manage for both students and faculty.
+
+<hr />
 <center><h1>Project Requirements</h1></center>
 <ul>
   <li>Vscode</li>
   <li>Ecllipse</li>
+  <li>Mongodb</li>
   <li>Docker Desktop</li>
   <li>Judge0</li>
   <li>Java21 or above versions is installed in pc.</li>
